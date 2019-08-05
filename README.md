@@ -94,6 +94,10 @@ There are more ways to install plugins for grafana, which can be found on their 
 
 A guide on how to contribute can be found [here](https://docs.synchronicity-iot.eu/docs/contributing/contribution)
 
+## Acknowledgements
+
+This plugin was developed as part of the the [SynchroniCity Project](https://synchronicity-iot.eu/) by The Alexandra Institute. The SynchroniCity project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 732240
+
 ## License
 
 [MIT © Alexandra Institute.](./LICENSE)
