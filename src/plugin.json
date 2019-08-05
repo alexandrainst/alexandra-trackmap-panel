@@ -1,0 +1,25 @@
+{
+  "type": "panel",
+  "name": "Track Map",
+  "id": "alexandra-trackmap-panel",
+
+  "info": {
+    "description": "Map plugin using Leaflet and OpenSteetMap to visualize coordinates or geo:json as either a Ant-path, Hexbin, or Heatmap.",
+    "author": {
+      "name": "Alexandra Institute",
+      "url": "https://www.alexandra.dk"
+    },
+    "keywords": ["map", "tracking", "panel"],
+    "links": [
+      {"name": "Project site", "url": "https://github.com/alexandrainst/alexandra-trackmap-panel"},
+      {"name": "MIT License", "url": "https://github.com/alexandrainst/alexandra-trackmap-panel/blob/master/LICENSE"}
+    ],
+    "version": "1.1.1",
+    "updated": "2019-06-03"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "6.x.x",
+    "plugins": []
+  }
+}

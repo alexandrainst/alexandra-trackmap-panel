@@ -1,0 +1,113 @@
+<div class="editor-row">
+  <div class="section gf-form-group">
+    <h5 class="section-heading">Visualization type options</h5>
+    <div class="gf-form">
+      <label class="gf-form-label width-14">Visualization</label>
+      <div class="gf-form-select-wrapper max-width-12">
+        <select class="input-medium gf-form-input" ng-model="ctrl.panel.mode" ng-options="t for t in ctrl.modeTypes" ng-change="ctrl.addLayer()"></select>
+      </div>
+    </div>
+
+    <div class="gf-form-group" ng-if="ctrl.panel.mode===ctrl.modeTypes[0]">
+      <div class="gf-form">
+        <label class="gf-form-label width-14">Color range</label>
+        <span class="max-width-12">
+          <spectrum-picker class="gf-form-input" ng-model="ctrl.panel.hexbin.colorRange[0]" ng-change="ctrl.addLayer()" ></spectrum-picker>
+        </span>
+        <span class="max-width-12">
+          <spectrum-picker class="gf-form-input" ng-model="ctrl.panel.hexbin.colorRange[1]" ng-change="ctrl.addLayer()" ></spectrum-picker>
+        </span>
+      </div>
+      <div class="gf-form">
+        <label class="gf-form-label width-14">Radius range</label>
+        <span class="max-width-12">
+          <input class="gf-form-input" ng-model="ctrl.panel.hexbin.radiusRange[0]" ng-change="ctrl.addLayer()" />
+        </span>
+        <span class="max-width-12">
+          <input class="gf-form-input" ng-model="ctrl.panel.hexbin.radiusRange[1]" ng-change="ctrl.addLayer()" />
+        </span>
+      </div>
+    </div>
+
+    <div class="gf-form-group" ng-if="ctrl.panel.mode===ctrl.modeTypes[1]">
+      <!-- Options for heatmap -->
+    </div>
+
+    <div class="gf-form-group" ng-if="ctrl.panel.mode===ctrl.modeTypes[2]">
+      <div class="gf-form">
+        <label class="gf-form-label width-14">Delay</label>
+        <span class="max-width-12">
+          <input class="gf-form-input" ng-model="ctrl.panel.antpath.delay" ng-change="ctrl.addLayer()" />
+        </span>
+      </div>
+      <div class="gf-form">
+        <label class="gf-form-label width-14">Dash array</label>
+        <span class="max-width-12">
+          <input class="gf-form-input" ng-model="ctrl.panel.antpath.dashArray[0]" ng-change="ctrl.addLayer()" />
+        </span>
+        <span class="max-width-12">
+          <input class="gf-form-input" ng-model="ctrl.panel.antpath.dashArray[1]" ng-change="ctrl.addLayer()" />
+        </span>
+      </div>
+      <div class="gf-form">
+        <label class="gf-form-label width-14">Weight</label>
+        <span class="max-width-12">
+          <input class="gf-form-input" ng-model="ctrl.panel.antpath.weight" ng-change="ctrl.addLayer()" />
+        </span>
+      </div>
+      <div class="gf-form">
+        <label class="gf-form-label width-14">Color</label>
+        <span class="max-width-12">
+          <spectrum-picker class="gf-form-input" ng-model="ctrl.panel.antpath.color" ng-change="ctrl.addLayer()" ></spectrum-picker>
+        </span>
+        <label class="gf-form-label width-14">Pulse color</label>
+        <span class="max-width-12">
+          <spectrum-picker class="gf-form-input" ng-model="ctrl.panel.antpath.pulseColor" ng-change="ctrl.addLayer()" ></spectrum-picker>
+        </span>
+      </div>
+      <div class="gf-form">
+        <label class="gf-form-label width-14">Paused</label>
+        <gf-form-switch class="gf-form" title="Paused" checked="ctrl.panel.antpath.paused" on-change="ctrl.addLayer()"></gf-form-switch>
+      </div>
+      <div class="gf-form">
+        <label class="gf-form-label width-14">Reverse</label>
+        <gf-form-switch class="gf-form" title="Paused" checked="ctrl.panel.antpath.reverse" on-change="ctrl.addLayer()"></gf-form-switch>
+      </div>
+    </div>
+  </div>
+
+  <div class="section gf-form-group">
+    <h5 class="section-heading">Map options</h5>
+    <div class="gf-form">
+      <label class="gf-form-label width-14">
+        Center of map (lat, lon)
+        <a class="pointer pull-right gf-form-help-icon" ng-click="ctrl.setMapCenter()" title="click to get center of map">
+          <i class="fa fa-map-marker"></i>
+        </a>
+      </label>
+      <span class="max-width-12">
+        <input class="gf-form-input" ng-model="ctrl.panel.mapOptions.latlon[0]" ng-change="ctrl.centerMap()" />
+      </span>
+      <span class="max-width-12">
+        <input class="gf-form-input" ng-model="ctrl.panel.mapOptions.latlon[1]" ng-change="ctrl.centerMap()" />
+      </span>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label width-14">
+        Start zoom
+        <a class="pointer pull-right gf-form-help-icon" ng-click="ctrl.setStartZoom()" title="click to get zoom level from map">
+          <i class="fa fa-search"></i>
+        </a>
+      </label>
+      <span class="max-width-12">
+        <input class="gf-form-input" ng-model="ctrl.panel.mapOptions.zoom" ng-change="ctrl.centerMap()" />
+      </span>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label width-14">Max zoom</label>
+      <span class="max-width-12">
+        <input class="gf-form-input" ng-model="ctrl.panel.mapOptions.maxZoom" ng-change="ctrl.maxZoomChanged()" />
+      </span>
+    </div>
+  </div>
+</div>
