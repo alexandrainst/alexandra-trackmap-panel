@@ -3,13 +3,13 @@
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)](https://github.com/RichardLitt/standard-readme)
 
-> Map plugin using Leaflet and OpenSteetMap to visualize coordinates or geo:json as either a Ant-path, Hexbin, or Heatmap.
+> Map plugin to visualize timeseries data from geo:json or NGSIv2 sources as either a Ant-path, Hexbin, or Heatmap.
 
 ## Usage
 
 ### Queries
-To use the plugin the data need to be formatted as a table with either contains `location` in NGSI format:
-```
+To use the plugin the data needs to be formatted as a table with either contains `location` in NGSIv2 format:
+```javascript
 {
   ...,
   "location": {
@@ -23,10 +23,18 @@ To use the plugin the data need to be formatted as a table with either contains 
 ```
 Or simply a `lat` and `lon`.
 
-A example of a query using location:
-```
+A example of a query for location against a crateDB/PostgreSQL:
+```sql
 SELECT time_index, location
-FROM doc.etvehicle
+FROM doc.table_name
+WHERE $__timeFilter(time_index)
+ORDER BY time_index
+```
+
+And a example query for lat and lon against a crateDB/PostgreSQL:
+```sql
+SELECT time_index, latitude as lat, longitude as lon
+FROM doc.table_name
 WHERE $__timeFilter(time_index)
 ORDER BY time_index
 ```

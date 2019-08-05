@@ -4,7 +4,7 @@
   "id": "alexandra-trackmap-panel",
 
   "info": {
-    "description": "Map plugin using Leaflet and OpenSteetMap to visualize coordinates or geo:json as either a Ant-path, Hexbin, or Heatmap.",
+    "description": "Map plugin to visualize timeseries data from geo:json or NGSIv2 sources as either a Ant-path, Hexbin, or Heatmap.",
     "author": {
       "name": "Alexandra Institute",
       "url": "https://www.alexandra.dk"
