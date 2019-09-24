@@ -35,13 +35,23 @@
 
     <div class="gf-form-group" ng-if="ctrl.panel.mode===ctrl.modeTypes[2]">
       <div class="gf-form">
-        <label class="gf-form-label width-14">Delay</label>
+        <label class="gf-form-label width-14">
+          Delay
+          <info-popover mode="right-normal" position="top center">
+            The delay of the animation flux
+          </info-popover>
+        </label>
         <span class="max-width-12">
           <input class="gf-form-input" ng-model="ctrl.panel.antpath.delay" ng-change="ctrl.addLayer()" />
         </span>
       </div>
       <div class="gf-form">
-        <label class="gf-form-label width-14">Dash array</label>
+        <label class="gf-form-label width-14">
+          Dash array
+          <info-popover mode="right-normal" position="top center">
+            The size of the animated dashes
+          </info-popover>
+        </label>
         <span class="max-width-12">
           <input class="gf-form-input" ng-model="ctrl.panel.antpath.dashArray[0]" ng-change="ctrl.addLayer()" />
         </span>
@@ -50,28 +60,53 @@
         </span>
       </div>
       <div class="gf-form">
-        <label class="gf-form-label width-14">Weight</label>
+        <label class="gf-form-label width-14">
+          Weight
+          <info-popover mode="right-normal" position="top center">
+            The weight of the path
+          </info-popover>
+        </label>
         <span class="max-width-12">
           <input class="gf-form-input" ng-model="ctrl.panel.antpath.weight" ng-change="ctrl.addLayer()" />
         </span>
       </div>
       <div class="gf-form">
-        <label class="gf-form-label width-14">Color</label>
+        <label class="gf-form-label width-14">
+          Color
+          <info-popover mode="right-normal" position="top center">
+            The color of the path
+          </info-popover>
+        </label>
         <span class="max-width-12">
           <spectrum-picker class="gf-form-input" ng-model="ctrl.panel.antpath.color" ng-change="ctrl.addLayer()" ></spectrum-picker>
         </span>
-        <label class="gf-form-label width-14">Pulse color</label>
+        <label class="gf-form-label width-14">
+          Pulse color
+          <info-popover mode="right-normal" position="top center">
+            Adds a color to the dashed flux
+          </info-popover>
+        </label>
         <span class="max-width-12">
           <spectrum-picker class="gf-form-input" ng-model="ctrl.panel.antpath.pulseColor" ng-change="ctrl.addLayer()" ></spectrum-picker>
         </span>
       </div>
       <div class="gf-form">
-        <label class="gf-form-label width-14">Paused</label>
+        <label class="gf-form-label width-14">
+          Paused
+          <info-popover mode="right-normal" position="top center">
+            Toggle stop/start of the animation
+          </info-popover>
+        </label>
         <gf-form-switch class="gf-form" title="Paused" checked="ctrl.panel.antpath.paused" on-change="ctrl.addLayer()"></gf-form-switch>
       </div>
       <div class="gf-form">
-        <label class="gf-form-label width-14">Reverse</label>
-        <gf-form-switch class="gf-form" title="Paused" checked="ctrl.panel.antpath.reverse" on-change="ctrl.addLayer()"></gf-form-switch>
+        <label class="gf-form-label width-14">
+          Reverse
+          <info-popover mode="right-normal" position="top center">
+            Reverses the animation flow
+          </info-popover>
+        </label>
+        <gf-form-switch class="gf-form" title="Reverse" checked="ctrl.panel.antpath.reverse" on-change="ctrl.addLayer()"></gf-form-switch>
       </div>
     </div>
   </div>
@@ -104,10 +139,33 @@
       </span>
     </div>
     <div class="gf-form">
-      <label class="gf-form-label width-14">Max zoom</label>
+      <label class="gf-form-label width-14">
+        Max zoom
+        <info-popover mode="right-normal" position="top center">
+          Max zoom can't be higher than 19.
+        </info-popover>
+      </label>
       <span class="max-width-12">
         <input class="gf-form-input" ng-model="ctrl.panel.mapOptions.maxZoom" ng-change="ctrl.maxZoomChanged()" />
       </span>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label width-14">
+        Use min and max coords
+        <info-popover mode="right-normal" position="top center">
+          Adds $maxLat, $minLat, $maxLon and $minLon with map bounds as grafana variables. (Requires a movement of the map for this to take effect).
+        </info-popover>
+      </label>
+      <gf-form-switch class="gf-form" title="minMaxCoords" checked="ctrl.panel.mapOptions.minMaxCoords"></gf-form-switch>
+    </div>
+    <div class="gf-form" ng-if="ctrl.panel.mapOptions.minMaxCoords">
+      <label class="gf-form-label width-14">
+        Update map on move
+        <info-popover mode="right-normal" position="top center">
+          Adds a refresh event to movement of the map. This is not recommended for slow/large databases.
+        </info-popover>
+      </label>
+      <gf-form-switch class="gf-form" title="updateOnMove" checked="ctrl.panel.mapOptions.updateOnMove"></gf-form-switch>
     </div>
   </div>
 </div>

@@ -17,6 +17,8 @@ const panelDefaults = {
     url: "https://{s}.tile.osm.org/{z}/{x}/{y}.png",
     attribution: "&copy; <a href='http://osm.org/copyright'>OpenSteetMap</a> contributors",
     maxZoom: 18,
+    minMaxCoords: false,
+    updateOnMove: false
   },
   mode: 'Hexbin',
   hexbin: {
@@ -37,10 +39,11 @@ const panelDefaults = {
 };
 
 export class MapCtrl extends MetricsPanelCtrl {
-  constructor($scope, $injector) {
+  constructor($scope, $injector, variableSrv) {
     super($scope, $injector);
     defaults(this.panel, panelDefaults);
 
+    this.variableSrv = variableSrv;
     this.map = null;
     this.mapLayer = null;
     this.points = [];
@@ -136,9 +139,81 @@ export class MapCtrl extends MetricsPanelCtrl {
     this.map = L["map"]('map_' + this.panel.id).setView(this.panel.mapOptions.latlon, this.panel.mapOptions.zoom);
     L["tileLayer"](this.panel.mapOptions.url, {
       attribution: this.panel.mapOptions.attribution,
-      maxZoom: this.panel.mapOptions.maxZoom
+      maxZoom: 19
     }).addTo(this.map);
+    this.map.on('moveend', (event) => {this.onMapMoved()} );
     this.render();
+  }
+
+  onMapMoved() {
+    if (!this.panel.mapOptions.minMaxCoords) {
+      return;
+    }
+
+    let bounds = this.map.getBounds();
+    let maxLat, maxLon, minLat, minLon;
+    let found = 0;
+    this.variableSrv.variables.some(v => {
+      if (v.name === 'maxLat') {
+        maxLat = v;
+        found++;
+      } else if (v.name === 'maxLon') {
+        maxLon = v;
+        found++;
+      } else if (v.name === 'minLat') {
+        minLat = v;
+        found++;
+      } else if (v.name === 'minLon') {
+        minLon = v;
+        found++;
+      }
+      if (found >= 4) {
+        return true;
+      }
+    });
+
+    if (!maxLat) {
+      maxLat = this.variableSrv.createVariableFromModel({ type: 'textbox' });
+      maxLat.name = "maxLat";
+      this.variableSrv.addVariable(maxLat);
+    }
+    if (!maxLon) {
+      maxLon = this.variableSrv.createVariableFromModel({ type: 'textbox' });
+      maxLon.name = "maxLon";
+      this.variableSrv.addVariable(maxLon);
+    }
+    if (!minLat) {
+      minLat = this.variableSrv.createVariableFromModel({ type: 'textbox' });
+      minLat.name = "minLat";
+      this.variableSrv.addVariable(minLat);
+    }
+    if (!minLon) {
+      minLon = this.variableSrv.createVariableFromModel({ type: 'textbox' });
+      minLon.name = "minLon";
+      this.variableSrv.addVariable(minLon);
+    }
+
+    this.variableSrv.setOptionAsCurrent(maxLat, {
+      text: bounds._northEast.lat,
+      value: bounds._northEast.lat
+    });
+    this.variableSrv.setOptionAsCurrent(maxLon, {
+      text: bounds._northEast.lng,
+      value: bounds._northEast.lng
+    });
+    this.variableSrv.setOptionAsCurrent(minLat, {
+      text: bounds._southWest.lat,
+      value: bounds._southWest.lat
+    });
+    this.variableSrv.setOptionAsCurrent(minLon, {
+      text: bounds._southWest.lng,
+      value: bounds._southWest.lng
+    });
+
+    this.variableSrv.variableUpdated(maxLat, false);
+    this.variableSrv.variableUpdated(maxLon, false);
+    this.variableSrv.variableUpdated(minLat, false);
+    this.variableSrv.variableUpdated(minLon, this.panel.mapOptions.updateOnMove);
   }
 
   onPanelTeardown() {
@@ -160,6 +235,9 @@ export class MapCtrl extends MetricsPanelCtrl {
   }
 
   maxZoomChanged() {
+    if (this.panel.mapOptions.maxZoom > 19) {
+      this.panel.mapOptions.maxZoom = 19;
+    }
     this.map.setMaxZoom(this.panel.mapOptions.maxZoom);
   }
 

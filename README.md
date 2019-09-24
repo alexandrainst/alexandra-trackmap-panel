@@ -40,9 +40,28 @@ ORDER BY time_index
 ```
 
 ### Settings
-You can change the starting zoom and center of the map, aswell as the maximum zoom under the map otions:
+You can change the starting zoom and center of the map, as well as the maximum zoom under the map options:
 
 ![map](https://github.com/alexandrainst/alexandra-trackmap-panel/raw/master/images/map_settings.png)
+
+There is a options to enable the use of the maps min and max coordinates.
+This adds or updates `$maxLat`, `$minLat`, `$maxLon` and `$minLon` with the maps bounding box.
+Which can then be used in the query, as an example:
+
+```sql
+SELECT time_index, latitude as lat, longitude as lon
+FROM doc.table_name
+WHERE $__timeFilter(time_index)
+AND latitude >= $minLat
+AND latitude <= $maxLat
+AND longitude >= $minLon
+AND longitude <= $maxLon
+ORDER BY time_index
+```
+
+> The first time this is enabled does it require a move/zoom on the map for it to create the variables.
+
+An option for the map to update the data after moving/zooming, is available when using the maps min and max coordinates. Do note that enabling this might make it spam your database, and can queue op request to it.
 
 There are three visualization options to choose from, Hexbin, Heatmap and Antpath.
 
