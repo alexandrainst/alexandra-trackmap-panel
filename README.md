@@ -110,6 +110,15 @@ You can also run the code in development with the following command:
 npm run dev
 ```
 
+### Build from Docker
+It is possible to use `npm` without installing it locally thanks to Docker, e.g.:
+
+```sh
+cd alexandra-trackmap-panel/
+sudo docker run -v $(pwd):/app -w=/app --rm node npm install
+sudo docker run -v $(pwd):/app -w=/app --rm node npm run build
+```
+
 ## Install
 If you are running grafana locally, you can clone or download the repository directly into the plugin directory of grafana, and then reset the grafana-server, and the plugin should be automatically detected.
 

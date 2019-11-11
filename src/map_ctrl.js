@@ -105,15 +105,15 @@ export class MapCtrl extends MetricsPanelCtrl {
     }
     if (this.points.length > 0) {
       if (this.panel.mode === this.modeTypes[0]) {
-        this.mapLayer = L.hexbinLayer(this.panel.hexbin).hoverHandler(L.HexbinHoverHandler.tooltip());
+        this.mapLayer = MapCtrl.L.hexbinLayer(this.panel.hexbin).hoverHandler(MapCtrl.L.HexbinHoverHandler.tooltip());
         this.mapLayer.data(this.points);
       } else if (this.panel.mode === this.modeTypes[1]) {
-        this.mapLayer = L.heatLayer(this.points);
+        this.mapLayer = MapCtrl.L.heatLayer(this.points);
       } else if (this.panel.mode === this.modeTypes[2]) {
-        this.mapLayer = L["polyline"].antPath(this.points, this.panel.antpath);
+        this.mapLayer = MapCtrl.L["polyline"].antPath(this.points, this.panel.antpath);
       } else {
         console.log("invalid mode type, defaulting to hexbin");
-        this.mapLayer = L.hexbinLayer(this.panel.hexbin).hoverHandler(L.HexbinHoverHandler.tooltip());
+        this.mapLayer = MapCtrl.L.hexbinLayer(this.panel.hexbin).hoverHandler(MapCtrl.L.HexbinHoverHandler.tooltip());
         this.mapLayer.data(this.points);
       }
       this.mapLayer.addTo(this.map);
@@ -258,3 +258,4 @@ export class MapCtrl extends MetricsPanelCtrl {
 }
 
 MapCtrl.templateUrl = "partials/module.html";
+MapCtrl.L = L;
