@@ -1,11 +1,14 @@
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import {defaults} from 'lodash';
-import 'leaflet';
+import * as leaflet from 'leaflet';
 import 'leaflet-ant-path';
-import './lib/hexbinLayer.js';
-import './lib/leaflet-heat.js';
+import { hexbinInit } from './lib/hexbinLayer.js';
+import { heatmapInit } from './lib/leaflet-heat.js';
 import './css/hexbin.css';
 import './css/map-panel.css';
+
+hexbinInit(leaflet);
+heatmapInit(leaflet);
 
 const panelDefaults = {
   mapOptions: {
@@ -105,15 +108,15 @@ export class MapCtrl extends MetricsPanelCtrl {
     }
     if (this.points.length > 0) {
       if (this.panel.mode === this.modeTypes[0]) {
-        this.mapLayer = L.hexbinLayer(this.panel.hexbin).hoverHandler(L.HexbinHoverHandler.tooltip());
+        this.mapLayer = leaflet.hexbinLayer(this.panel.hexbin).hoverHandler(leaflet.HexbinHoverHandler.tooltip());
         this.mapLayer.data(this.points);
       } else if (this.panel.mode === this.modeTypes[1]) {
-        this.mapLayer = L.heatLayer(this.points);
+        this.mapLayer = leaflet.heatLayer(this.points);
       } else if (this.panel.mode === this.modeTypes[2]) {
-        this.mapLayer = L["polyline"].antPath(this.points, this.panel.antpath);
+        this.mapLayer = leaflet["polyline"].antPath(this.points, this.panel.antpath);
       } else {
         console.log("invalid mode type, defaulting to hexbin");
-        this.mapLayer = L.hexbinLayer(this.panel.hexbin).hoverHandler(L.HexbinHoverHandler.tooltip());
+        this.mapLayer = leaflet.hexbinLayer(this.panel.hexbin).hoverHandler(leaflet.HexbinHoverHandler.tooltip());
         this.mapLayer.data(this.points);
       }
       this.mapLayer.addTo(this.map);
@@ -136,8 +139,8 @@ export class MapCtrl extends MetricsPanelCtrl {
   }
 
   onPanelInitialized() {
-    this.map = L["map"]('map_' + this.panel.id).setView(this.panel.mapOptions.latlon, this.panel.mapOptions.zoom);
-    L["tileLayer"](this.panel.mapOptions.url, {
+    this.map = leaflet["map"]('map_' + this.panel.id).setView(this.panel.mapOptions.latlon, this.panel.mapOptions.zoom);
+    leaflet["tileLayer"](this.panel.mapOptions.url, {
       attribution: this.panel.mapOptions.attribution,
       maxZoom: 19
     }).addTo(this.map);
