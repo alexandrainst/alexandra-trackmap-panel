@@ -39,6 +39,15 @@ WHERE $__timeFilter(time_index)
 ORDER BY time_index
 ```
 
+To only get specific entities from the database a query could look like this:
+```sql
+SELECT location, time_index
+FROM doc.table_name
+WHERE $__timeFilter(time_index)
+AND (entity_id = 'vehicle:WasteManagement:id1' OR entity_id = 'vehicle:WasteManagement:id2')
+ORDER BY time_index
+```
+
 ### Settings
 You can change the starting zoom and center of the map, as well as the maximum zoom under the map options:
 
@@ -46,7 +55,7 @@ You can change the starting zoom and center of the map, as well as the maximum z
 
 There is a options to enable the use of the maps min and max coordinates.
 This adds or updates `$maxLat`, `$minLat`, `$maxLon` and `$minLon` with the maps bounding box.
-Which can then be used in the query, as an example:
+Which can then be used in the query, as an example for crateDB/PostgreSQL:
 
 ```sql
 SELECT time_index, latitude as lat, longitude as lon
@@ -57,6 +66,21 @@ AND latitude <= $maxLat
 AND longitude >= $minLon
 AND longitude <= $maxLon
 ORDER BY time_index
+```
+
+To use this with NGSIv2 data, is abit more complex, an example for crateDB/PostgreSQL:
+```sql
+SELECt coordinates[1] as lat, coordinates[2] as lon, time_index
+FROM (
+  SELECT location['value']['coordinates'] as coordinates, time_index
+  FROM doc.table_name
+  WHERE $__timeFilter(time_index)
+) AS Array
+WHERE coordinates[1] >= $minLat
+AND coordinates[1] <= $maxLat
+AND coordinates[2] >= $minLon
+AND coordinates[2] <= $maxLon
+ORDER BY 3
 ```
 
 > The first time this is enabled does it require a move/zoom on the map for it to create the variables.
