@@ -1,6 +1,6 @@
 {
   "name": "alexandra-trackmap-panel",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Map plugin using Leaflet and OpenSteetMap to visualize coordinates or geo:json as either a Ant-path, Hexbin, or Heatmap.",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
@@ -13,7 +13,7 @@
     "@babel/preset-env": "^7.5.5",
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^3.0.0",
-    "copy-webpack-plugin": "^5.0.3",
+    "copy-webpack-plugin": "^5.1.0",
     "css-loader": "^3.1.0",
     "d3": "^5.9.2",
     "d3-hexbin": "^0.2.2",
