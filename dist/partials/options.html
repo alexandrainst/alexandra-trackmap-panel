@@ -153,10 +153,10 @@
       <label class="gf-form-label width-14">
         Use min and max coords
         <info-popover mode="right-normal" position="top center">
-          Adds $maxLat, $minLat, $maxLon and $minLon with map bounds as grafana variables. (Requires a movement of the map for this to take effect).
+          Adds $maxLat, $minLat, $maxLon and $minLon with map bounds as grafana variables.
         </info-popover>
       </label>
-      <gf-form-switch class="gf-form" title="minMaxCoords" checked="ctrl.panel.mapOptions.minMaxCoords"></gf-form-switch>
+      <gf-form-switch class="gf-form" title="minMaxCoords" checked="ctrl.panel.mapOptions.minMaxCoords" ng-click="ctrl.createMinMaxVariables()"></gf-form-switch>
     </div>
     <div class="gf-form" ng-if="ctrl.panel.mapOptions.minMaxCoords">
       <label class="gf-form-label width-14">

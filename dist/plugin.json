@@ -14,8 +14,8 @@
       {"name": "Project site", "url": "https://github.com/alexandrainst/alexandra-trackmap-panel"},
       {"name": "MIT License", "url": "https://github.com/alexandrainst/alexandra-trackmap-panel/blob/master/LICENSE"}
     ],
-    "version": "1.2.2",
-    "updated": "2019-12-12"
+    "version": "1.2.3",
+    "updated": "2019-12-19"
   },
 
   "dependencies": {
