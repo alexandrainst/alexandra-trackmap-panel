@@ -23,7 +23,7 @@ To use the plugin the data needs to be formatted as a table with either contains
 ```
 Or simply a `lat` and `lon`.
 
-A example of a query for location against a crateDB/PostgreSQL:
+A example of a query for location against a CrateDB/PostgreSQL:
 ```sql
 SELECT time_index, location
 FROM doc.table_name
@@ -31,7 +31,7 @@ WHERE $__timeFilter(time_index)
 ORDER BY time_index
 ```
 
-And a example query for lat and lon against a crateDB/PostgreSQL:
+And a example query for lat and lon against a CrateDB/PostgreSQL:
 ```sql
 SELECT time_index, latitude as lat, longitude as lon
 FROM doc.table_name
@@ -54,8 +54,8 @@ You can change the starting zoom and center of the map, as well as the maximum z
 ![map](https://github.com/alexandrainst/alexandra-trackmap-panel/raw/master/images/map_settings.png)
 
 There is a options to enable the use of the maps min and max coordinates.
-This adds or updates `$maxLat`, `$minLat`, `$maxLon` and `$minLon` with the maps bounding box.
-Which can then be used in the query, as an example for crateDB/PostgreSQL:
+This adds `$maxLat`, `$minLat`, `$maxLon` and `$minLon` as variables in the dashboard, with the maps bounding box.
+Which can then be used in the query, as an example for CrateDB/PostgreSQL:
 
 ```sql
 SELECT time_index, latitude as lat, longitude as lon
@@ -68,22 +68,20 @@ AND longitude <= $maxLon
 ORDER BY time_index
 ```
 
-To use this with NGSIv2 data, is abit more complex, an example for crateDB/PostgreSQL:
+To use this with NGSIv2 data, is a bit more complex, an example for CrateDB/PostgreSQL:
 ```sql
-SELECt coordinates[1] as lat, coordinates[2] as lon, time_index
+SELECT coordinates[1] as lat, coordinates[2] as lon, time_index
 FROM (
   SELECT location['value']['coordinates'] as coordinates, time_index
   FROM doc.table_name
   WHERE $__timeFilter(time_index)
-) AS Array
+) AS alias
 WHERE coordinates[1] >= $minLat
 AND coordinates[1] <= $maxLat
 AND coordinates[2] >= $minLon
 AND coordinates[2] <= $maxLon
 ORDER BY 3
 ```
-
-> The first time this is enabled does it require a move/zoom on the map for it to create the variables.
 
 An option for the map to update the data after moving/zooming, is available when using the maps min and max coordinates. Do note that enabling this might make it spam your database, and can queue op request to it.
 
