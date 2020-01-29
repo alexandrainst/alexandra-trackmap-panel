@@ -21,7 +21,8 @@ const panelDefaults = {
     attribution: "&copy; <a href='http://osm.org/copyright'>OpenSteetMap</a> contributors",
     maxZoom: 18,
     minMaxCoords: false,
-    updateOnMove: false
+    updateOnMove: false,
+    reCenter: false,
   },
   mode: 'Hexbin',
   hexbin: {
@@ -92,10 +93,16 @@ export class MapCtrl extends MetricsPanelCtrl {
             if (l && l.type === "geo:json" && l.value && l.value.coordinates) {
               const coord = l.value.coordinates;
               this.points.push([coord[0], coord[1], 1]);
+            } else {
+              console.warn("Invalid NGSIv2 data format ignored.\n", l);
             }
           });
         }
+      } else {
+        console.warn("Data type must be table. Received " + data[0].type);
       }
+    } else {
+      console.warn("Received data not of type array or empty.\n", data);
     }
 
     this.addLayer();
@@ -106,6 +113,11 @@ export class MapCtrl extends MetricsPanelCtrl {
       this.mapLayer.removeFrom(this.map);
       this.mapLayer = null;
     }
+
+    if (this.panel.mapOptions.reCenter) {
+      this.reCenterMap();
+    }
+
     if (this.points.length > 0) {
       if (this.panel.mode === this.modeTypes[0]) {
         this.mapLayer = leaflet.hexbinLayer(this.panel.hexbin).hoverHandler(leaflet.HexbinHoverHandler.tooltip());
@@ -149,9 +161,7 @@ export class MapCtrl extends MetricsPanelCtrl {
   }
 
   onMapMoved() {
-    if (!this.panel.mapOptions.minMaxCoords) {
-      return;
-    }
+    if (!this.panel.mapOptions.minMaxCoords) return;
 
     let bounds = this.map.getBounds();
     let maxLat, maxLon, minLat, minLon;
@@ -216,10 +226,29 @@ export class MapCtrl extends MetricsPanelCtrl {
     this.map.setView(this.panel.mapOptions.latlon, this.panel.mapOptions.zoom);
   }
 
+  reCenterMap() {
+    if (this.points.length === 0 || this.panel.mapOptions.minMaxCoords) return;
+
+    let maxLat = -200;
+    let maxLon = -200;
+    let minLat = 200;
+    let minLon = 200;
+
+    this.points.forEach(coords => {
+      let lat = coords[0];
+      if (lat < minLat) minLat = lat;
+      if (lat > maxLat) maxLat = lat;
+
+      let lon = coords[1];
+      if (lon < minLon) minLon = lon;
+      if (lon > maxLon) maxLon = lon;
+    });
+
+    this.map.fitBounds([[minLat, minLon], [maxLat, maxLon]]);
+  }
+
   createMinMaxVariables() {
-    if (!this.panel.mapOptions.minMaxCoords) {
-      return;
-    }
+    if (!this.panel.mapOptions.minMaxCoords) return;
 
     let bounds = this.map.getBounds();
     let maxLat, maxLon, minLat, minLon;
