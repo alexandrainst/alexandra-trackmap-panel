@@ -153,7 +153,7 @@
       <label class="gf-form-label width-14">
         Use min and max coords
         <info-popover mode="right-normal" position="top center">
-          Adds $maxLat, $minLat, $maxLon and $minLon with map bounds as grafana variables.
+          Adds $maxLat, $minLat, $maxLon and $minLon with map bounds as grafana variables. This options disables the 'Re-center map' option.
         </info-popover>
       </label>
       <gf-form-switch class="gf-form" title="minMaxCoords" checked="ctrl.panel.mapOptions.minMaxCoords" ng-click="ctrl.createMinMaxVariables()"></gf-form-switch>
@@ -166,6 +166,15 @@
         </info-popover>
       </label>
       <gf-form-switch class="gf-form" title="updateOnMove" checked="ctrl.panel.mapOptions.updateOnMove"></gf-form-switch>
+    </div>
+    <div class="gf-form" ng-if="!ctrl.panel.mapOptions.minMaxCoords">
+      <label class="gf-form-label width-14">
+        Re-center map
+        <info-popover mode="right-normal" position="top center">
+          Automatically center and zoom the map to show all data points. This options doesn't work with 'Use min and max coords' enabled.
+        </info-popover>
+      </label>
+      <gf-form-switch class="gf-form" title="reCenter" checked="ctrl.panel.mapOptions.reCenter"></gf-form-switch>
     </div>
   </div>
 </div>

@@ -8,20 +8,39 @@
 ## Usage
 
 ### Queries
-To use the plugin the data needs to be formatted as a table with either contains `location` in NGSIv2 format:
+To use the plugin the data needs to be formatted as a table with either contains simple `lat` and `lon`, or as `location` in NGSIv2 format. Here is a example of how the data from the query should look like using `location`:
 ```javascript
-{
-  ...,
-  "location": {
-    "type": "geo:json",
-    "value": {
-      "coordinates": [55.96086,9.75394],
-      "type": "Point"
-    }
+[
+  {
+    "columns": [
+      {
+        "text": "location"
+      }
+    ],
+    "rows": [
+      [
+        {
+          "type": "geo:json",
+          "value": {
+            "type": "Point",
+            "coordinates": [56.171884, 10.189101]
+          }
+        }
+      ],
+      [
+        {
+          "type": "geo:json",
+          "value": {
+            "type": "Point",
+            "coordinates": [56.18803, 10.16773]
+          }
+        }
+      ]
+    ],
+    "type": "table"
   }
-}
+]
 ```
-Or simply a `lat` and `lon`.
 
 A example of a query for location against a CrateDB/PostgreSQL:
 ```sql
