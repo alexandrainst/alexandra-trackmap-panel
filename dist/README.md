@@ -8,7 +8,9 @@
 ## Usage
 
 ### Queries
-To use the plugin the data needs to be formatted as a table with either contains simple `lat` and `lon`, or as `location` in NGSIv2 format. Here is a example of how the data from the query should look like using `location`:
+> It's important for the plugin to work, that the `Format as` is set to `Table`.
+
+To use the plugin the data needs to be formatted as a table which either contains simple `lat` and `lon`, or as `location` in NGSIv2 format. Here is a example of how the data from the query should look like using `location`:
 ```javascript
 [
   {
@@ -45,7 +47,7 @@ To use the plugin the data needs to be formatted as a table with either contains
 A example of a query for location against a CrateDB/PostgreSQL:
 ```sql
 SELECT time_index, location
-FROM doc.table_name
+FROM table_name
 WHERE $__timeFilter(time_index)
 ORDER BY time_index
 ```
@@ -53,7 +55,7 @@ ORDER BY time_index
 And a example query for lat and lon against a CrateDB/PostgreSQL:
 ```sql
 SELECT time_index, latitude as lat, longitude as lon
-FROM doc.table_name
+FROM table_name
 WHERE $__timeFilter(time_index)
 ORDER BY time_index
 ```
@@ -61,7 +63,7 @@ ORDER BY time_index
 To only get specific entities from the database a query could look like this:
 ```sql
 SELECT location, time_index
-FROM doc.table_name
+FROM table_name
 WHERE $__timeFilter(time_index)
 AND (entity_id = 'vehicle:WasteManagement:id1' OR entity_id = 'vehicle:WasteManagement:id2')
 ORDER BY time_index
@@ -78,7 +80,7 @@ Which can then be used in the query, as an example for CrateDB/PostgreSQL:
 
 ```sql
 SELECT time_index, latitude as lat, longitude as lon
-FROM doc.table_name
+FROM table_name
 WHERE $__timeFilter(time_index)
 AND latitude >= $minLat
 AND latitude <= $maxLat
@@ -92,7 +94,7 @@ To use this with NGSIv2 data, is a bit more complex, an example for CrateDB/Post
 SELECT coordinates[1] as lat, coordinates[2] as lon, time_index
 FROM (
   SELECT location['value']['coordinates'] as coordinates, time_index
-  FROM doc.table_name
+  FROM table_name
   WHERE $__timeFilter(time_index)
 ) AS alias
 WHERE coordinates[1] >= $minLat
