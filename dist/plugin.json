@@ -2,24 +2,35 @@
   "type": "panel",
   "name": "Track Map",
   "id": "alexandra-trackmap-panel",
-
   "info": {
-    "description": "Map plugin to visualize timeseries data from geo:json or NGSIv2 sources as either a Ant-path, Hexbin, or Heatmap.",
+    "description": "A map plugin to visualise GPS data as markers, hexbin, ant path, or heatmap",
     "author": {
       "name": "Alexandra Institute",
-      "url": "https://www.alexandra.dk"
+      "url": "https://alexandra.dk/"
     },
-    "keywords": ["map", "tracking", "panel"],
+    "keywords": [
+      "map",
+      "tracking",
+      "time",
+      "markers",
+      "ant path",
+      "heatmap",
+      "hexbin"
+    ],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
     "links": [
       {"name": "Project site", "url": "https://github.com/alexandrainst/alexandra-trackmap-panel"},
       {"name": "MIT License", "url": "https://github.com/alexandrainst/alexandra-trackmap-panel/blob/master/LICENSE"}
     ],
-    "version": "1.2.5",
-    "updated": "2020-04-28"
+    "screenshots": [],
+    "version": "2.0.0",
+    "updated": "2020-09-25"
   },
-
   "dependencies": {
-    "grafanaVersion": "6.x.x",
+    "grafanaVersion": "7.x.x",
     "plugins": []
   }
 }
