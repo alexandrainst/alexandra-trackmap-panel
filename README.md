@@ -6,6 +6,8 @@ This is a new version of the Track Map plugin - now built with React, which work
 
 Note that this plugin is [not backwards compatible](https://grafana.com/docs/grafana/latest/developers/plugins/migration-guide/#compatibility-between-grafana-versions) with the old Grafana 6 versions.
 
+For Grafana 6 and older, please use our [1.x branch](https://github.com/alexandrainst/alexandra-trackmap-panel/releases/tag/1.2.4) instead.
+
 ## How to use
 
 ### Query
