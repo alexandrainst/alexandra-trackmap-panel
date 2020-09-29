@@ -29,9 +29,8 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   });
 
   useEffect(() => {
-    let map: Map | null = mapRef.current;
-    if (map !== null) {
-      const bounds = map.leafletElement.getBounds();
+    if (mapRef.current !== null) {
+      const bounds = mapRef.current.leafletElement.getBounds();
       updateMap(bounds);
     }
     // eslint-disable-next-line
@@ -106,6 +105,9 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   };
 
   const onMapMoveEnd = (event: LeafletEvent) => {
+    if (mapRef.current !== null) {
+      mapRef.current.leafletElement.invalidateSize();
+    }
     updateMap(event.target.getBounds());
   };
 
