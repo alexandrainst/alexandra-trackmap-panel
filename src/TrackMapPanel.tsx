@@ -35,21 +35,48 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     }
     // eslint-disable-next-line
   }, []);
-
-  const latitudes: number[] | undefined = data.series[0].fields
+  
+  let latitudes: number[] | undefined = data.series
+    .find(f => f.name === 'latitude' || f.name === 'lat')
+    ?.fields.find(f => f.name === 'Value')?.values?.toArray();
+  
+  let longitudes: number[] | undefined = data.series
+    .find(f => f.name === 'longitude' || f.name === 'lon')
+    ?.fields.find(f => f.name === 'Value')?.values?.toArray();
+  
+  let intensities: number[] | undefined = data.series
+    .find(f => f.name === 'intensity')
+    ?.fields.find(f => f.name === 'Value')?.values?.toArray();
+  
+  if(!latitudes && data.series?.length) {
+    latitudes = data.series[0].fields
     .find(f => f.name === 'latitude' || f.name === 'lat')
     ?.values.toArray();
-  const longitudes: number[] | undefined = data.series[0].fields
+  }
+
+  if(!longitudes && data.series?.length) {
+    longitudes = data.series[0].fields
     .find(f => f.name === 'longitude' || f.name === 'lon')
     ?.values.toArray();
-  const intensities: string[] | undefined = data.series[0].fields.find(f => f.name === 'intensity')?.values.toArray();
+  }
 
-  const positions: Position[] | undefined = latitudes?.map((latitude, index) => {
+  if(!intensities && data.series?.length)
+  {
+    intensities = data.series[0].fields.find(f => f.name === 'intensity')?.values.toArray();
+  }
+
+  let positions: Position[] | undefined = latitudes?.map((latitude, index) => {
     return {
       latitude,
       longitude: longitudes !== undefined ? longitudes[index] : 0,
     };
   });
+
+  if(!positions)
+  {
+    positions = [{latitude: 0, longitude: 0}];
+  }
+
 
   const heatData: any[] = [];
   const antData: number[][] = [];
