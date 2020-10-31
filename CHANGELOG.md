@@ -10,3 +10,6 @@ Initial Release
 
 * Add support for centering map by first position
 * Add support for andpath view with markers
+
+## v2.0.2
+* Add support for tooltips from data

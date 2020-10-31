@@ -1,6 +1,6 @@
 {
   "name": "alexandra-trackmap-panel",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A map plugin to visualise GPS data as markers, hexbin, ant path, or heatmap",
   "scripts": {
     "build": "grafana-toolkit plugin:build",

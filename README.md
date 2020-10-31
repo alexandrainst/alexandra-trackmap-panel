@@ -11,7 +11,7 @@ For Grafana 6 and older, please use our [1.x branch](https://github.com/alexandr
 ## How to use
 
 ### Query
-The query in Grafana must be formatted as `Table` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added.
+The query in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added. To add text tooltips to the markers, the `text` or `desc` field should be added.
 
 Data query example (TimescaleDB with PostGIS):
 
