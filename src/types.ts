@@ -1,4 +1,4 @@
-type ViewType = 'ant' | 'hex' | 'heat' | 'marker';
+type ViewType = 'ant' | 'hex' | 'heat' | 'marker' | 'ant-marker';
 
 export interface TrackMapOptions {
   text: string;
@@ -15,6 +15,7 @@ interface Map {
   centerLongitude: number;
   zoom: number;
   useBoundsInQuery: boolean;
+  useCenterFromFirstPos: boolean;
 }
 
 interface AntOptions {
