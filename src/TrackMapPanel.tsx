@@ -162,9 +162,9 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   };
   const mapCenter = {lat:options.map.centerLatitude, lon: options.map.centerLongitude};
 
-  if (options.map.useCenterFromFirstPos && positions?.length) {
+  if (options.map.useCenterFromFirstPos && positions?.length && positions[0].latitude) {
     mapCenter.lat =  positions[0].latitude;
-    mapCenter.lon = positions[1].longitude;
+    mapCenter.lon = positions[0].longitude;
   }
 
   return (
