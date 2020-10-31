@@ -1,19 +1,26 @@
 import { PanelPlugin } from '@grafana/data';
-import { TrackMapOptions } from './types';
 import { TrackMapPanel } from './TrackMapPanel';
+import { TrackMapOptions } from './types';
 
 export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOptions(builder => {
   return (
     builder
+      .addBooleanSwitch({
+        path: 'map.useCenterFromFirstPos',
+        name: 'Map center to first position',
+        defaultValue: false,
+      })
       .addNumberInput({
         path: 'map.centerLatitude',
         name: 'Map center latitude',
         defaultValue: 56.17203,
+        showIf: config => !config.map.useCenterFromFirstPos,
       })
       .addNumberInput({
         path: 'map.centerLongitude',
         name: 'Map center longitude',
         defaultValue: 10.1865203,
+        showIf: config => !config.map.useCenterFromFirstPos,
       })
       .addNumberInput({
         path: 'map.zoom',
@@ -38,6 +45,10 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
             {
               value: 'ant',
               label: 'Ant Path',
+            },
+            {
+              value: 'ant-marker',
+              label: 'Ant Path with markers',
             },
             {
               value: 'hex',

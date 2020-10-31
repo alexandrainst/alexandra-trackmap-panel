@@ -36,20 +36,55 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     // eslint-disable-next-line
   }, []);
 
-  const latitudes: number[] | undefined = data.series[0].fields
-    .find(f => f.name === 'latitude' || f.name === 'lat')
-    ?.values.toArray();
-  const longitudes: number[] | undefined = data.series[0].fields
-    .find(f => f.name === 'longitude' || f.name === 'lon')
-    ?.values.toArray();
-  const intensities: string[] | undefined = data.series[0].fields.find(f => f.name === 'intensity')?.values.toArray();
+  let latitudes: number[] | undefined = data.series
+    .find((f) => f.name === 'latitude' || f.name === 'lat')
+    ?.fields.find((f) => f.name === 'Value')
+    ?.values?.toArray();
 
-  const positions: Position[] | undefined = latitudes?.map((latitude, index) => {
+  let longitudes: number[] | undefined = data.series
+    .find((f) => f.name === 'longitude' || f.name === 'lon')
+    ?.fields.find((f) => f.name === 'Value')
+    ?.values?.toArray();
+
+  let intensities: number[] | undefined = data.series
+    .find((f) => f.name === 'intensity')
+    ?.fields.find((f) => f.name === 'Value')
+    ?.values?.toArray();
+
+  let markerTooltips: string[] | undefined = data.series
+    .find((f) => f.name === 'text' || f.name === 'desc')
+    ?.fields.find((f) => f.name === 'Value')
+    ?.values?.toArray();
+
+  if (!latitudes && data.series?.length) {
+    latitudes = data.series[0].fields.find((f) => f.name === 'latitude' || f.name === 'lat')?.values.toArray();
+  }
+
+  if (!longitudes && data.series?.length) {
+    longitudes = data.series[0].fields.find((f) => f.name === 'longitude' || f.name === 'lon')?.values.toArray();
+  }
+
+  if (!intensities && data.series?.length) {
+    intensities = data.series[0].fields.find((f) => f.name === 'intensity')?.values.toArray();
+  }
+
+  if (!markerTooltips && data.series?.length) {
+    markerTooltips = data.series[0].fields.find((f) => f.name === 'text' || f.name === 'desc')?.values.toArray();
+  }
+
+  let positions: Position[] | undefined = latitudes?.map((latitude, index) => {
+    const lon = longitudes !== undefined ? longitudes[index] : 0;
+    const tooltip = markerTooltips !== undefined ? markerTooltips[index] : null;
     return {
       latitude,
-      longitude: longitudes !== undefined ? longitudes[index] : 0,
+      longitude: lon,
+      tooltip: !tooltip ? `${latitude}, ${lon}` : tooltip,
     };
   });
+
+  if (!positions || positions.length == 0) {
+    positions = [{ latitude: 0, longitude: 0, tooltip: '' }];
+  }
 
   const heatData: any[] = [];
   const antData: number[][] = [];
@@ -75,9 +110,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   positions?.forEach((p, i) => {
     markers.push(
       <Marker key={i} position={[p.latitude, p.longitude]} icon={mark}>
-        <Popup>
-          {p.latitude}, {p.longitude}
-        </Popup>
+        <Popup>{p.tooltip}</Popup>
       </Marker>
     );
   });
@@ -133,6 +166,12 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
       updateQueryVariables(minLat, minLon, maxLat, maxLon);
     }
   };
+  const mapCenter = { lat: options.map.centerLatitude, lon: options.map.centerLongitude };
+
+  if (options.map.useCenterFromFirstPos && positions?.length && positions[0].latitude) {
+    mapCenter.lat = positions[0].latitude;
+    mapCenter.lon = positions[0].longitude;
+  }
 
   return (
     <div
@@ -146,7 +185,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     >
       <Map
         ref={mapRef}
-        center={[options.map.centerLatitude, options.map.centerLongitude]}
+        center={[mapCenter.lat, mapCenter.lon]}
         zoom={options.map.zoom}
         onload={(event: LeafletEvent) => {
           onMapLoad(event);
@@ -155,7 +194,9 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
           onMapMoveEnd(event);
         }}
       >
-        {options.viewType === 'ant' && <AntPath positions={antData} options={antOptions} />}
+        {(options.viewType === 'ant' || options.viewType === 'ant-marker') && (
+          <AntPath positions={antData} options={antOptions} />
+        )}
         {options.viewType === 'heat' && (
           <HeatmapLayer
             fitBoundsOnLoad={options.heat.fitBoundsOnLoad}
@@ -167,7 +208,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
           />
         )}
         {options.viewType === 'hex' && <WrappedHexbinLayer {...hexbinOptions} data={hexData} />}
-        {options.viewType === 'marker' && markers}
+        {(options.viewType === 'marker' || options.viewType === 'ant-marker') && markers}
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
