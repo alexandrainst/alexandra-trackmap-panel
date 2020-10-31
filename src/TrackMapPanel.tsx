@@ -160,6 +160,12 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
       updateQueryVariables(minLat, minLon, maxLat, maxLon);
     }
   };
+  const mapCenter = {lat:options.map.centerLatitude, lon: options.map.centerLongitude};
+
+  if (options.map.useCenterFromFirstPos && positions?.length) {
+    mapCenter.lat =  positions[0].latitude;
+    mapCenter.lon = positions[1].longitude;
+  }
 
   return (
     <div
@@ -173,7 +179,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     >
       <Map
         ref={mapRef}
-        center={[options.map.centerLatitude, options.map.centerLongitude]}
+        center={[mapCenter.lat, mapCenter.lon]}
         zoom={options.map.zoom}
         onload={(event: LeafletEvent) => {
           onMapLoad(event);
@@ -182,7 +188,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
           onMapMoveEnd(event);
         }}
       >
-        {options.viewType === 'ant' && <AntPath positions={antData} options={antOptions} />}
+        {(options.viewType === 'ant' || options.viewType === 'ant-marker') && <AntPath positions={antData} options={antOptions} />}
         {options.viewType === 'heat' && (
           <HeatmapLayer
             fitBoundsOnLoad={options.heat.fitBoundsOnLoad}
@@ -194,7 +200,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
           />
         )}
         {options.viewType === 'hex' && <WrappedHexbinLayer {...hexbinOptions} data={hexData} />}
-        {options.viewType === 'marker' && markers}
+        {(options.viewType === 'marker' || options.viewType === 'ant-marker') && markers}
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
