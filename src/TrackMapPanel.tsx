@@ -26,6 +26,14 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   const mark = new Icon({
     iconUrl: require('img/marker.png'),
     iconSize: [options.marker.size, options.marker.size],
+    iconAnchor: [options.marker.size * 0.5, options.marker.size],
+    popupAnchor: [0, -options.marker.size],
+  });
+  const mark_last = new Icon({
+    iconUrl: require('img/marker_last.png'),
+    iconSize: [options.marker.size_last, options.marker.size_last],
+    iconAnchor: [options.marker.size_last * 0.5, options.marker.size_last],
+    popupAnchor: [0, -options.marker.size_last],
   });
 
   useEffect(() => {
@@ -107,13 +115,24 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   });
 
   const markers: ReactElement[] = [];
-  positions?.forEach((p, i) => {
+
+  if (options.marker.showOnlyLastMarker && positions?.length > 0) {
+    const p = positions[positions.length - 1];
     markers.push(
-      <Marker key={i} position={[p.latitude, p.longitude]} icon={mark}>
+      <Marker key={0} position={[p.latitude, p.longitude]} icon={mark_last} title={p.tooltip}>
         <Popup>{p.tooltip}</Popup>
       </Marker>
     );
-  });
+  } else {
+    positions?.forEach((p, i) => {
+      const icon = i + 1 == positions?.length || options.marker.alwaysShowIconFromLastMarker ? mark_last : mark;
+      markers.push(
+        <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.tooltip}>
+          <Popup>{p.tooltip}</Popup>
+        </Marker>
+      );
+    });
+  }
 
   const antOptions = {
     delay: options.ant.delay,
@@ -168,11 +187,21 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   };
   const mapCenter = { lat: options.map.centerLatitude, lon: options.map.centerLongitude };
 
-  if (options.map.useCenterFromFirstPos && positions?.length && positions[0].latitude) {
-    mapCenter.lat = positions[0].latitude;
-    mapCenter.lon = positions[0].longitude;
+  if (positions?.length) {
+    if (options.map.useCenterFromFirstPos && positions[0].latitude) {
+      mapCenter.lat = positions[0].latitude;
+      mapCenter.lon = positions[0].longitude;
+    }
+    if (
+      !options.map.useCenterFromFirstPos &&
+      options.map.useCenterFromLastPos &&
+      positions[positions.length - 1].latitude
+    ) {
+      mapCenter.lat = positions[positions.length - 1].latitude;
+      mapCenter.lon = positions[positions.length - 1].longitude;
+    }
   }
-
+ 
   return (
     <div
       className={cx(

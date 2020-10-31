@@ -13,3 +13,7 @@ Initial Release
 
 ## v2.0.2
 * Add support for tooltips from data
+
+## v2.0.3
+* Add support for last marker image view options
+* Add support for centering map by first position
