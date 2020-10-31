@@ -72,9 +72,8 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     };
   });
 
-  if(!positions)
-  {
-    positions = [{latitude: 0, longitude: 0}];
+  if (!positions || positions.length == 0) {
+    positions = [{ latitude: 0, longitude: 0 }];
   }
 
 
