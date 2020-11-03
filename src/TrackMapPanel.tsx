@@ -35,33 +35,31 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     }
     // eslint-disable-next-line
   }, []);
-  
+
   let latitudes: number[] | undefined = data.series
     .find(f => f.name === 'latitude' || f.name === 'lat')
-    ?.fields.find(f => f.name === 'Value')?.values?.toArray();
-  
+    ?.fields.find(f => f.name === 'Value')
+    ?.values?.toArray();
+
   let longitudes: number[] | undefined = data.series
     .find(f => f.name === 'longitude' || f.name === 'lon')
-    ?.fields.find(f => f.name === 'Value')?.values?.toArray();
-  
+    ?.fields.find(f => f.name === 'Value')
+    ?.values?.toArray();
+
   let intensities: number[] | undefined = data.series
     .find(f => f.name === 'intensity')
-    ?.fields.find(f => f.name === 'Value')?.values?.toArray();
-  
-  if(!latitudes && data.series?.length) {
-    latitudes = data.series[0].fields
-    .find(f => f.name === 'latitude' || f.name === 'lat')
-    ?.values.toArray();
+    ?.fields.find(f => f.name === 'Value')
+    ?.values?.toArray();
+
+  if (!latitudes && data.series?.length) {
+    latitudes = data.series[0].fields.find(f => f.name === 'latitude' || f.name === 'lat')?.values.toArray();
   }
 
-  if(!longitudes && data.series?.length) {
-    longitudes = data.series[0].fields
-    .find(f => f.name === 'longitude' || f.name === 'lon')
-    ?.values.toArray();
+  if (!longitudes && data.series?.length) {
+    longitudes = data.series[0].fields.find(f => f.name === 'longitude' || f.name === 'lon')?.values.toArray();
   }
 
-  if(!intensities && data.series?.length)
-  {
+  if (!intensities && data.series?.length) {
     intensities = data.series[0].fields.find(f => f.name === 'intensity')?.values.toArray();
   }
 
@@ -72,10 +70,9 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     };
   });
 
-  if (!positions || positions.length == 0) {
+  if (!positions || positions.length === 0) {
     positions = [{ latitude: 0, longitude: 0 }];
   }
-
 
   const heatData: any[] = [];
   const antData: number[][] = [];
@@ -159,11 +156,14 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
       updateQueryVariables(minLat, minLon, maxLat, maxLon);
     }
   };
-  const mapCenter = {lat:options.map.centerLatitude, lon: options.map.centerLongitude};
+  const mapCenter: Position = {
+    latitude: options.map.centerLatitude,
+    longitude: options.map.centerLongitude,
+  };
 
   if (options.map.useCenterFromFirstPos && positions?.length && positions[0].latitude) {
-    mapCenter.lat =  positions[0].latitude;
-    mapCenter.lon = positions[0].longitude;
+    mapCenter.latitude = positions[0].latitude;
+    mapCenter.longitude = positions[0].longitude;
   }
 
   return (
@@ -178,7 +178,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     >
       <Map
         ref={mapRef}
-        center={[mapCenter.lat, mapCenter.lon]}
+        center={[mapCenter.latitude, mapCenter.longitude]}
         zoom={options.map.zoom}
         onload={(event: LeafletEvent) => {
           onMapLoad(event);
@@ -187,7 +187,9 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
           onMapMoveEnd(event);
         }}
       >
-        {(options.viewType === 'ant' || options.viewType === 'ant-marker') && <AntPath positions={antData} options={antOptions} />}
+        {(options.viewType === 'ant' || options.viewType === 'ant-marker') && (
+          <AntPath positions={antData} options={antOptions} />
+        )}
         {options.viewType === 'heat' && (
           <HeatmapLayer
             fitBoundsOnLoad={options.heat.fitBoundsOnLoad}
