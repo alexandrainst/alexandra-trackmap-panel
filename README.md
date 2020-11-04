@@ -11,7 +11,7 @@ For Grafana 6 and older, please use our [1.x branch](https://github.com/alexandr
 ## How to use
 
 ### Query
-The query in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added. To add text tooltips to the markers, the `text` or `desc` field should be added.
+The query in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added. To add text tooltips to the markers, a `text` or`desc` field should be added. If no tooltip exists in the data, latitude and longitude are displayed as the tooltip.
 
 Data query example (TimescaleDB with PostGIS):
 
@@ -38,10 +38,14 @@ Map center and zoom can be changed with the `Map center latitude`, `Map center l
 
 To update query variables when the map bounds are updated turn on `Use map bounds in query`. See section "Updating query based on map bounds" below.
 
-Switch between views (Markers, Ant Path, Hexbin, Heatmap) by selecting a `Visualisation type` .
+Switch between views (Markers, Ant Path, Ant Path With Markers, Hexbin, Heatmap) by selecting a `Visualisation type` .
 
 #### Markers
 - `Size`: The size of the markers
+- `Size of last marker`: The size of the last marker
+- `Show only last marker`: Shows only last marker
+- `Use secondary icon for last marker`: Uses secondary icon image for last marker
+- `Use secondary icon for all marker`: Uses secondary icon image for all markers
 
 ![markers_options](img/markers.png)
 
@@ -69,6 +73,9 @@ Switch between views (Markers, Ant Path, Hexbin, Heatmap) by selecting a `Visual
 - `Fit bounds on update`: Fit the heatmap inside the map bounds on update
 
 ![heatmap_options](img/heatmap.png)
+
+### Changing marker icons
+To change the icons used for the markers, replace the `marker.png` and `marker_secondary.png` files in the `/src/img` folder.
 
 ### Updating query based on map bounds
 To update the query dynamically based on the map bounds turn on `Use map bounds in query`. To use this you must manually add four variables to the dashboard (via settings in the top right corner). Add four variables of type `constant` with names `minLat`, `minLon`, `maxLat`, and `maxLon`. The values can be anything, e.g. 1, 2, 3, 4 - they will be overwritten by the plugin. Remember to save the dashboard. The variables can then be used in a query. Here is an example that limits the query to the bounds of the map:

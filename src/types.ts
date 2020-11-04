@@ -35,9 +35,10 @@ interface HeatOptions {
 
 interface MarkerOptions {
   size: number;
-  size_last: number;
+  sizeLast: number;
   showOnlyLastMarker: boolean;
-  alwaysShowIconFromLastMarker: boolean;
+  useSecondaryIconForAllMarkers: boolean;
+  useSecondaryIconForLastMarker: boolean;
 }
 
 interface HexOptions {
@@ -51,5 +52,5 @@ interface HexOptions {
 export interface Position {
   latitude: number;
   longitude: number;
-  tooltip: string;
+  tooltip?: string;
 }

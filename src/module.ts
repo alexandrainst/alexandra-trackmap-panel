@@ -54,7 +54,7 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
             },
             {
               value: 'ant-marker',
-              label: 'Ant Path with markers',
+              label: 'Ant Path With Markers',
             },
             {
               value: 'hex',
@@ -80,7 +80,6 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
         defaultValue: 5,
         showIf: config => config.viewType === 'ant' || config.viewType === 'ant-marker',
       })
-
       .addColorPicker({
         path: 'ant.color',
         name: 'Color',
@@ -125,29 +124,30 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
         defaultValue: 25,
         showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
       })
-
       .addNumberInput({
-        path: 'marker.size_last',
-        name: 'Size for last marker',
+        path: 'marker.sizeLast',
+        name: 'Size of last marker',
         defaultValue: 25,
         showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
       })
-
-      
       .addBooleanSwitch({
         path: 'marker.showOnlyLastMarker',
         name: 'Show only last marker',
         defaultValue: false,
-        showIf: config => config.viewType === 'ant-marker'
+        showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
       })
       .addBooleanSwitch({
-        path: 'marker.alwaysShowIconFromLastMarker',
-        name: 'Always show icon from last marker',
+        path: 'marker.useSecondaryIconForLastMarker',
+        name: 'Use secondary icon for last marker',
         defaultValue: false,
         showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
       })
-      
-
+      .addBooleanSwitch({
+        path: 'marker.useSecondaryIconForAllMarkers',
+        name: 'Use secondary icon for all markers',
+        defaultValue: false,
+        showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
+      })
       //hex
       .addNumberInput({
         path: 'hex.opacity',
