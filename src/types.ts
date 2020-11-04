@@ -47,5 +47,5 @@ interface HexOptions {
 export interface Position {
   latitude: number;
   longitude: number;
-  tooltip: string;
+  tooltip?: string;
 }

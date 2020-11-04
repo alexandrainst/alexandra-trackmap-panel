@@ -11,7 +11,7 @@ For Grafana 6 and older, please use our [1.x branch](https://github.com/alexandr
 ## How to use
 
 ### Query
-The query in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added. To add text tooltips to the markers, the `text` or `desc` field should be added.
+The query in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added. To add text tooltips to the markers, a `text` or`desc` field should be added. If no tooltip exists in the data, latitude and longitude are displayed as the tooltip.
 
 Data query example (TimescaleDB with PostGIS):
 
@@ -38,7 +38,7 @@ Map center and zoom can be changed with the `Map center latitude`, `Map center l
 
 To update query variables when the map bounds are updated turn on `Use map bounds in query`. See section "Updating query based on map bounds" below.
 
-Switch between views (Markers, Ant Path, Hexbin, Heatmap) by selecting a `Visualisation type` .
+Switch between views (Markers, Ant Path, Ant Path With Markers, Hexbin, Heatmap) by selecting a `Visualisation type` .
 
 #### Markers
 - `Size`: The size of the markers

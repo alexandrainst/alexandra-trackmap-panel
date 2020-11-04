@@ -37,53 +37,53 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   }, []);
 
   let latitudes: number[] | undefined = data.series
-    .find((f) => f.name === 'latitude' || f.name === 'lat')
-    ?.fields.find((f) => f.name === 'Value')
+    .find(f => f.name === 'latitude' || f.name === 'lat')
+    ?.fields.find(f => f.name === 'Value')
     ?.values?.toArray();
 
   let longitudes: number[] | undefined = data.series
-    .find((f) => f.name === 'longitude' || f.name === 'lon')
-    ?.fields.find((f) => f.name === 'Value')
+    .find(f => f.name === 'longitude' || f.name === 'lon')
+    ?.fields.find(f => f.name === 'Value')
     ?.values?.toArray();
 
   let intensities: number[] | undefined = data.series
-    .find((f) => f.name === 'intensity')
-    ?.fields.find((f) => f.name === 'Value')
+    .find(f => f.name === 'intensity')
+    ?.fields.find(f => f.name === 'Value')
     ?.values?.toArray();
 
   let markerTooltips: string[] | undefined = data.series
-    .find((f) => f.name === 'text' || f.name === 'desc')
-    ?.fields.find((f) => f.name === 'Value')
+    .find(f => f.name === 'text' || f.name === 'desc')
+    ?.fields.find(f => f.name === 'Value')
     ?.values?.toArray();
 
   if (!latitudes && data.series?.length) {
-    latitudes = data.series[0].fields.find((f) => f.name === 'latitude' || f.name === 'lat')?.values.toArray();
+    latitudes = data.series[0].fields.find(f => f.name === 'latitude' || f.name === 'lat')?.values.toArray();
   }
 
   if (!longitudes && data.series?.length) {
-    longitudes = data.series[0].fields.find((f) => f.name === 'longitude' || f.name === 'lon')?.values.toArray();
+    longitudes = data.series[0].fields.find(f => f.name === 'longitude' || f.name === 'lon')?.values.toArray();
   }
 
   if (!intensities && data.series?.length) {
-    intensities = data.series[0].fields.find((f) => f.name === 'intensity')?.values.toArray();
+    intensities = data.series[0].fields.find(f => f.name === 'intensity')?.values.toArray();
   }
 
   if (!markerTooltips && data.series?.length) {
-    markerTooltips = data.series[0].fields.find((f) => f.name === 'text' || f.name === 'desc')?.values.toArray();
+    markerTooltips = data.series[0].fields.find(f => f.name === 'text' || f.name === 'desc')?.values.toArray();
   }
 
   let positions: Position[] | undefined = latitudes?.map((latitude, index) => {
-    const lon = longitudes !== undefined ? longitudes[index] : 0;
-    const tooltip = markerTooltips !== undefined ? markerTooltips[index] : null;
+    const longitude = longitudes !== undefined ? longitudes[index] : 0;
+    const tooltip = markerTooltips !== undefined ? markerTooltips[index] : `${latitude}, ${longitude}`;
     return {
       latitude,
-      longitude: lon,
-      tooltip: !tooltip ? `${latitude}, ${lon}` : tooltip,
+      longitude,
+      tooltip,
     };
   });
 
-  if (!positions || positions.length == 0) {
-    positions = [{ latitude: 0, longitude: 0, tooltip: '' }];
+  if (!positions || positions.length === 0) {
+    positions = [{ latitude: 0, longitude: 0 }];
   }
 
   const heatData: any[] = [];
@@ -166,11 +166,14 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
       updateQueryVariables(minLat, minLon, maxLat, maxLon);
     }
   };
-  const mapCenter = { lat: options.map.centerLatitude, lon: options.map.centerLongitude };
+  const mapCenter: Position = {
+    latitude: options.map.centerLatitude,
+    longitude: options.map.centerLongitude,
+  };
 
   if (options.map.useCenterFromFirstPos && positions?.length && positions[0].latitude) {
-    mapCenter.lat = positions[0].latitude;
-    mapCenter.lon = positions[0].longitude;
+    mapCenter.latitude = positions[0].latitude;
+    mapCenter.longitude = positions[0].longitude;
   }
 
   return (
@@ -185,7 +188,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     >
       <Map
         ref={mapRef}
-        center={[mapCenter.lat, mapCenter.lon]}
+        center={[mapCenter.latitude, mapCenter.longitude]}
         zoom={options.map.zoom}
         onload={(event: LeafletEvent) => {
           onMapLoad(event);
