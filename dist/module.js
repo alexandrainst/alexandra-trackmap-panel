@@ -27924,7 +27924,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
       width = _a.width,
       height = _a.height;
 
-  var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
+  var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0;
 
   var styles = getStyles();
   var mapRef = Object(react__WEBPACK_IMPORTED_MODULE_1__["useRef"])(null);
@@ -27955,29 +27955,43 @@ var TrackMapPanel = function TrackMapPanel(_a) {
   })) === null || _h === void 0 ? void 0 : _h.fields.find(function (f) {
     return f.name === 'Value';
   })) === null || _j === void 0 ? void 0 : _j.values) === null || _k === void 0 ? void 0 : _k.toArray();
+  var markerTooltips = (_o = (_m = (_l = data.series.find(function (f) {
+    return f.name === 'text' || f.name === 'desc';
+  })) === null || _l === void 0 ? void 0 : _l.fields.find(function (f) {
+    return f.name === 'Value';
+  })) === null || _m === void 0 ? void 0 : _m.values) === null || _o === void 0 ? void 0 : _o.toArray();
 
-  if (!latitudes && ((_l = data.series) === null || _l === void 0 ? void 0 : _l.length)) {
-    latitudes = (_m = data.series[0].fields.find(function (f) {
+  if (!latitudes && ((_p = data.series) === null || _p === void 0 ? void 0 : _p.length)) {
+    latitudes = (_q = data.series[0].fields.find(function (f) {
       return f.name === 'latitude' || f.name === 'lat';
-    })) === null || _m === void 0 ? void 0 : _m.values.toArray();
+    })) === null || _q === void 0 ? void 0 : _q.values.toArray();
   }
 
-  if (!longitudes && ((_o = data.series) === null || _o === void 0 ? void 0 : _o.length)) {
-    longitudes = (_p = data.series[0].fields.find(function (f) {
+  if (!longitudes && ((_r = data.series) === null || _r === void 0 ? void 0 : _r.length)) {
+    longitudes = (_s = data.series[0].fields.find(function (f) {
       return f.name === 'longitude' || f.name === 'lon';
-    })) === null || _p === void 0 ? void 0 : _p.values.toArray();
+    })) === null || _s === void 0 ? void 0 : _s.values.toArray();
   }
 
-  if (!intensities && ((_q = data.series) === null || _q === void 0 ? void 0 : _q.length)) {
-    intensities = (_r = data.series[0].fields.find(function (f) {
+  if (!intensities && ((_t = data.series) === null || _t === void 0 ? void 0 : _t.length)) {
+    intensities = (_u = data.series[0].fields.find(function (f) {
       return f.name === 'intensity';
-    })) === null || _r === void 0 ? void 0 : _r.values.toArray();
+    })) === null || _u === void 0 ? void 0 : _u.values.toArray();
   }
 
-  var positions = (_s = latitudes) === null || _s === void 0 ? void 0 : _s.map(function (latitude, index) {
+  if (!markerTooltips && ((_v = data.series) === null || _v === void 0 ? void 0 : _v.length)) {
+    markerTooltips = (_w = data.series[0].fields.find(function (f) {
+      return f.name === 'text' || f.name === 'desc';
+    })) === null || _w === void 0 ? void 0 : _w.values.toArray();
+  }
+
+  var positions = (_x = latitudes) === null || _x === void 0 ? void 0 : _x.map(function (latitude, index) {
+    var longitude = longitudes !== undefined ? longitudes[index] : 0;
+    var tooltip = markerTooltips !== undefined ? markerTooltips[index] : latitude + ", " + longitude;
     return {
       latitude: latitude,
-      longitude: longitudes !== undefined ? longitudes[index] : 0
+      longitude: longitude,
+      tooltip: tooltip
     };
   });
 
@@ -27994,7 +28008,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     type: 'FeatureCollection',
     features: []
   };
-  (_t = positions) === null || _t === void 0 ? void 0 : _t.forEach(function (p, i) {
+  (_y = positions) === null || _y === void 0 ? void 0 : _y.forEach(function (p, i) {
     heatData.push([p.latitude, p.longitude, intensities !== undefined ? intensities[i] : '']);
     antData.push([p.latitude, p.longitude]);
     hexData.features.push({
@@ -28007,12 +28021,12 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     });
   });
   var markers = [];
-  (_u = positions) === null || _u === void 0 ? void 0 : _u.forEach(function (p, i) {
+  (_z = positions) === null || _z === void 0 ? void 0 : _z.forEach(function (p, i) {
     markers.push(react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Marker"], {
       key: i,
       position: [p.latitude, p.longitude],
       icon: mark
-    }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Popup"], null, p.latitude, ", ", p.longitude)));
+    }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Popup"], null, p.tooltip)));
   });
   var antOptions = {
     delay: options.ant.delay,
@@ -28072,7 +28086,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     longitude: options.map.centerLongitude
   };
 
-  if (options.map.useCenterFromFirstPos && ((_v = positions) === null || _v === void 0 ? void 0 : _v.length) && positions[0].latitude) {
+  if (options.map.useCenterFromFirstPos && ((_0 = positions) === null || _0 === void 0 ? void 0 : _0.length) && positions[0].latitude) {
     mapCenter.latitude = positions[0].latitude;
     mapCenter.longitude = positions[0].longitude;
   }
@@ -28217,7 +28231,7 @@ var plugin = new _grafana_data__WEBPACK_IMPORTED_MODULE_0__["PanelPlugin"](_Trac
         label: 'Ant Path'
       }, {
         value: 'ant-marker',
-        label: 'Ant Path with markers'
+        label: 'Ant Path With Markers'
       }, {
         value: 'hex',
         label: 'Hexbin'

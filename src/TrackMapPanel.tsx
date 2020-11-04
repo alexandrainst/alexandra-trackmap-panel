@@ -51,6 +51,11 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     ?.fields.find(f => f.name === 'Value')
     ?.values?.toArray();
 
+  let markerTooltips: string[] | undefined = data.series
+    .find(f => f.name === 'text' || f.name === 'desc')
+    ?.fields.find(f => f.name === 'Value')
+    ?.values?.toArray();
+
   if (!latitudes && data.series?.length) {
     latitudes = data.series[0].fields.find(f => f.name === 'latitude' || f.name === 'lat')?.values.toArray();
   }
@@ -63,10 +68,17 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     intensities = data.series[0].fields.find(f => f.name === 'intensity')?.values.toArray();
   }
 
+  if (!markerTooltips && data.series?.length) {
+    markerTooltips = data.series[0].fields.find(f => f.name === 'text' || f.name === 'desc')?.values.toArray();
+  }
+
   let positions: Position[] | undefined = latitudes?.map((latitude, index) => {
+    const longitude = longitudes !== undefined ? longitudes[index] : 0;
+    const tooltip = markerTooltips !== undefined ? markerTooltips[index] : `${latitude}, ${longitude}`;
     return {
       latitude,
-      longitude: longitudes !== undefined ? longitudes[index] : 0,
+      longitude,
+      tooltip,
     };
   });
 
@@ -98,9 +110,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   positions?.forEach((p, i) => {
     markers.push(
       <Marker key={i} position={[p.latitude, p.longitude]} icon={mark}>
-        <Popup>
-          {p.latitude}, {p.longitude}
-        </Popup>
+        <Popup>{p.tooltip}</Popup>
       </Marker>
     );
   });

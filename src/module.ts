@@ -48,7 +48,7 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
             },
             {
               value: 'ant-marker',
-              label: 'Ant Path with markers',
+              label: 'Ant Path With Markers',
             },
             {
               value: 'hex',
