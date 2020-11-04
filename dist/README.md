@@ -74,6 +74,9 @@ Switch between views (Markers, Ant Path, Ant Path With Markers, Hexbin, Heatmap)
 
 ![heatmap_options](img/heatmap.png)
 
+### Changing marker icons
+To change the icons used for the markers, replace the `marker.png` and `marker_secondary.png` files in the `/src/img` folder.
+
 ### Updating query based on map bounds
 To update the query dynamically based on the map bounds turn on `Use map bounds in query`. To use this you must manually add four variables to the dashboard (via settings in the top right corner). Add four variables of type `constant` with names `minLat`, `minLon`, `maxLat`, and `maxLon`. The values can be anything, e.g. 1, 2, 3, 4 - they will be overwritten by the plugin. Remember to save the dashboard. The variables can then be used in a query. Here is an example that limits the query to the bounds of the map:
 

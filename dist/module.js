@@ -28022,7 +28022,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     });
   });
 
-  var generateMarkers = function generateMarkers(positions, useSecondaryIconForAllMarkers, useSecondaryIconForLastMarker, showOnlyLastMarker) {
+  var createMarkers = function createMarkers(positions, useSecondaryIconForAllMarkers, useSecondaryIconForLastMarker, showOnlyLastMarker) {
     var _a;
 
     var markers = [];
@@ -28033,7 +28033,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
 
         var isLastPosition = i + 1 === ((_a = positions) === null || _a === void 0 ? void 0 : _a.length);
         var useSecondaryIcon = useSecondaryIconForAllMarkers || useSecondaryIconForLastMarker && isLastPosition;
-        var icon = generateIcon(useSecondaryIcon, isLastPosition, primaryIcon, secondaryIcon, options.marker.size, options.marker.sizeLast);
+        var icon = createIcon(useSecondaryIcon ? secondaryIcon : primaryIcon, isLastPosition ? options.marker.sizeLast : options.marker.size);
         markers.push(react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Marker"], {
           key: i,
           position: [p.latitude, p.longitude],
@@ -28046,17 +28046,16 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     return showOnlyLastMarker ? [markers[markers.length - 1]] : markers;
   };
 
-  var generateIcon = function generateIcon(useSecondaryIcon, isLastPosition, primaryIcon, secondaryIcon, size, sizeLast) {
-    var iconSize = isLastPosition ? sizeLast : size;
+  var createIcon = function createIcon(url, size) {
     return new leaflet__WEBPACK_IMPORTED_MODULE_6__["Icon"]({
-      iconUrl: useSecondaryIcon ? secondaryIcon : primaryIcon,
-      iconSize: [iconSize, iconSize],
-      iconAnchor: [iconSize * 0.5, iconSize],
-      popupAnchor: [0, -iconSize]
+      iconUrl: url,
+      iconSize: [size, size],
+      iconAnchor: [size * 0.5, size],
+      popupAnchor: [0, -size]
     });
   };
 
-  var markers = generateMarkers(positions, options.marker.useSecondaryIconForAllMarkers, options.marker.useSecondaryIconForLastMarker, options.marker.showOnlyLastMarker);
+  var markers = createMarkers(positions, options.marker.useSecondaryIconForAllMarkers, options.marker.useSecondaryIconForLastMarker, options.marker.showOnlyLastMarker);
   var antOptions = {
     delay: options.ant.delay,
     dashArray: [10, 20],

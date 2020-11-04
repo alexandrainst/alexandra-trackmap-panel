@@ -104,7 +104,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     } as Feature);
   });
 
-  const generateMarkers = (
+  const createMarkers = (
     positions: Position[],
     useSecondaryIconForAllMarkers: boolean,
     useSecondaryIconForLastMarker: boolean,
@@ -115,13 +115,9 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
       positions.forEach((p, i) => {
         const isLastPosition = i + 1 === positions?.length;
         const useSecondaryIcon = useSecondaryIconForAllMarkers || (useSecondaryIconForLastMarker && isLastPosition);
-        const icon: Icon = generateIcon(
-          useSecondaryIcon,
-          isLastPosition,
-          primaryIcon,
-          secondaryIcon,
-          options.marker.size,
-          options.marker.sizeLast
+        const icon: Icon = createIcon(
+          useSecondaryIcon ? secondaryIcon : primaryIcon,
+          isLastPosition ? options.marker.sizeLast : options.marker.size
         );
         markers.push(
           <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.tooltip}>
@@ -133,24 +129,16 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     return showOnlyLastMarker ? [markers[markers.length - 1]] : markers;
   };
 
-  const generateIcon = (
-    useSecondaryIcon: boolean,
-    isLastPosition: boolean,
-    primaryIcon: string,
-    secondaryIcon: string,
-    size: number,
-    sizeLast: number
-  ) => {
-    const iconSize = isLastPosition ? sizeLast : size;
+  const createIcon = (url: string, size: number) => {
     return new Icon({
-      iconUrl: useSecondaryIcon ? secondaryIcon : primaryIcon,
-      iconSize: [iconSize, iconSize],
-      iconAnchor: [iconSize * 0.5, iconSize],
-      popupAnchor: [0, -iconSize],
+      iconUrl: url,
+      iconSize: [size, size],
+      iconAnchor: [size * 0.5, size],
+      popupAnchor: [0, -size],
     });
   };
 
-  let markers: ReactElement[] = generateMarkers(
+  let markers: ReactElement[] = createMarkers(
     positions,
     options.marker.useSecondaryIconForAllMarkers,
     options.marker.useSecondaryIconForLastMarker,
