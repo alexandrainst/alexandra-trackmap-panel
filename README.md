@@ -59,6 +59,19 @@ Switch between views (Markers, Ant Path, Ant Path With Markers, Hexbin, Heatmap)
 
 ![ant_path_options](img/antpath.png)
 
+#### Ant Path With Markers
+- `Delay`: The delay of the animation
+- `Weight`: The width of the path
+- `Color`: The color of the path
+- `Pulse color`: The color of the pulse running along the path
+- `Paused`: Pause/start the animation
+- `Reverse`: Reverse the animation direction
+- `Show only last marker`: Shows only last marker
+- `Use secondary icon for last marker`: Uses secondary icon image for last marker
+- `Use secondary icon for all markers`: Uses secondary icon image for all markers
+
+![ant_markers_options](img/ant_markers.png)
+
 #### Hexbin
 - `Opacity`: The opacity of the hexagons
 - `Color range from (hex)`: Color ranges from this value
