@@ -28246,7 +28246,10 @@ var plugin = new _grafana_data__WEBPACK_IMPORTED_MODULE_0__["PanelPlugin"](_Trac
   return builder.addBooleanSwitch({
     path: 'map.useCenterFromFirstPos',
     name: 'Map center to first position',
-    defaultValue: false
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return !config.map.useCenterFromLastPos;
+    }
   }).addBooleanSwitch({
     path: 'map.useCenterFromLastPos',
     name: 'Map center to last position',
