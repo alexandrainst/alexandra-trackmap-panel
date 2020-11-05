@@ -9,6 +9,7 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
         path: 'map.useCenterFromFirstPos',
         name: 'Map center to first position',
         defaultValue: false,
+        showIf: config => !config.map.useCenterFromLastPos,
       })
       .addBooleanSwitch({
         path: 'map.useCenterFromLastPos',
