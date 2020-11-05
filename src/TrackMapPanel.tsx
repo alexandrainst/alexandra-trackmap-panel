@@ -23,10 +23,8 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
 
   const WrappedHexbinLayer: any = withLeaflet(HexbinLayer);
 
-  const mark = new Icon({
-    iconUrl: require('img/marker.png'),
-    iconSize: [options.marker.size, options.marker.size],
-  });
+  const primaryIcon: string = require('img/marker.png');
+  const secondaryIcon: string = require('img/marker_secondary.png');
 
   useEffect(() => {
     if (mapRef.current !== null) {
@@ -106,14 +104,46 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     } as Feature);
   });
 
-  const markers: ReactElement[] = [];
-  positions?.forEach((p, i) => {
-    markers.push(
-      <Marker key={i} position={[p.latitude, p.longitude]} icon={mark}>
-        <Popup>{p.tooltip}</Popup>
-      </Marker>
-    );
-  });
+  const createMarkers = (
+    positions: Position[],
+    useSecondaryIconForAllMarkers: boolean,
+    useSecondaryIconForLastMarker: boolean,
+    showOnlyLastMarker: boolean
+  ): ReactElement[] => {
+    let markers: ReactElement[] = [];
+    if (positions?.length > 0) {
+      positions.forEach((p, i) => {
+        const isLastPosition = i + 1 === positions?.length;
+        const useSecondaryIcon = useSecondaryIconForAllMarkers || (useSecondaryIconForLastMarker && isLastPosition);
+        const icon: Icon = createIcon(
+          useSecondaryIcon ? secondaryIcon : primaryIcon,
+          isLastPosition ? options.marker.sizeLast : options.marker.size
+        );
+        markers.push(
+          <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.tooltip}>
+            <Popup>{p.tooltip}</Popup>
+          </Marker>
+        );
+      });
+    }
+    return showOnlyLastMarker ? [markers[markers.length - 1]] : markers;
+  };
+
+  const createIcon = (url: string, size: number) => {
+    return new Icon({
+      iconUrl: url,
+      iconSize: [size, size],
+      iconAnchor: [size * 0.5, size],
+      popupAnchor: [0, -size],
+    });
+  };
+
+  let markers: ReactElement[] = createMarkers(
+    positions,
+    options.marker.useSecondaryIconForAllMarkers,
+    options.marker.useSecondaryIconForLastMarker,
+    options.marker.showOnlyLastMarker
+  );
 
   const antOptions = {
     delay: options.ant.delay,
@@ -174,6 +204,21 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   if (options.map.useCenterFromFirstPos && positions?.length && positions[0].latitude) {
     mapCenter.latitude = positions[0].latitude;
     mapCenter.longitude = positions[0].longitude;
+  }
+
+  if (positions?.length) {
+    if (options.map.useCenterFromFirstPos && positions[0].latitude) {
+      mapCenter.latitude = positions[0].latitude;
+      mapCenter.longitude = positions[0].longitude;
+    }
+    if (
+      !options.map.useCenterFromFirstPos &&
+      options.map.useCenterFromLastPos &&
+      positions[positions.length - 1].latitude
+    ) {
+      mapCenter.latitude = positions[positions.length - 1].latitude;
+      mapCenter.longitude = positions[positions.length - 1].longitude;
+    }
   }
 
   return (

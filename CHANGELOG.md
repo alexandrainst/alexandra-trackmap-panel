@@ -13,3 +13,9 @@ Initial Release
 
 ## v2.0.2
 * Add support for tooltips on markers
+
+## v2.0.3
+* Add support for only showing last marker
+* Add support for switching between primary and secondary marker icons
+* Add support for changing size of the last marker
+* Add support for centering map by last position

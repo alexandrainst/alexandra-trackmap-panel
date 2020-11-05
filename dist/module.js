@@ -27929,10 +27929,11 @@ var TrackMapPanel = function TrackMapPanel(_a) {
   var styles = getStyles();
   var mapRef = Object(react__WEBPACK_IMPORTED_MODULE_1__["useRef"])(null);
   var WrappedHexbinLayer = Object(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["withLeaflet"])(HexbinLayer);
-  var mark = new leaflet__WEBPACK_IMPORTED_MODULE_6__["Icon"]({
-    iconUrl: __webpack_require__(/*! img/marker.png */ "./img/marker.png"),
-    iconSize: [options.marker.size, options.marker.size]
-  });
+
+  var primaryIcon = __webpack_require__(/*! img/marker.png */ "./img/marker.png");
+
+  var secondaryIcon = __webpack_require__(/*! img/marker_secondary.png */ "./img/marker_secondary.png");
+
   Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
     if (mapRef.current !== null) {
       var bounds = mapRef.current.leafletElement.getBounds();
@@ -28020,14 +28021,41 @@ var TrackMapPanel = function TrackMapPanel(_a) {
       }
     });
   });
-  var markers = [];
-  (_z = positions) === null || _z === void 0 ? void 0 : _z.forEach(function (p, i) {
-    markers.push(react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Marker"], {
-      key: i,
-      position: [p.latitude, p.longitude],
-      icon: mark
-    }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Popup"], null, p.tooltip)));
-  });
+
+  var createMarkers = function createMarkers(positions, useSecondaryIconForAllMarkers, useSecondaryIconForLastMarker, showOnlyLastMarker) {
+    var _a;
+
+    var markers = [];
+
+    if (((_a = positions) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+      positions.forEach(function (p, i) {
+        var _a;
+
+        var isLastPosition = i + 1 === ((_a = positions) === null || _a === void 0 ? void 0 : _a.length);
+        var useSecondaryIcon = useSecondaryIconForAllMarkers || useSecondaryIconForLastMarker && isLastPosition;
+        var icon = createIcon(useSecondaryIcon ? secondaryIcon : primaryIcon, isLastPosition ? options.marker.sizeLast : options.marker.size);
+        markers.push(react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Marker"], {
+          key: i,
+          position: [p.latitude, p.longitude],
+          icon: icon,
+          title: p.tooltip
+        }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Popup"], null, p.tooltip)));
+      });
+    }
+
+    return showOnlyLastMarker ? [markers[markers.length - 1]] : markers;
+  };
+
+  var createIcon = function createIcon(url, size) {
+    return new leaflet__WEBPACK_IMPORTED_MODULE_6__["Icon"]({
+      iconUrl: url,
+      iconSize: [size, size],
+      iconAnchor: [size * 0.5, size],
+      popupAnchor: [0, -size]
+    });
+  };
+
+  var markers = createMarkers(positions, options.marker.useSecondaryIconForAllMarkers, options.marker.useSecondaryIconForLastMarker, options.marker.showOnlyLastMarker);
   var antOptions = {
     delay: options.ant.delay,
     dashArray: [10, 20],
@@ -28086,9 +28114,21 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     longitude: options.map.centerLongitude
   };
 
-  if (options.map.useCenterFromFirstPos && ((_0 = positions) === null || _0 === void 0 ? void 0 : _0.length) && positions[0].latitude) {
+  if (options.map.useCenterFromFirstPos && ((_z = positions) === null || _z === void 0 ? void 0 : _z.length) && positions[0].latitude) {
     mapCenter.latitude = positions[0].latitude;
     mapCenter.longitude = positions[0].longitude;
+  }
+
+  if ((_0 = positions) === null || _0 === void 0 ? void 0 : _0.length) {
+    if (options.map.useCenterFromFirstPos && positions[0].latitude) {
+      mapCenter.latitude = positions[0].latitude;
+      mapCenter.longitude = positions[0].longitude;
+    }
+
+    if (!options.map.useCenterFromFirstPos && options.map.useCenterFromLastPos && positions[positions.length - 1].latitude) {
+      mapCenter.latitude = positions[positions.length - 1].latitude;
+      mapCenter.longitude = positions[positions.length - 1].longitude;
+    }
   }
 
   return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
@@ -28146,6 +28186,17 @@ module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACq
 
 /***/ }),
 
+/***/ "./img/marker_secondary.png":
+/*!**********************************!*\
+  !*** ./img/marker_secondary.png ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAFTGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgZXhpZjpQaXhlbFhEaW1lbnNpb249IjY0IgogICBleGlmOlBpeGVsWURpbWVuc2lvbj0iNjQiCiAgIGV4aWY6Q29sb3JTcGFjZT0iMSIKICAgdGlmZjpJbWFnZUxlbmd0aD0iNjQiCiAgIHRpZmY6SW1hZ2VXaWR0aD0iNjQiCiAgIHRpZmY6UmVzb2x1dGlvblVuaXQ9IjIiCiAgIHRpZmY6WFJlc29sdXRpb249IjMwMC4wIgogICB0aWZmOllSZXNvbHV0aW9uPSIzMDAuMCIKICAgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyMC0xMS0wNFQxNTo0NjoyMiswMTowMCIKICAgeG1wOk1vZGlmeURhdGU9IjIwMjAtMTEtMDRUMTU6NDY6MjIrMDE6MDAiCiAg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"
+
+/***/ }),
+
 /***/ "./leaflet.css":
 /*!*********************!*\
   !*** ./leaflet.css ***!
@@ -28196,19 +28247,26 @@ var plugin = new _grafana_data__WEBPACK_IMPORTED_MODULE_0__["PanelPlugin"](_Trac
     path: 'map.useCenterFromFirstPos',
     name: 'Map center to first position',
     defaultValue: false
+  }).addBooleanSwitch({
+    path: 'map.useCenterFromLastPos',
+    name: 'Map center to last position',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return !config.map.useCenterFromFirstPos;
+    }
   }).addNumberInput({
     path: 'map.centerLatitude',
     name: 'Map center latitude',
     defaultValue: 56.17203,
     showIf: function showIf(config) {
-      return !config.map.useCenterFromFirstPos;
+      return !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos;
     }
   }).addNumberInput({
     path: 'map.centerLongitude',
     name: 'Map center longitude',
     defaultValue: 10.1865203,
     showIf: function showIf(config) {
-      return !config.map.useCenterFromFirstPos;
+      return !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos;
     }
   }).addNumberInput({
     path: 'map.zoom',
@@ -28246,42 +28304,42 @@ var plugin = new _grafana_data__WEBPACK_IMPORTED_MODULE_0__["PanelPlugin"](_Trac
     name: 'Delay',
     defaultValue: 400,
     showIf: function showIf(config) {
-      return config.viewType === 'ant';
+      return config.viewType === 'ant' || config.viewType === 'ant-marker';
     }
   }).addNumberInput({
     path: 'ant.weight',
     name: 'Weight',
     defaultValue: 5,
     showIf: function showIf(config) {
-      return config.viewType === 'ant';
+      return config.viewType === 'ant' || config.viewType === 'ant-marker';
     }
   }).addColorPicker({
     path: 'ant.color',
     name: 'Color',
     defaultValue: 'rgb(0, 100, 255)',
     showIf: function showIf(config) {
-      return config.viewType === 'ant';
+      return config.viewType === 'ant' || config.viewType === 'ant-marker';
     }
   }).addColorPicker({
     path: 'ant.pulseColor',
     name: 'Pulse color',
     defaultValue: 'rgb(0, 0, 0)',
     showIf: function showIf(config) {
-      return config.viewType === 'ant';
+      return config.viewType === 'ant' || config.viewType === 'ant-marker';
     }
   }).addBooleanSwitch({
     path: 'ant.paused',
     name: 'Paused',
     defaultValue: false,
     showIf: function showIf(config) {
-      return config.viewType === 'ant';
+      return config.viewType === 'ant' || config.viewType === 'ant-marker';
     }
   }).addBooleanSwitch({
     path: 'ant.reverse',
     name: 'Reverse',
     defaultValue: false,
     showIf: function showIf(config) {
-      return config.viewType === 'ant';
+      return config.viewType === 'ant' || config.viewType === 'ant-marker';
     }
   }) //heat
   .addBooleanSwitch({
@@ -28304,7 +28362,35 @@ var plugin = new _grafana_data__WEBPACK_IMPORTED_MODULE_0__["PanelPlugin"](_Trac
     name: 'Size',
     defaultValue: 25,
     showIf: function showIf(config) {
-      return config.viewType === 'marker';
+      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+    }
+  }).addNumberInput({
+    path: 'marker.sizeLast',
+    name: 'Size of last marker',
+    defaultValue: 25,
+    showIf: function showIf(config) {
+      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+    }
+  }).addBooleanSwitch({
+    path: 'marker.showOnlyLastMarker',
+    name: 'Show only last marker',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+    }
+  }).addBooleanSwitch({
+    path: 'marker.useSecondaryIconForLastMarker',
+    name: 'Use secondary icon for last marker',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+    }
+  }).addBooleanSwitch({
+    path: 'marker.useSecondaryIconForAllMarkers',
+    name: 'Use secondary icon for all markers',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return config.viewType === 'marker' || config.viewType === 'ant-marker';
     }
   }) //hex
   .addNumberInput({

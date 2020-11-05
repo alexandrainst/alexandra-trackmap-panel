@@ -16,6 +16,7 @@ interface Map {
   zoom: number;
   useBoundsInQuery: boolean;
   useCenterFromFirstPos: boolean;
+  useCenterFromLastPos: boolean;
 }
 
 interface AntOptions {
@@ -34,6 +35,10 @@ interface HeatOptions {
 
 interface MarkerOptions {
   size: number;
+  sizeLast: number;
+  showOnlyLastMarker: boolean;
+  useSecondaryIconForAllMarkers: boolean;
+  useSecondaryIconForLastMarker: boolean;
 }
 
 interface HexOptions {
