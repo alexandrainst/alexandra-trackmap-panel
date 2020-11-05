@@ -20,13 +20,13 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
         path: 'map.centerLatitude',
         name: 'Map center latitude',
         defaultValue: 56.17203,
-        showIf: config => !config.map.useCenterFromFirstPos,
+        showIf: config => !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos,
       })
       .addNumberInput({
         path: 'map.centerLongitude',
         name: 'Map center longitude',
         defaultValue: 10.1865203,
-        showIf: config => !config.map.useCenterFromFirstPos,
+        showIf: config => !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos,
       })
       .addNumberInput({
         path: 'map.zoom',

@@ -28259,14 +28259,14 @@ var plugin = new _grafana_data__WEBPACK_IMPORTED_MODULE_0__["PanelPlugin"](_Trac
     name: 'Map center latitude',
     defaultValue: 56.17203,
     showIf: function showIf(config) {
-      return !config.map.useCenterFromFirstPos;
+      return !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos;
     }
   }).addNumberInput({
     path: 'map.centerLongitude',
     name: 'Map center longitude',
     defaultValue: 10.1865203,
     showIf: function showIf(config) {
-      return !config.map.useCenterFromFirstPos;
+      return !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos;
     }
   }).addNumberInput({
     path: 'map.zoom',

@@ -18,3 +18,4 @@ Initial Release
 * Add support for only showing last marker
 * Add support for switching between primary and secondary marker icons
 * Add support for changing size of the last marker
+* Add support for centering map by last position

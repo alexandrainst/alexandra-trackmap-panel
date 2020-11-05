@@ -45,7 +45,7 @@ Switch between views (Markers, Ant Path, Ant Path With Markers, Hexbin, Heatmap)
 - `Size of last marker`: The size of the last marker
 - `Show only last marker`: Shows only last marker
 - `Use secondary icon for last marker`: Uses secondary icon image for last marker
-- `Use secondary icon for all marker`: Uses secondary icon image for all markers
+- `Use secondary icon for all markers`: Uses secondary icon image for all markers
 
 ![markers_options](img/markers.png)
 
