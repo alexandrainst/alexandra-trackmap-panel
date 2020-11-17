@@ -9,37 +9,48 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
         path: 'map.useCenterFromFirstPos',
         name: 'Map center to first position',
         defaultValue: false,
-        showIf: config => !config.map.useCenterFromLastPos,
+        showIf: config => !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds,
       })
       .addBooleanSwitch({
         path: 'map.useCenterFromLastPos',
         name: 'Map center to last position',
         defaultValue: false,
-        showIf: config => !config.map.useCenterFromFirstPos,
+        showIf: config => !config.map.useCenterFromFirstPos && !config.map.zoomToDataBounds,
+      })
+      .addBooleanSwitch({
+        path: 'map.zoomToDataBounds',
+        name: 'Zoom map to fit data bounds',
+        defaultValue: false,
+        showIf: config =>
+          !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.useBoundsInQuery,
       })
       .addNumberInput({
         path: 'map.centerLatitude',
         name: 'Map center latitude',
         defaultValue: 56.17203,
-        showIf: config => !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos,
+        showIf: config =>
+          !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds,
       })
       .addNumberInput({
         path: 'map.centerLongitude',
         name: 'Map center longitude',
         defaultValue: 10.1865203,
-        showIf: config => !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos,
+        showIf: config =>
+          !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds,
       })
       .addNumberInput({
         path: 'map.zoom',
         name: 'Map Zoom',
         defaultValue: 10,
+        showIf: config => !config.map.zoomToDataBounds,
       })
       .addBooleanSwitch({
         path: 'map.useBoundsInQuery',
         name: 'Use map bounds in query',
         defaultValue: false,
+        showIf: config => !config.map.zoomToDataBounds,
       })
-      .addRadio({
+      .addSelect({
         path: 'viewType',
         defaultValue: 'marker',
         name: 'Visualisation type',

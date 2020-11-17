@@ -19,3 +19,6 @@ Initial Release
 
 ## v2.1.0
 * Fix dependencies
+
+## v2.1.1
+* Add support for zooming map to fit data bounds on load

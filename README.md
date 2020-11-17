@@ -36,9 +36,13 @@ The panel has general configuration options as well as options specific to each 
 
 Map center and zoom can be changed with the `Map center latitude`, `Map center longitude` and `Zoom` properties.
 
+Centering the map on the first/last position or zooming to fit all data within the map bounds on load can be achieved by using the `Map center to first position`, `Map center to last position` and `Zoom map to fit data bounds` switches. 
+
 To update query variables when the map bounds are updated turn on `Use map bounds in query`. See section "Updating query based on map bounds" below.
 
 Switch between views (Markers, Ant Path, Ant Path With Markers, Hexbin, Heatmap) by selecting a `Visualisation type` .
+
+Note that some options are disabled when others are activited - e.g. you cannot set a specific zoom level and also zoom the map to fit all data at the same time.
 
 #### Markers
 - `Size`: The size of the markers
