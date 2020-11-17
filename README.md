@@ -42,7 +42,7 @@ To update query variables when the map bounds are updated turn on `Use map bound
 
 Switch between views (Markers, Ant Path, Ant Path With Markers, Hexbin, Heatmap) by selecting a `Visualisation type` .
 
-Note that some options are disabled when others are activited - e.g. you cannot set a specific zoom level and also zoom the map to fit all data at the same time.
+Note that some options are disabled when others are enabled - e.g. you cannot set a specific zoom level and also zoom the map to fit all data at the same time.
 
 #### Markers
 - `Size`: The size of the markers
