@@ -27918,6 +27918,13 @@ var TrackMapPanel = function TrackMapPanel(_a) {
 
   Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
     if (mapRef.current !== null) {
+      if (options.map.zoomToDataBounds) {
+        var bounds_1 = getBoundsFromPositions(positions);
+        mapRef.current.leafletElement.fitBounds(bounds_1, {
+          animate: false
+        });
+      }
+
       var bounds = mapRef.current.leafletElement.getBounds();
       updateMap(bounds);
     } // eslint-disable-next-line
@@ -28055,10 +28062,6 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     radiusRange: [options.hex.radiusRangeFrom, options.hex.radiusRangeTo]
   };
 
-  var onMapLoad = function onMapLoad(event) {
-    updateMap(event.target.getBounds());
-  };
-
   var onMapMoveEnd = function onMapMoveEnd(event) {
     if (mapRef.current !== null) {
       mapRef.current.leafletElement.invalidateSize();
@@ -28091,6 +28094,24 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     }
   };
 
+  var getBoundsFromPositions = function getBoundsFromPositions(positions) {
+    var _a, _b, _c, _d;
+
+    var minLon = Math.min.apply(Math, Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__spread"])((_a = positions) === null || _a === void 0 ? void 0 : _a.map(function (p) {
+      return p.longitude;
+    })));
+    var maxLon = Math.max.apply(Math, Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__spread"])((_b = positions) === null || _b === void 0 ? void 0 : _b.map(function (p) {
+      return p.longitude;
+    })));
+    var minLat = Math.min.apply(Math, Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__spread"])((_c = positions) === null || _c === void 0 ? void 0 : _c.map(function (p) {
+      return p.latitude;
+    })));
+    var maxLat = Math.max.apply(Math, Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__spread"])((_d = positions) === null || _d === void 0 ? void 0 : _d.map(function (p) {
+      return p.latitude;
+    })));
+    return [[minLat, minLon], [maxLat, maxLon]];
+  };
+
   var mapCenter = {
     latitude: options.map.centerLatitude,
     longitude: options.map.centerLongitude
@@ -28119,9 +28140,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     ref: mapRef,
     center: [mapCenter.latitude, mapCenter.longitude],
     zoom: options.map.zoom,
-    onload: function onload(event) {
-      onMapLoad(event);
-    },
+    zoomSnap: 0.5,
     onmoveend: function onmoveend(event) {
       onMapMoveEnd(event);
     }
@@ -28230,38 +28249,51 @@ var plugin = new _grafana_data__WEBPACK_IMPORTED_MODULE_0__["PanelPlugin"](_Trac
     name: 'Map center to first position',
     defaultValue: false,
     showIf: function showIf(config) {
-      return !config.map.useCenterFromLastPos;
+      return !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds;
     }
   }).addBooleanSwitch({
     path: 'map.useCenterFromLastPos',
     name: 'Map center to last position',
     defaultValue: false,
     showIf: function showIf(config) {
-      return !config.map.useCenterFromFirstPos;
+      return !config.map.useCenterFromFirstPos && !config.map.zoomToDataBounds;
+    }
+  }).addBooleanSwitch({
+    path: 'map.zoomToDataBounds',
+    name: 'Zoom map to fit data bounds',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.useBoundsInQuery;
     }
   }).addNumberInput({
     path: 'map.centerLatitude',
     name: 'Map center latitude',
     defaultValue: 56.17203,
     showIf: function showIf(config) {
-      return !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos;
+      return !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds;
     }
   }).addNumberInput({
     path: 'map.centerLongitude',
     name: 'Map center longitude',
     defaultValue: 10.1865203,
     showIf: function showIf(config) {
-      return !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos;
+      return !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds;
     }
   }).addNumberInput({
     path: 'map.zoom',
     name: 'Map Zoom',
-    defaultValue: 10
+    defaultValue: 10,
+    showIf: function showIf(config) {
+      return !config.map.zoomToDataBounds;
+    }
   }).addBooleanSwitch({
     path: 'map.useBoundsInQuery',
     name: 'Use map bounds in query',
-    defaultValue: false
-  }).addRadio({
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return !config.map.zoomToDataBounds;
+    }
+  }).addSelect({
     path: 'viewType',
     defaultValue: 'marker',
     name: 'Visualisation type',

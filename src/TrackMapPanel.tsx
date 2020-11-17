@@ -6,7 +6,7 @@ import { css, cx } from 'emotion';
 import { stylesFactory } from '@grafana/ui';
 import { FeatureCollection, Feature } from 'geojson';
 import { Map, TileLayer, Marker, Popup, withLeaflet } from 'react-leaflet';
-import { Icon, LeafletEvent, LatLngBounds } from 'leaflet';
+import { Icon, LeafletEvent, LatLngBounds, LatLngBoundsExpression } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import { useRef } from 'react';
@@ -28,6 +28,10 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
 
   useEffect(() => {
     if (mapRef.current !== null) {
+      if (options.map.zoomToDataBounds) {
+        const bounds = getBoundsFromPositions(positions);
+        mapRef.current.leafletElement.fitBounds(bounds, { animate: false });
+      }
       const bounds = mapRef.current.leafletElement.getBounds();
       updateMap(bounds);
     }
@@ -138,7 +142,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     });
   };
 
-  let markers: ReactElement[] = createMarkers(
+  const markers: ReactElement[] = createMarkers(
     positions,
     options.marker.useSecondaryIconForAllMarkers,
     options.marker.useSecondaryIconForLastMarker,
@@ -161,10 +165,6 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     radiusScaleExtent: [1, undefined],
     colorRange: [options.hex.colorRangeFrom, options.hex.colorRangeTo],
     radiusRange: [options.hex.radiusRangeFrom, options.hex.radiusRangeTo],
-  };
-
-  const onMapLoad = (event: LeafletEvent) => {
-    updateMap(event.target.getBounds());
   };
 
   const onMapMoveEnd = (event: LeafletEvent) => {
@@ -196,6 +196,18 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
       updateQueryVariables(minLat, minLon, maxLat, maxLon);
     }
   };
+
+  const getBoundsFromPositions = (positions: Position[] | undefined): LatLngBoundsExpression => {
+    const minLon = Math.min(...positions?.map(p => p.longitude));
+    const maxLon = Math.max(...positions?.map(p => p.longitude));
+    const minLat = Math.min(...positions?.map(p => p.latitude));
+    const maxLat = Math.max(...positions?.map(p => p.latitude));
+    return [
+      [minLat, minLon],
+      [maxLat, maxLon],
+    ];
+  };
+
   const mapCenter: Position = {
     latitude: options.map.centerLatitude,
     longitude: options.map.centerLongitude,
@@ -235,9 +247,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
         ref={mapRef}
         center={[mapCenter.latitude, mapCenter.longitude]}
         zoom={options.map.zoom}
-        onload={(event: LeafletEvent) => {
-          onMapLoad(event);
-        }}
+        zoomSnap={0.5}
         onmoveend={(event: LeafletEvent) => {
           onMapMoveEnd(event);
         }}

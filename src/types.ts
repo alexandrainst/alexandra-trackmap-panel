@@ -13,6 +13,7 @@ export interface TrackMapOptions {
 interface Map {
   centerLatitude: number;
   centerLongitude: number;
+  zoomToDataBounds: boolean;
   zoom: number;
   useBoundsInQuery: boolean;
   useCenterFromFirstPos: boolean;
