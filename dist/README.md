@@ -17,7 +17,7 @@ To add a text popup to the markers, a `popup`, `text` or `desc` field should be 
 
 ![popup](img/popup.png)
 
-To add a mouse-over tooltip to the markers, add a `tooltip` field. The tooltips can be shown permanently by toggling the `Always show tooltips` option (requires map reload).
+To add a mouseover tooltip to the markers, add a `tooltip` field. The tooltips can be shown permanently by toggling the `Always show tooltips` option (may require map reload).
 
 ![tooltip](img/tooltip.png)
 
@@ -59,7 +59,7 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 - `Show only last marker`: Shows only last marker
 - `Use secondary icon for last marker`: Uses secondary icon image for last marker
 - `Use secondary icon for all markers`: Uses secondary icon image for all markers
-- `Always show tooltips`: Always show the mouse-over tooltips
+- `Always show tooltips`: Always show the mouseover tooltips
 
 ![markers_options](img/markers.png)
 
@@ -83,7 +83,7 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 - `Show only last marker`: Shows only last marker
 - `Use secondary icon for last marker`: Uses secondary icon image for last marker
 - `Use secondary icon for all markers`: Uses secondary icon image for all markers
-- `Always show tooltips`: Always show the mouse-over tooltips
+- `Always show tooltips`: Always show the mouseover tooltips
 
 ![ant_markers_options](img/ant_markers.png)
 
