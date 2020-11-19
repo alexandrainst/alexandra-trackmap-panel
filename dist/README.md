@@ -27,7 +27,7 @@ Data query example (TimescaleDB with PostGIS):
 SELECT
 avg("lat") as "latitude",  
 avg("long") as "longitude",  
-max("rssi" * -1) as "intensity",
+max(abs("rssi")) as "intensity",
 max("rssi") as "tooltip",
 clusters
 FROM (SELECT lat,
@@ -112,7 +112,7 @@ To update the query dynamically based on the map bounds turn on `Use map bounds 
 SELECT
   avg("lat") as "latitude",
   avg("long") as "longitude",
-  max("rssi" * -1) as "intensity",
+  max(abs("rssi")) as "intensity",
   max("rssi") as "tooltip",
 FROM (
   SELECT sys_time, lat, long, geo, rssi, ST_ClusterKMeans(geo, 15) over() as clusters from table_name
