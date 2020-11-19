@@ -11,7 +11,15 @@ For Grafana 6 and older, please use our [1.x branch](https://github.com/alexandr
 ## How to use
 
 ### Query
-The query in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added. To add text tooltips to the markers, a `text` or`desc` field should be added. If no tooltip exists in the data, latitude and longitude are displayed as the tooltip.
+The query in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added.
+
+To add a text popup to the markers, a `popup`, `text` or `desc` field should be added. If no popup field exists, latitude and longitude are displayed in the popup.
+
+![popup](img/popup.png)
+
+To add a mouse-over tooltip to the markers, add a `tooltip` field. The tooltips can be shown permanently by toggling the `Always show tooltips` option (may require map reload).
+
+![tooltip](img/tooltip.png)
 
 Data query example (TimescaleDB with PostGIS):
 
@@ -19,7 +27,8 @@ Data query example (TimescaleDB with PostGIS):
 SELECT
 avg("lat") as "latitude",  
 avg("long") as "longitude",  
-max("rssi") as "intensity",  
+max("rssi" * -1) as "intensity",
+max("rssi") as "tooltip",
 clusters
 FROM (SELECT lat,
 long,
@@ -50,6 +59,7 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 - `Show only last marker`: Shows only last marker
 - `Use secondary icon for last marker`: Uses secondary icon image for last marker
 - `Use secondary icon for all markers`: Uses secondary icon image for all markers
+- `Always show tooltips`: Always show the mouse-over tooltips
 
 ![markers_options](img/markers.png)
 
@@ -73,6 +83,7 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 - `Show only last marker`: Shows only last marker
 - `Use secondary icon for last marker`: Uses secondary icon image for last marker
 - `Use secondary icon for all markers`: Uses secondary icon image for all markers
+- `Always show tooltips`: Always show the mouse-over tooltips
 
 ![ant_markers_options](img/ant_markers.png)
 
@@ -101,7 +112,8 @@ To update the query dynamically based on the map bounds turn on `Use map bounds 
 SELECT
   avg("lat") as "latitude",
   avg("long") as "longitude",
-  max("rssi") as "intensity"
+  max("rssi" * -1) as "intensity",
+  max("rssi") as "tooltip",
 FROM (
   SELECT sys_time, lat, long, geo, rssi, ST_ClusterKMeans(geo, 15) over() as clusters from table_name
   Where lat >= $minLat
