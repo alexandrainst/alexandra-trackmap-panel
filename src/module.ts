@@ -160,6 +160,12 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
         defaultValue: false,
         showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
       })
+      .addBooleanSwitch({
+        path: 'marker.alwaysShowTooltips',
+        name: 'Always show tooltips',
+        defaultValue: false,
+        showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
+      })
       //hex
       .addNumberInput({
         path: 'hex.opacity',

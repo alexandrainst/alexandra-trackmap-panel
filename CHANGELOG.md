@@ -22,3 +22,6 @@ Initial Release
 
 ## v2.1.1
 * Add support for zooming map to fit data bounds on load
+
+## v2.1.2
+* Add support for mouseover tooltips on markers

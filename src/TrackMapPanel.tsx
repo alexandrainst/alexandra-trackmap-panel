@@ -5,7 +5,7 @@ import { TrackMapOptions, Position } from 'types';
 import { css, cx } from 'emotion';
 import { stylesFactory } from '@grafana/ui';
 import { FeatureCollection, Feature } from 'geojson';
-import { Map, TileLayer, Marker, Popup, withLeaflet } from 'react-leaflet';
+import { Map, TileLayer, Marker, Popup, Tooltip, withLeaflet } from 'react-leaflet';
 import { Icon, LeafletEvent, LatLngBounds, LatLngBoundsExpression } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
@@ -53,8 +53,13 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     ?.fields.find(f => f.name === 'Value')
     ?.values?.toArray();
 
+  let markerPopups: string[] | undefined = data.series
+    .find(f => f.name === 'popup' || f.name === 'text' || f.name === 'desc')
+    ?.fields.find(f => f.name === 'Value')
+    ?.values?.toArray();
+
   let markerTooltips: string[] | undefined = data.series
-    .find(f => f.name === 'text' || f.name === 'desc')
+    .find(f => f.name === 'tooltip')
     ?.fields.find(f => f.name === 'Value')
     ?.values?.toArray();
 
@@ -70,16 +75,24 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     intensities = data.series[0].fields.find(f => f.name === 'intensity')?.values.toArray();
   }
 
+  if (!markerPopups && data.series?.length) {
+    markerPopups = data.series[0].fields
+      .find(f => f.name === 'popup' || f.name === 'text' || f.name === 'desc')
+      ?.values.toArray();
+  }
+
   if (!markerTooltips && data.series?.length) {
-    markerTooltips = data.series[0].fields.find(f => f.name === 'text' || f.name === 'desc')?.values.toArray();
+    markerTooltips = data.series[0].fields.find(f => f.name === 'tooltip')?.values.toArray();
   }
 
   let positions: Position[] | undefined = latitudes?.map((latitude, index) => {
     const longitude = longitudes !== undefined ? longitudes[index] : 0;
-    const tooltip = markerTooltips !== undefined ? markerTooltips[index] : `${latitude}, ${longitude}`;
+    const popup = markerPopups !== undefined ? markerPopups[index] : `${latitude}, ${longitude}`;
+    const tooltip = markerTooltips !== undefined ? markerTooltips[index] : undefined;
     return {
       latitude,
       longitude,
+      popup,
       tooltip,
     };
   });
@@ -112,7 +125,8 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     positions: Position[],
     useSecondaryIconForAllMarkers: boolean,
     useSecondaryIconForLastMarker: boolean,
-    showOnlyLastMarker: boolean
+    showOnlyLastMarker: boolean,
+    alwaysShowTooltips: boolean
   ): ReactElement[] => {
     let markers: ReactElement[] = [];
     if (positions?.length > 0) {
@@ -124,8 +138,9 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
           isLastPosition ? options.marker.sizeLast : options.marker.size
         );
         markers.push(
-          <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.tooltip}>
-            <Popup>{p.tooltip}</Popup>
+          <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.popup}>
+            <Popup>{p.popup}</Popup>
+            {p.tooltip && <Tooltip permanent={alwaysShowTooltips}>{p.tooltip}</Tooltip>}
           </Marker>
         );
       });
@@ -146,7 +161,8 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     positions,
     options.marker.useSecondaryIconForAllMarkers,
     options.marker.useSecondaryIconForLastMarker,
-    options.marker.showOnlyLastMarker
+    options.marker.showOnlyLastMarker,
+    options.marker.alwaysShowTooltips
   );
 
   const antOptions = {

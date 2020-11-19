@@ -27906,7 +27906,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
       width = _a.width,
       height = _a.height;
 
-  var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0;
+  var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5;
 
   var styles = getStyles();
   var mapRef = Object(react__WEBPACK_IMPORTED_MODULE_1__["useRef"])(null);
@@ -27945,42 +27945,55 @@ var TrackMapPanel = function TrackMapPanel(_a) {
   })) === null || _h === void 0 ? void 0 : _h.fields.find(function (f) {
     return f.name === 'Value';
   })) === null || _j === void 0 ? void 0 : _j.values) === null || _k === void 0 ? void 0 : _k.toArray();
-  var markerTooltips = (_o = (_m = (_l = data.series.find(function (f) {
-    return f.name === 'text' || f.name === 'desc';
+  var markerPopups = (_o = (_m = (_l = data.series.find(function (f) {
+    return f.name === 'popup' || f.name === 'text' || f.name === 'desc';
   })) === null || _l === void 0 ? void 0 : _l.fields.find(function (f) {
     return f.name === 'Value';
   })) === null || _m === void 0 ? void 0 : _m.values) === null || _o === void 0 ? void 0 : _o.toArray();
+  var markerTooltips = (_r = (_q = (_p = data.series.find(function (f) {
+    return f.name === 'tooltip';
+  })) === null || _p === void 0 ? void 0 : _p.fields.find(function (f) {
+    return f.name === 'Value';
+  })) === null || _q === void 0 ? void 0 : _q.values) === null || _r === void 0 ? void 0 : _r.toArray();
 
-  if (!latitudes && ((_p = data.series) === null || _p === void 0 ? void 0 : _p.length)) {
-    latitudes = (_q = data.series[0].fields.find(function (f) {
+  if (!latitudes && ((_s = data.series) === null || _s === void 0 ? void 0 : _s.length)) {
+    latitudes = (_t = data.series[0].fields.find(function (f) {
       return f.name === 'latitude' || f.name === 'lat';
-    })) === null || _q === void 0 ? void 0 : _q.values.toArray();
+    })) === null || _t === void 0 ? void 0 : _t.values.toArray();
   }
 
-  if (!longitudes && ((_r = data.series) === null || _r === void 0 ? void 0 : _r.length)) {
-    longitudes = (_s = data.series[0].fields.find(function (f) {
+  if (!longitudes && ((_u = data.series) === null || _u === void 0 ? void 0 : _u.length)) {
+    longitudes = (_v = data.series[0].fields.find(function (f) {
       return f.name === 'longitude' || f.name === 'lon';
-    })) === null || _s === void 0 ? void 0 : _s.values.toArray();
+    })) === null || _v === void 0 ? void 0 : _v.values.toArray();
   }
 
-  if (!intensities && ((_t = data.series) === null || _t === void 0 ? void 0 : _t.length)) {
-    intensities = (_u = data.series[0].fields.find(function (f) {
+  if (!intensities && ((_w = data.series) === null || _w === void 0 ? void 0 : _w.length)) {
+    intensities = (_x = data.series[0].fields.find(function (f) {
       return f.name === 'intensity';
-    })) === null || _u === void 0 ? void 0 : _u.values.toArray();
+    })) === null || _x === void 0 ? void 0 : _x.values.toArray();
   }
 
-  if (!markerTooltips && ((_v = data.series) === null || _v === void 0 ? void 0 : _v.length)) {
-    markerTooltips = (_w = data.series[0].fields.find(function (f) {
-      return f.name === 'text' || f.name === 'desc';
-    })) === null || _w === void 0 ? void 0 : _w.values.toArray();
+  if (!markerPopups && ((_y = data.series) === null || _y === void 0 ? void 0 : _y.length)) {
+    markerPopups = (_z = data.series[0].fields.find(function (f) {
+      return f.name === 'popup' || f.name === 'text' || f.name === 'desc';
+    })) === null || _z === void 0 ? void 0 : _z.values.toArray();
   }
 
-  var positions = (_x = latitudes) === null || _x === void 0 ? void 0 : _x.map(function (latitude, index) {
+  if (!markerTooltips && ((_0 = data.series) === null || _0 === void 0 ? void 0 : _0.length)) {
+    markerTooltips = (_1 = data.series[0].fields.find(function (f) {
+      return f.name === 'tooltip';
+    })) === null || _1 === void 0 ? void 0 : _1.values.toArray();
+  }
+
+  var positions = (_2 = latitudes) === null || _2 === void 0 ? void 0 : _2.map(function (latitude, index) {
     var longitude = longitudes !== undefined ? longitudes[index] : 0;
-    var tooltip = markerTooltips !== undefined ? markerTooltips[index] : latitude + ", " + longitude;
+    var popup = markerPopups !== undefined ? markerPopups[index] : latitude + ", " + longitude;
+    var tooltip = markerTooltips !== undefined ? markerTooltips[index] : undefined;
     return {
       latitude: latitude,
       longitude: longitude,
+      popup: popup,
       tooltip: tooltip
     };
   });
@@ -27998,7 +28011,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     type: 'FeatureCollection',
     features: []
   };
-  (_y = positions) === null || _y === void 0 ? void 0 : _y.forEach(function (p, i) {
+  (_3 = positions) === null || _3 === void 0 ? void 0 : _3.forEach(function (p, i) {
     heatData.push([p.latitude, p.longitude, intensities !== undefined ? intensities[i] : '']);
     antData.push([p.latitude, p.longitude]);
     hexData.features.push({
@@ -28011,7 +28024,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     });
   });
 
-  var createMarkers = function createMarkers(positions, useSecondaryIconForAllMarkers, useSecondaryIconForLastMarker, showOnlyLastMarker) {
+  var createMarkers = function createMarkers(positions, useSecondaryIconForAllMarkers, useSecondaryIconForLastMarker, showOnlyLastMarker, alwaysShowTooltips) {
     var _a;
 
     var markers = [];
@@ -28027,8 +28040,10 @@ var TrackMapPanel = function TrackMapPanel(_a) {
           key: i,
           position: [p.latitude, p.longitude],
           icon: icon,
-          title: p.tooltip
-        }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Popup"], null, p.tooltip)));
+          title: p.popup
+        }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Popup"], null, p.popup), p.tooltip && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_5__["Tooltip"], {
+          permanent: alwaysShowTooltips
+        }, p.tooltip)));
       });
     }
 
@@ -28044,7 +28059,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     });
   };
 
-  var markers = createMarkers(positions, options.marker.useSecondaryIconForAllMarkers, options.marker.useSecondaryIconForLastMarker, options.marker.showOnlyLastMarker);
+  var markers = createMarkers(positions, options.marker.useSecondaryIconForAllMarkers, options.marker.useSecondaryIconForLastMarker, options.marker.showOnlyLastMarker, options.marker.alwaysShowTooltips);
   var antOptions = {
     delay: options.ant.delay,
     dashArray: [10, 20],
@@ -28117,12 +28132,12 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     longitude: options.map.centerLongitude
   };
 
-  if (options.map.useCenterFromFirstPos && ((_z = positions) === null || _z === void 0 ? void 0 : _z.length) && positions[0].latitude) {
+  if (options.map.useCenterFromFirstPos && ((_4 = positions) === null || _4 === void 0 ? void 0 : _4.length) && positions[0].latitude) {
     mapCenter.latitude = positions[0].latitude;
     mapCenter.longitude = positions[0].longitude;
   }
 
-  if ((_0 = positions) === null || _0 === void 0 ? void 0 : _0.length) {
+  if ((_5 = positions) === null || _5 === void 0 ? void 0 : _5.length) {
     if (options.map.useCenterFromFirstPos && positions[0].latitude) {
       mapCenter.latitude = positions[0].latitude;
       mapCenter.longitude = positions[0].longitude;
@@ -28405,6 +28420,13 @@ var plugin = new _grafana_data__WEBPACK_IMPORTED_MODULE_0__["PanelPlugin"](_Trac
   }).addBooleanSwitch({
     path: 'marker.useSecondaryIconForAllMarkers',
     name: 'Use secondary icon for all markers',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+    }
+  }).addBooleanSwitch({
+    path: 'marker.alwaysShowTooltips',
+    name: 'Always show tooltips',
     defaultValue: false,
     showIf: function showIf(config) {
       return config.viewType === 'marker' || config.viewType === 'ant-marker';

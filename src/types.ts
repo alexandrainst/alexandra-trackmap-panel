@@ -40,6 +40,7 @@ interface MarkerOptions {
   showOnlyLastMarker: boolean;
   useSecondaryIconForAllMarkers: boolean;
   useSecondaryIconForLastMarker: boolean;
+  alwaysShowTooltips: boolean;
 }
 
 interface HexOptions {
@@ -53,5 +54,6 @@ interface HexOptions {
 export interface Position {
   latitude: number;
   longitude: number;
+  popup?: string;
   tooltip?: string;
 }
