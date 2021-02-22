@@ -85,16 +85,47 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     markerTooltips = data.series[0].fields.find(f => f.name === 'tooltip')?.values.toArray();
   }
 
-  let positions: Position[] | undefined = latitudes?.map((latitude, index) => {
-    const longitude = longitudes !== undefined ? longitudes[index] : 0;
-    const popup = markerPopups !== undefined ? markerPopups[index] : `${latitude}, ${longitude}`;
-    const tooltip = markerTooltips !== undefined ? markerTooltips[index] : undefined;
-    return {
-      latitude,
-      longitude,
-      popup,
-      tooltip,
-    };
+  let positions: Position[] = [];
+
+  let timeLatitudes: number[] | undefined = data.series
+    .find(f => f.name === 'latitude' || f.name === 'lat')
+    ?.fields.find(f => f.name === 'Time')
+    ?.values?.toArray();
+
+  let timeLongitudes: number[] | undefined = data.series
+    .find(f => f.name === 'longitude' || f.name === 'lon')
+    ?.fields.find(f => f.name === 'Time')
+    ?.values?.toArray();
+
+  latitudes?.forEach((latitude, i) => {
+    const longitude = longitudes !== undefined ? longitudes[i] : 0;
+    const popup = markerPopups !== undefined ? markerPopups[i] : `${latitude}, ${longitude}`;
+    const tooltip = markerTooltips !== undefined ? markerTooltips[i] : undefined;
+
+    if (!options.discardZeroOrNull && (typeof longitude !== 'number' || longitude === 0)) {
+      const time = timeLongitudes !== undefined ? timeLongitudes[i] : 0;
+      throw new Error(`Longitude is null or equal to 0 at time ${new Date(time)} and index ${i + 1}`);
+    }
+    if (!options.discardZeroOrNull && (typeof latitude !== 'number' || latitude === 0)) {
+      const time = timeLatitudes !== undefined ? timeLatitudes[i] : 0;
+      throw new Error(`Latitude is null or equal to 0 at time ${new Date(time)} and at index ${i + 1}`);
+    }
+
+    if (
+      !options.discardZeroOrNull ||
+      (options.discardZeroOrNull &&
+        typeof longitude === 'number' &&
+        typeof latitude === 'number' &&
+        longitude !== 0 &&
+        latitude !== 0)
+    ) {
+      positions.push({
+        latitude,
+        longitude,
+        popup,
+        tooltip,
+      });
+    }
   });
 
   if (!positions || positions.length === 0) {
