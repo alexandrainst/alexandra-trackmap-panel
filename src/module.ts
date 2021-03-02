@@ -6,6 +6,11 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
   return (
     builder
       .addBooleanSwitch({
+        path: 'discardZeroOrNull',
+        name: 'Discard positions that contains null (avoid plugin crash) or exactly 0 (inconsistent) coordinates.',
+        defaultValue: true,
+      })
+      .addBooleanSwitch({
         path: 'map.useCenterFromFirstPos',
         name: 'Map center to first position',
         defaultValue: false,

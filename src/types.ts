@@ -8,6 +8,7 @@ export interface TrackMapOptions {
   heat: HeatOptions;
   marker: MarkerOptions;
   hex: HexOptions;
+  discardZeroOrNull: boolean;
 }
 
 interface Map {
