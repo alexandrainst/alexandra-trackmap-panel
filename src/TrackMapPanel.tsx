@@ -39,62 +39,62 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   }, []);
 
   let latitudes: number[] | undefined = data.series
-    .find(f => f.name === 'latitude' || f.name === 'lat')
-    ?.fields.find(f => f.name === 'Value')
+    .find((f) => f.name === 'latitude' || f.name === 'lat')
+    ?.fields.find((f) => f.name === 'Value')
     ?.values?.toArray();
 
   let longitudes: number[] | undefined = data.series
-    .find(f => f.name === 'longitude' || f.name === 'lon')
-    ?.fields.find(f => f.name === 'Value')
+    .find((f) => f.name === 'longitude' || f.name === 'lon')
+    ?.fields.find((f) => f.name === 'Value')
     ?.values?.toArray();
 
   let intensities: number[] | undefined = data.series
-    .find(f => f.name === 'intensity')
-    ?.fields.find(f => f.name === 'Value')
+    .find((f) => f.name === 'intensity')
+    ?.fields.find((f) => f.name === 'Value')
     ?.values?.toArray();
 
   let markerPopups: string[] | undefined = data.series
-    .find(f => f.name === 'popup' || f.name === 'text' || f.name === 'desc')
-    ?.fields.find(f => f.name === 'Value')
+    .find((f) => f.name === 'popup' || f.name === 'text' || f.name === 'desc')
+    ?.fields.find((f) => f.name === 'Value')
     ?.values?.toArray();
 
   let markerTooltips: string[] | undefined = data.series
-    .find(f => f.name === 'tooltip')
-    ?.fields.find(f => f.name === 'Value')
+    .find((f) => f.name === 'tooltip')
+    ?.fields.find((f) => f.name === 'Value')
     ?.values?.toArray();
 
   if (!latitudes && data.series?.length) {
-    latitudes = data.series[0].fields.find(f => f.name === 'latitude' || f.name === 'lat')?.values.toArray();
+    latitudes = data.series[0].fields.find((f) => f.name === 'latitude' || f.name === 'lat')?.values.toArray();
   }
 
   if (!longitudes && data.series?.length) {
-    longitudes = data.series[0].fields.find(f => f.name === 'longitude' || f.name === 'lon')?.values.toArray();
+    longitudes = data.series[0].fields.find((f) => f.name === 'longitude' || f.name === 'lon')?.values.toArray();
   }
 
   if (!intensities && data.series?.length) {
-    intensities = data.series[0].fields.find(f => f.name === 'intensity')?.values.toArray();
+    intensities = data.series[0].fields.find((f) => f.name === 'intensity')?.values.toArray();
   }
 
   if (!markerPopups && data.series?.length) {
     markerPopups = data.series[0].fields
-      .find(f => f.name === 'popup' || f.name === 'text' || f.name === 'desc')
+      .find((f) => f.name === 'popup' || f.name === 'text' || f.name === 'desc')
       ?.values.toArray();
   }
 
   if (!markerTooltips && data.series?.length) {
-    markerTooltips = data.series[0].fields.find(f => f.name === 'tooltip')?.values.toArray();
+    markerTooltips = data.series[0].fields.find((f) => f.name === 'tooltip')?.values.toArray();
   }
 
   let positions: Position[] = [];
 
   let timeLatitudes: number[] | undefined = data.series
-    .find(f => f.name === 'latitude' || f.name === 'lat')
-    ?.fields.find(f => f.name === 'Time')
+    .find((f) => f.name === 'latitude' || f.name === 'lat')
+    ?.fields.find((f) => f.name === 'Time')
     ?.values?.toArray();
 
   let timeLongitudes: number[] | undefined = data.series
-    .find(f => f.name === 'longitude' || f.name === 'lon')
-    ?.fields.find(f => f.name === 'Time')
+    .find((f) => f.name === 'longitude' || f.name === 'lon')
+    ?.fields.find((f) => f.name === 'Time')
     ?.values?.toArray();
 
   latitudes?.forEach((latitude, i) => {
@@ -245,10 +245,16 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   };
 
   const getBoundsFromPositions = (positions: Position[] | undefined): LatLngBoundsExpression => {
-    const minLon = Math.min(...positions?.map(p => p.longitude));
-    const maxLon = Math.max(...positions?.map(p => p.longitude));
-    const minLat = Math.min(...positions?.map(p => p.latitude));
-    const maxLat = Math.max(...positions?.map(p => p.latitude));
+    if (positions === undefined) {
+      return [
+        [0, 0],
+        [0, 0],
+      ];
+    }
+    const minLon = Math.min(...positions.map((p) => p.longitude));
+    const maxLon = Math.max(...positions.map((p) => p.longitude));
+    const minLat = Math.min(...positions.map((p) => p.latitude));
+    const maxLat = Math.max(...positions.map((p) => p.latitude));
     return [
       [minLat, minLon],
       [maxLat, maxLon],
