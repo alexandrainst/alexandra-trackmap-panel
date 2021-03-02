@@ -24,6 +24,8 @@ artifacts/
 work/
 ci/
 e2e-results/
+dist/CHANGELOG.md
 
 # Editors
 .idea
+.vscode
