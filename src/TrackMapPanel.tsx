@@ -251,10 +251,20 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
         [0, 0],
       ];
     }
-    const minLon = Math.min(...positions.map((p) => p.longitude));
-    const maxLon = Math.max(...positions.map((p) => p.longitude));
-    const minLat = Math.min(...positions.map((p) => p.latitude));
-    const maxLat = Math.max(...positions.map((p) => p.latitude));
+
+    const minLon = positions
+      .map((p) => p.longitude)
+      .reduce((previousValue, currentValue) => Math.min(previousValue, currentValue), 0);
+    const maxLon = positions
+      .map((p) => p.longitude)
+      .reduce((previousValue, currentValue) => Math.max(previousValue, currentValue), 0);
+    const minLat = positions
+      .map((p) => p.latitude)
+      .reduce((previousValue, currentValue) => Math.min(previousValue, currentValue), 0);
+    const maxLat = positions
+      .map((p) => p.latitude)
+      .reduce((previousValue, currentValue) => Math.max(previousValue, currentValue), 0);
+
     return [
       [minLat, minLon],
       [maxLat, maxLon],

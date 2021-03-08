@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 
 node_modules/
+yarn.lock
 
 # Runtime data
 pids

@@ -145,31 +145,29 @@ For more information on Grafana plugins [look here](https://grafana.com/docs/gra
 
 ## Development
 
-To compile the plugin you need either `npm` or `yarn`.
+To compile the plugin you need either `npm` (default) or `yarn`.
 
 ### 1. Install dependencies
 
 ```sh
-yarn install
+npm install
 ```
 
 ### 2. Build plugin in development mode
 
 ```sh
-yarn dev
+npm run-script dev
 ```
 
 or run in watch mode
 
 ```sh
-yarn watch
+npm run-script watch
 ```
 
 ### 3. Build plugin in production mode
 
 ```sh
-yarn build
-#or
 npm run-script build
 ```
 
