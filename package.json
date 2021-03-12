@@ -1,6 +1,6 @@
 {
   "name": "alexandra-trackmap-panel",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "A map plugin to visualise GPS data as markers, hexbin, ant path, or heatmap",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
@@ -12,20 +12,22 @@
   "license": "MIT",
   "devDependencies": {
     "@grafana/data": "^7.4.3",
+    "@grafana/runtime": "^7.4.3",
     "@grafana/toolkit": "^7.4.3",
     "@grafana/ui": "^7.4.3",
-    "@grafana/runtime": "^7.4.3",
-    "emotion": "10.0.27"
+    "@types/d3": "^5.16.4",
+    "@types/d3-hexbin": "^0.2.3",
+    "@types/geojson": "^7946.0.7",
+    "@types/leaflet": "^1.7.0",
+    "@types/react-leaflet": "^2.8.1",
+    "@types/styled-components": "^5.1.8",
+    "emotion": "10.0.27",
+    "typescript": "4.0.2"
   },
   "engines": {
     "node": ">=12 <13"
   },
   "dependencies": {
-    "@types/d3": "^5.7.2",
-    "@types/d3-hexbin": "^0.2.3",
-    "@types/geojson": "^7946.0.7",
-    "@types/leaflet": "^1.5.23",
-    "@types/react-leaflet": "^2.8.0",
     "d3": "^5.16.0",
     "d3-hexbin": "^0.2.2",
     "leaflet": "^1.6.0",
@@ -35,7 +37,8 @@
     "react-leaflet": "^2.8.0",
     "react-leaflet-ant-path": "^1.1.0",
     "react-leaflet-d3": "^2.0.0",
-    "react-leaflet-heatmap-layer": "^2.0.0"
+    "react-leaflet-heatmap-layer": "^2.0.0",
+    "styled-components": "^5.2.1"
   },
   "repository": {
     "type": "git",

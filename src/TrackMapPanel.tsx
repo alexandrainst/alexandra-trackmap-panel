@@ -1,15 +1,15 @@
-import React, { ReactElement, useEffect } from 'react';
-import { PanelProps } from '@grafana/data';
-import { getLocationSrv } from '@grafana/runtime';
-import { TrackMapOptions, Position } from 'types';
+import React, { ReactElement, useEffect, useRef } from 'react';
+import { Labels, PanelProps } from '@grafana/data';
+import { Position, TrackMapOptions, AntData } from 'types';
 import { css, cx } from 'emotion';
-import { stylesFactory } from '@grafana/ui';
-import { FeatureCollection, Feature } from 'geojson';
-import { Map, TileLayer, Marker, Popup, Tooltip, withLeaflet } from 'react-leaflet';
-import { Icon, LeafletEvent, LatLngBounds, LatLngBoundsExpression } from 'leaflet';
+import { Feature, FeatureCollection } from 'geojson';
+import { Map, Marker, Popup, TileLayer, Tooltip, withLeaflet } from 'react-leaflet';
+import { DivIcon, LatLngBounds, LatLngBoundsExpression, LeafletEvent } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
-import { useRef } from 'react';
+import styled from 'styled-components';
+import { getLocationSrv } from '@grafana/runtime';
+import { stylesFactory } from '@grafana/ui';
 
 const AntPath = require('react-leaflet-ant-path').default;
 const HeatmapLayer = require('react-leaflet-heatmap-layer').default;
@@ -17,14 +17,21 @@ const HexbinLayer = require('react-leaflet-d3').HexbinLayer;
 
 interface Props extends PanelProps<TrackMapOptions> {}
 
+const StyledPopup = styled(Popup)`
+  .leaflet-popup-content-wrapper {
+    white-space: pre-wrap;
+  }
+
+  .leaflet-popup-tip-container {
+    visibility: hidden;
+  }
+`;
+
 export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height }) => {
   const styles = getStyles();
   const mapRef = useRef<Map | null>(null);
 
   const WrappedHexbinLayer: any = withLeaflet(HexbinLayer);
-
-  const primaryIcon: string = require('img/marker.png');
-  const secondaryIcon: string = require('img/marker_secondary.png');
 
   useEffect(() => {
     if (mapRef.current !== null) {
@@ -38,37 +45,78 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     // eslint-disable-next-line
   }, []);
 
-  let latitudes: number[] | undefined = data.series
-    .find((f) => f.name === 'latitude' || f.name === 'lat')
-    ?.fields.find((f) => f.name === 'Value')
-    ?.values?.toArray();
+  const getAntPathColorOverridesMemoized = (): (() => { [key: string]: string }) => {
+    let antPathColorOverrides: { [key: string]: string } = {};
+    return () => {
+      if (Object.keys(antPathColorOverrides).length === 0) {
+        if (options.ant.colorOverridesByLabel?.length) {
+          options.ant.colorOverridesByLabel.forEach((labelColor) => {
+            antPathColorOverrides[labelColor.label] = labelColor.color;
+          });
+        }
+      }
+      return antPathColorOverrides;
+    };
+  };
 
-  let longitudes: number[] | undefined = data.series
-    .find((f) => f.name === 'longitude' || f.name === 'lon')
-    ?.fields.find((f) => f.name === 'Value')
-    ?.values?.toArray();
+  const getMarkerHtmlOverridesMemoized = (): (() => { [key: string]: string }) => {
+    let markerHtmlOverrides: { [key: string]: string } = {};
+    return () => {
+      if (Object.keys(markerHtmlOverrides).length === 0) {
+        if (options.marker.markerHtmlByLabel?.length) {
+          options.marker.markerHtmlByLabel.forEach((keyVal) => {
+            markerHtmlOverrides[keyVal.key] = keyVal.value;
+          });
+        }
+      }
+      return markerHtmlOverrides;
+    };
+  };
 
-  let intensities: number[] | undefined = data.series
-    .find((f) => f.name === 'intensity')
-    ?.fields.find((f) => f.name === 'Value')
-    ?.values?.toArray();
+  const getAntPathColorOverrides = getAntPathColorOverridesMemoized();
 
-  let markerPopups: string[] | undefined = data.series
-    .find((f) => f.name === 'popup' || f.name === 'text' || f.name === 'desc')
-    ?.fields.find((f) => f.name === 'Value')
-    ?.values?.toArray();
+  const getMarkerHtmlOverrides = getMarkerHtmlOverridesMemoized();
 
-  let markerTooltips: string[] | undefined = data.series
-    .find((f) => f.name === 'tooltip')
-    ?.fields.find((f) => f.name === 'Value')
-    ?.values?.toArray();
+  let latitudes: number[][] | undefined = data.series
+    .filter((f) => f.name === 'latitude' || f.name === 'lat')
+    ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.values?.toArray() as number[]);
 
-  if (!latitudes && data.series?.length) {
-    latitudes = data.series[0].fields.find((f) => f.name === 'latitude' || f.name === 'lat')?.values.toArray();
-  }
+  let longitudes: number[][] | undefined = data.series
+    .filter((f) => f.name === 'longitude' || f.name === 'lon')
+    ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.values?.toArray() as number[]);
 
-  if (!longitudes && data.series?.length) {
-    longitudes = data.series[0].fields.find((f) => f.name === 'longitude' || f.name === 'lon')?.values.toArray();
+  let timestamps: number[][] | undefined = data.series
+    .filter((f) => f.name === 'latitude' || f.name === 'lat')
+    ?.map((f1) => f1.fields.find((f) => f.name === 'Time')?.values?.toArray() as number[]);
+
+  let labels: Array<Labels | undefined> = data.series
+    .filter((f) => f.name === 'latitude' || f.name === 'lat')
+    ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.labels);
+
+  let liveness: boolean[] = latitudes.map((ls) => ls[ls.length - 1] !== null);
+
+  let intensities: number[][] | undefined = data.series
+    .filter((f) => f.name === 'intensity')
+    ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.values?.toArray() as number[]);
+
+  let markerPopups: string[][] | undefined = data.series
+    .filter((f) => f.name === 'popup' || f.name === 'text' || f.name === 'desc')
+    ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.values?.toArray() as string[]);
+
+  let markerTooltips: string[][] | undefined = data.series
+    .filter((f) => f.name === 'tooltip')
+    ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.values?.toArray() as string[]);
+
+  let iconHtml: Array<string | undefined> | undefined;
+
+  if (labels && labels.length) {
+    iconHtml = labels.map((l: Labels | undefined) => {
+      const overrides = getMarkerHtmlOverrides();
+      if (l && l[options.marker.labelName] && overrides[l[options.marker.labelName]]) {
+        return overrides[l[options.marker.labelName]];
+      }
+      return undefined;
+    });
   }
 
   if (!intensities && data.series?.length) {
@@ -85,103 +133,149 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     markerTooltips = data.series[0].fields.find((f) => f.name === 'tooltip')?.values.toArray();
   }
 
-  let positions: Position[] = [];
+  let positions: Position[][] | undefined = latitudes?.map((lats, index1) => {
+    return lats.map((latitude, index2) => {
+      const longitude =
+        longitudes !== undefined && longitudes.length && longitudes[index1] !== undefined
+          ? longitudes[index1][index2]
+          : 0;
 
-  let timeLatitudes: number[] | undefined = data.series
-    .find((f) => f.name === 'latitude' || f.name === 'lat')
-    ?.fields.find((f) => f.name === 'Time')
-    ?.values?.toArray();
+      const timestamp =
+        timestamps !== undefined && timestamps.length && timestamps[index1] !== undefined
+          ? timestamps[index1][index2]
+          : 0;
 
-  let timeLongitudes: number[] | undefined = data.series
-    .find((f) => f.name === 'longitude' || f.name === 'lon')
-    ?.fields.find((f) => f.name === 'Time')
-    ?.values?.toArray();
+      const trackLabels = labels && labels[index1] ? labels[index1] : undefined;
 
-  latitudes?.forEach((latitude, i) => {
-    const longitude = longitudes !== undefined ? longitudes[i] : 0;
-    const popup = markerPopups !== undefined ? markerPopups[i] : `${latitude}, ${longitude}`;
-    const tooltip = markerTooltips !== undefined ? markerTooltips[i] : undefined;
-
-    if (!options.discardZeroOrNull && (typeof longitude !== 'number' || longitude === 0)) {
-      const time = timeLongitudes !== undefined ? timeLongitudes[i] : 0;
-      throw new Error(`Longitude is null or equal to 0 at time ${new Date(time)} and index ${i + 1}`);
-    }
-    if (!options.discardZeroOrNull && (typeof latitude !== 'number' || latitude === 0)) {
-      const time = timeLatitudes !== undefined ? timeLatitudes[i] : 0;
-      throw new Error(`Latitude is null or equal to 0 at time ${new Date(time)} and at index ${i + 1}`);
-    }
-
-    if (
-      !options.discardZeroOrNull ||
-      (options.discardZeroOrNull &&
-        typeof longitude === 'number' &&
-        typeof latitude === 'number' &&
-        longitude !== 0 &&
-        latitude !== 0)
-    ) {
-      positions.push({
+      const popup =
+        markerPopups !== undefined && markerPopups.length && markerPopups[index1] !== undefined
+          ? markerPopups[index1][index2]
+          : `LatLon: (${latitude}, ${longitude})
+Timestamp: ${timestamp}
+Labels:
+${trackLabels ? JSON.stringify(trackLabels, null, 2) : ''}
+`;
+      const tooltip =
+        markerTooltips !== undefined && markerTooltips.length && markerTooltips[index1] !== undefined
+          ? markerTooltips[index1][index2]
+          : undefined;
+      // const icon = iconNames !== undefined ? iconNames[index1][index2] : undefined;
+      return {
         latitude,
         longitude,
         popup,
         tooltip,
-      });
-    }
+        labels: trackLabels,
+        // icon,
+      };
+    });
   });
 
   if (!positions || positions.length === 0) {
-    positions = [{ latitude: 0, longitude: 0 }];
+    positions = [[{ latitude: 0, longitude: 0 }]];
   }
 
-  const heatData: any[] = [];
-  const antData: number[][] = [];
+  const heatData: any[][] = [];
+  const antData: AntData[] = [];
   const hexData: FeatureCollection = {
     type: 'FeatureCollection',
     features: [],
   };
 
-  positions?.forEach((p, i) => {
-    heatData.push([p.latitude, p.longitude, intensities !== undefined ? intensities[i] : '']);
-    antData.push([p.latitude, p.longitude]);
-    hexData.features.push({
-      type: 'Feature',
-      id: i,
-      geometry: {
-        type: 'Point',
-        coordinates: [p.longitude, p.latitude],
-      },
-    } as Feature);
+  positions?.forEach((ps, i) => {
+    const antDatas: number[][] = [];
+
+    const antOptions = {
+      delay: options.ant.delay,
+      dashArray: [10, 20],
+      weight: options.ant.weight,
+      color: options.ant.color,
+      pulseColor: options.ant.pulseColor,
+      paused: options.ant.paused,
+      reverse: options.ant.reverse,
+    };
+
+    if (options.ant.pauseNonLiveTracks && !liveness[i]) {
+      antOptions.paused = true;
+    }
+
+    const currentLabels = labels[i];
+    if (options.ant.labelName && currentLabels && currentLabels[options.ant.labelName]) {
+      const override = getAntPathColorOverrides()[currentLabels[options.ant.labelName]];
+      if (override) {
+        antOptions.color = override;
+      }
+    }
+
+    const heatDatas: any[] = [];
+    ps.forEach((p) => {
+      // These may be null for alignment purposes in the timeseries data
+      if (p.latitude && p.longitude) {
+        heatDatas.push([p.latitude, p.longitude, intensities !== undefined ? intensities[i] : '']);
+        antDatas.push([p.latitude, p.longitude]);
+        hexData.features.push({
+          type: 'Feature',
+          id: i,
+          geometry: {
+            type: 'Point',
+            coordinates: [p.longitude, p.latitude],
+          },
+        } as Feature);
+      }
+    });
+    heatData.push(heatDatas);
+    antData.push({
+      options: antOptions,
+      data: antDatas,
+    });
   });
 
   const createMarkers = (
-    positions: Position[],
-    useSecondaryIconForAllMarkers: boolean,
-    useSecondaryIconForLastMarker: boolean,
+    positions: Position[][],
     showOnlyLastMarker: boolean,
+    showOnlyLiveTracks: boolean,
     alwaysShowTooltips: boolean
   ): ReactElement[] => {
     let markers: ReactElement[] = [];
     if (positions?.length > 0) {
-      positions.forEach((p, i) => {
-        const isLastPosition = i + 1 === positions?.length;
-        const useSecondaryIcon = useSecondaryIconForAllMarkers || (useSecondaryIconForLastMarker && isLastPosition);
-        const icon: Icon = createIcon(
-          useSecondaryIcon ? secondaryIcon : primaryIcon,
-          isLastPosition ? options.marker.sizeLast : options.marker.size
-        );
-        markers.push(
-          <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.popup}>
-            <Popup>{p.popup}</Popup>
-            {p.tooltip && <Tooltip permanent={alwaysShowTooltips}>{p.tooltip}</Tooltip>}
-          </Marker>
-        );
+      positions.forEach((ps, i) => {
+        ps = ps.filter((p) => p.latitude);
+        ps.forEach((p, j) => {
+          const isLastPosition = j + 1 === ps?.length;
+          let html = options.marker.defaultHtml;
+          if (iconHtml && iconHtml.length) {
+            const maybeHtml = iconHtml[i];
+            if (maybeHtml !== undefined) {
+              html = maybeHtml;
+            }
+          }
+          const icon: DivIcon = createIcon(html, options.marker.size);
+          let shouldShow = true;
+          if (showOnlyLastMarker) {
+            if (!isLastPosition) {
+              shouldShow = false;
+            }
+            if (showOnlyLiveTracks && !liveness[i]) {
+              shouldShow = false;
+            }
+          }
+          if (shouldShow && p.latitude && p.longitude) {
+            markers.push(
+              <Marker key={i + '-' + j} position={[p.latitude, p.longitude]} icon={icon} title={p.popup}>
+                <StyledPopup>{p.popup}</StyledPopup>
+                {p.tooltip && <Tooltip permanent={alwaysShowTooltips}>{p.tooltip}</Tooltip>}
+              </Marker>
+            );
+          }
+        });
       });
     }
-    return showOnlyLastMarker ? [markers[markers.length - 1]] : markers;
+    return markers;
   };
 
-  const createIcon = (url: string, size: number) => {
-    return new Icon({
-      iconUrl: url,
+  const createIcon = (html: string, size: number) => {
+    return new DivIcon({
+      html: html,
       iconSize: [size, size],
       iconAnchor: [size * 0.5, size],
       popupAnchor: [0, -size],
@@ -190,24 +284,12 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
 
   const markers: ReactElement[] = createMarkers(
     positions,
-    options.marker.useSecondaryIconForAllMarkers,
-    options.marker.useSecondaryIconForLastMarker,
     options.marker.showOnlyLastMarker,
+    options.marker.showOnlyLiveTracks,
     options.marker.alwaysShowTooltips
   );
 
-  const antOptions = {
-    delay: options.ant.delay,
-    dashArray: [10, 20],
-    weight: options.ant.weight,
-    color: options.ant.color,
-    pulseColor: options.ant.pulseColor,
-    paused: options.ant.paused,
-    reverse: options.ant.reverse,
-  };
-
   const hexbinOptions = {
-    opacity: options.hex.opacity,
     colorScaleExtent: [1, undefined],
     radiusScaleExtent: [1, undefined],
     colorRange: [options.hex.colorRangeFrom, options.hex.colorRangeTo],
@@ -244,58 +326,61 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     }
   };
 
-  const getBoundsFromPositions = (positions: Position[] | undefined): LatLngBoundsExpression => {
-    if (positions === undefined) {
+  const getBoundsFromPositions = (positions: Position[][] | undefined): LatLngBoundsExpression => {
+    if (positions) {
+      const minLon = Math.min(...positions?.map((ps) => ps.map((p) => p.longitude).flat()).flat());
+      const maxLon = Math.max(...positions?.map((ps) => ps.map((p) => p.longitude).flat()).flat());
+      const minLat = Math.min(...positions?.map((ps) => ps.map((p) => p.latitude).flat()).flat());
+      const maxLat = Math.max(...positions?.map((ps) => ps.map((p) => p.latitude).flat()).flat());
       return [
-        [0, 0],
-        [0, 0],
+        [minLat, minLon],
+        [maxLat, maxLon],
+      ];
+    } else {
+      return [
+        [-180, 180],
+        [-180, 180],
       ];
     }
-
-    const minLon = positions
-      .map((p) => p.longitude)
-      .reduce((previousValue, currentValue) => Math.min(previousValue, currentValue), 0);
-    const maxLon = positions
-      .map((p) => p.longitude)
-      .reduce((previousValue, currentValue) => Math.max(previousValue, currentValue), 0);
-    const minLat = positions
-      .map((p) => p.latitude)
-      .reduce((previousValue, currentValue) => Math.min(previousValue, currentValue), 0);
-    const maxLat = positions
-      .map((p) => p.latitude)
-      .reduce((previousValue, currentValue) => Math.max(previousValue, currentValue), 0);
-
-    return [
-      [minLat, minLon],
-      [maxLat, maxLon],
-    ];
   };
-
   const mapCenter: Position = {
     latitude: options.map.centerLatitude,
     longitude: options.map.centerLongitude,
   };
-
-  if (options.map.useCenterFromFirstPos && positions?.length && positions[0].latitude) {
-    mapCenter.latitude = positions[0].latitude;
-    mapCenter.longitude = positions[0].longitude;
+  if (options.map.useCenterFromFirstPos && positions?.length && positions[0]?.length && positions[0][0].latitude) {
+    mapCenter.latitude = positions[0][0].latitude;
+    mapCenter.longitude = positions[0][0].longitude;
   }
 
-  if (positions?.length) {
-    if (options.map.useCenterFromFirstPos && positions[0].latitude) {
-      mapCenter.latitude = positions[0].latitude;
-      mapCenter.longitude = positions[0].longitude;
+  if (positions?.length && positions[0]?.length && positions[0][0]) {
+    if (options.map.useCenterFromFirstPos && positions[0][0].latitude) {
+      mapCenter.latitude = positions[0][0].latitude;
+      mapCenter.longitude = positions[0][0].longitude;
     }
     if (
       !options.map.useCenterFromFirstPos &&
       options.map.useCenterFromLastPos &&
-      positions[positions.length - 1].latitude
+      positions[0][positions[0].length - 1].latitude
     ) {
-      mapCenter.latitude = positions[positions.length - 1].latitude;
-      mapCenter.longitude = positions[positions.length - 1].longitude;
+      mapCenter.latitude = positions[0][positions.length - 1].latitude;
+      mapCenter.longitude = positions[0][positions.length - 1].longitude;
     }
   }
-
+  let antPaths = null;
+  if (options.viewType === 'ant' || options.viewType === 'ant-marker') {
+    antPaths = antData.map((d, i) => {
+      if (d.data.length && d.data.length > 1) {
+        const popup = positions ? positions[i].find((p) => p.latitude && p.longitude)?.popup : undefined;
+        return (
+          <AntPath key={i} positions={d.data} options={d.options}>
+            {popup ? <StyledPopup>{popup}</StyledPopup> : null}
+          </AntPath>
+        );
+      } else {
+        return null;
+      }
+    });
+  }
   return (
     <div
       className={cx(
@@ -315,9 +400,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
           onMapMoveEnd(event);
         }}
       >
-        {(options.viewType === 'ant' || options.viewType === 'ant-marker') && (
-          <AntPath positions={antData} options={antOptions} />
-        )}
+        {antPaths}
         {options.viewType === 'heat' && (
           <HeatmapLayer
             fitBoundsOnLoad={options.heat.fitBoundsOnLoad}
@@ -331,8 +414,14 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
         {options.viewType === 'hex' && <WrappedHexbinLayer {...hexbinOptions} data={hexData} />}
         {(options.viewType === 'marker' || options.viewType === 'ant-marker') && markers}
         <TileLayer
-          attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution={options.map.tileAttribution}
+          url={options.map.tileUrl}
+          accessToken={options.map.tileAccessToken !== '' ? options.map.tileAccessToken : undefined}
+          maxZoom={25}
+          maxNativeZoom={19}
+          subdomains={
+            options.map.tileSubDomains && options.map.tileSubDomains.length ? options.map.tileSubDomains : undefined
+          }
         />
       </Map>
     </div>
