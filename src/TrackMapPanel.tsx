@@ -332,7 +332,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
         {(options.viewType === 'marker' || options.viewType === 'ant-marker') && markers}
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url={options.map.tileUrlSchema}
         />
       </Map>
     </div>
