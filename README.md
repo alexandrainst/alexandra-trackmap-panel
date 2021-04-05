@@ -113,7 +113,19 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 
 ### Changing marker icons
 
-To change the icons used for the markers, replace the `marker.png` and `marker_secondary.png` files in the `/src/img` folder.
+The default icon for the markers can be customized either globally (as primary and secondary default colors/icons), or for each data item individually.
+
+#### Global marker style defaults
+
+The configuration options for the global default marker styles can be found under "Track Map: Markers" and allow either color adjustments to the default icon or the definition of a custom icon via its URL:
+
+![marker_style_config_global](img/marker-style-config-global.png)
+
+#### Specific marker styles per data item
+
+It is also possible to define the style for each marker individually via the data. For this purpose, the fields `iconColor` or `iconUrl` can be set for an individual data element, which will override the global styles:
+
+![marker_style_config_specific](img/marker-style-config-specific.png)
 
 ### Updating query based on map bounds
 

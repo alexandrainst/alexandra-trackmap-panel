@@ -1,12 +1,12 @@
-import React, { ReactElement, useEffect } from 'react';
-import { PanelProps } from '@grafana/data';
+import React, { ReactElement, useEffect, useMemo } from 'react';
+import { PanelProps, getColorFromHexRgbOrName, getColorForTheme } from '@grafana/data';
 import { getLocationSrv } from '@grafana/runtime';
 import { TrackMapOptions, Position } from 'types';
 import { css, cx } from 'emotion';
-import { stylesFactory } from '@grafana/ui';
+import { stylesFactory, getTheme } from '@grafana/ui';
 import { FeatureCollection, Feature } from 'geojson';
 import { Map, TileLayer, Marker, Popup, Tooltip, withLeaflet } from 'react-leaflet';
-import { Icon, LeafletEvent, LatLngBounds, LatLngBoundsExpression } from 'leaflet';
+import { Icon, LeafletEvent, LatLngBounds, LatLngBoundsExpression, DivIcon, DivIconOptions } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import { useRef } from 'react';
@@ -19,12 +19,10 @@ interface Props extends PanelProps<TrackMapOptions> {}
 
 export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height }) => {
   const styles = getStyles();
+  const theme = getTheme();
   const mapRef = useRef<Map | null>(null);
 
   const WrappedHexbinLayer: any = withLeaflet(HexbinLayer);
-
-  const primaryIcon: string = require('img/marker.png');
-  const secondaryIcon: string = require('img/marker_secondary.png');
 
   useEffect(() => {
     if (mapRef.current !== null) {
@@ -63,6 +61,16 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     ?.fields.find((f) => f.name === 'Value')
     ?.values?.toArray();
 
+    let markerIconColors: string[] | undefined = data.series
+      .find((f) => f.name === 'iconColor')
+      ?.fields.find((f) => f.name === 'Value')
+      ?.values?.toArray();
+
+    let markerIconUrls: string[] | undefined = data.series
+      .find((f) => f.name === 'iconUrl')
+      ?.fields.find((f) => f.name === 'Value')
+      ?.values?.toArray();
+
   if (!latitudes && data.series?.length) {
     latitudes = data.series[0].fields.find((f) => f.name === 'latitude' || f.name === 'lat')?.values.toArray();
   }
@@ -85,6 +93,14 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     markerTooltips = data.series[0].fields.find((f) => f.name === 'tooltip')?.values.toArray();
   }
 
+  if (!markerIconColors && data.series?.length) {
+    markerIconColors = data.series[0].fields.find((f) => f.name === 'iconColor')?.values.toArray();
+  }
+
+  if (!markerIconUrls && data.series?.length) {
+    markerIconUrls = data.series[0].fields.find((f) => f.name === 'iconUrl')?.values.toArray();
+  }
+  
   let positions: Position[] = [];
 
   let timeLatitudes: number[] | undefined = data.series
@@ -101,6 +117,8 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     const longitude = longitudes !== undefined ? longitudes[i] : 0;
     const popup = markerPopups !== undefined ? markerPopups[i] : `${latitude}, ${longitude}`;
     const tooltip = markerTooltips !== undefined ? markerTooltips[i] : undefined;
+    const iconColor = markerIconColors !== undefined ? markerIconColors[i] : undefined;
+    const iconUrl = markerIconUrls !== undefined ? markerIconUrls[i] : undefined;
 
     if (!options.discardZeroOrNull && (typeof longitude !== 'number' || longitude === 0)) {
       const time = timeLongitudes !== undefined ? timeLongitudes[i] : 0;
@@ -124,6 +142,8 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
         longitude,
         popup,
         tooltip,
+        iconColor,
+        iconUrl
       });
     }
   });
@@ -131,7 +151,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   if (!positions || positions.length === 0) {
     positions = [{ latitude: 0, longitude: 0 }];
   }
-
+  
   const heatData: any[] = [];
   const antData: number[][] = [];
   const hexData: FeatureCollection = {
@@ -152,55 +172,52 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     } as Feature);
   });
 
-  const createMarkers = (
-    positions: Position[],
-    useSecondaryIconForAllMarkers: boolean,
-    useSecondaryIconForLastMarker: boolean,
-    showOnlyLastMarker: boolean,
-    alwaysShowTooltips: boolean
-  ): ReactElement[] => {
-    let markers: ReactElement[] = [];
-    if (positions?.length > 0) {
-      positions.forEach((p, i) => {
-        const isLastPosition = i + 1 === positions?.length;
-        const useSecondaryIcon = useSecondaryIconForAllMarkers || (useSecondaryIconForLastMarker && isLastPosition);
-        const icon: Icon = createIcon(
-          useSecondaryIcon ? secondaryIcon : primaryIcon,
-          isLastPosition ? options.marker.sizeLast : options.marker.size
-        );
-        markers.push(
-          <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.popup}>
-            <Popup>{p.popup}</Popup>
-            {p.tooltip && <Tooltip permanent={alwaysShowTooltips}>{p.tooltip}</Tooltip>}
-          </Marker>
-        );
-      });
-    }
-    return showOnlyLastMarker ? [markers[markers.length - 1]] : markers;
-  };
-
-  const createIcon = (url: string, size: number) => {
-    return new Icon({
+  const createIcon = (size: number, url: string|undefined = undefined, color: string|undefined = undefined) => {
+    const svgColor = (color) ? getColorForTheme(color, theme) : '#F2495C';
+    let iconConfig: DivIconOptions = {
       iconUrl: url,
       iconSize: [size, size],
       iconAnchor: [size * 0.5, size],
       popupAnchor: [0, -size],
-    });
+      html: `
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 15 15" >
+          <path stroke="rgba(0,0,0,0.2)" stroke-width="0.5px" fill="${svgColor}" d="
+            M7.5,0C5.1,0,2.2,1.5,2.2,5.3c0,2.6,4.1,8.2,5.3,9.7c1.1-1.5,5.3-7,5.3-9.7C12.8,1.5,9.9,0,7.5,0z
+            M7.5,7.4c-1.3,0-2.3-1-2.3-2.3c0-1.3,1-2.3,2.3-2.3s2.3,1,2.3,2.3C9.8,6.3,8.8,7.4,7.5,7.4z
+          " />
+        </svg>
+      `
+    }
+    return (!!url) ? new Icon(iconConfig) : new DivIcon(iconConfig);
   };
 
-  const markers: ReactElement[] = createMarkers(
-    positions,
-    options.marker.useSecondaryIconForAllMarkers,
-    options.marker.useSecondaryIconForLastMarker,
-    options.marker.showOnlyLastMarker,
-    options.marker.alwaysShowTooltips
-  );
+  const markers: ReactElement[] = useMemo((): ReactElement[] => {
+    let markers: ReactElement[] = [];
+    if (positions?.length > 0) {
+      positions.forEach((p, i) => {
+        const isLastPosition = i + 1 === positions?.length;
+        const useSecondary= options.marker.useSecondaryForAllMarkers || (options.marker.useSecondaryForLastMarker && isLastPosition);
+        const icon: Icon | DivIcon = createIcon(
+          isLastPosition ? options.marker.sizeLast : options.marker.size,
+          p.iconUrl || (!useSecondary ? options.marker.defaultMarkerIconUrl : options.marker.secondaryMarkerIconUrl),
+          p.iconColor || (!useSecondary ? options.marker.defaultMarkerIconColor : options.marker.secondaryMarkerIconColor)
+        );
+        markers.push(
+          <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.popup}>
+            <Popup>{p.popup}</Popup>
+            {p.tooltip && <Tooltip permanent={options.marker.alwaysShowTooltips}>{p.tooltip}</Tooltip>}
+          </Marker>
+        );
+      });
+    }
+    return options.marker.showOnlyLastMarker ? [markers[markers.length - 1]] : markers;
+  }, [positions, options.marker]);
 
   const antOptions = {
     delay: options.ant.delay,
     dashArray: [10, 20],
     weight: options.ant.weight,
-    color: options.ant.color,
+    color: getColorForTheme(options.ant.color, theme),
     pulseColor: options.ant.pulseColor,
     paused: options.ant.paused,
     reverse: options.ant.reverse,

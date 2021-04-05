@@ -39,9 +39,13 @@ interface MarkerOptions {
   size: number;
   sizeLast: number;
   showOnlyLastMarker: boolean;
-  useSecondaryIconForAllMarkers: boolean;
-  useSecondaryIconForLastMarker: boolean;
   alwaysShowTooltips: boolean;
+  defaultMarkerIconColor: string;
+  defaultMarkerIconUrl?: string;
+  secondaryMarkerIconColor: string;
+  secondaryMarkerIconUrl?: string;
+  useSecondaryForAllMarkers: boolean;
+  useSecondaryForLastMarker: boolean;
 }
 
 interface HexOptions {
@@ -57,4 +61,6 @@ export interface Position {
   longitude: number;
   popup?: string;
   tooltip?: string;
+  iconUrl?: string;
+  iconColor?: string;
 }
