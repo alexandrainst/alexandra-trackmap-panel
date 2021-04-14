@@ -19,6 +19,7 @@ interface Map {
   useBoundsInQuery: boolean;
   useCenterFromFirstPos: boolean;
   useCenterFromLastPos: boolean;
+  tileUrlSchema: string;
 }
 
 interface AntOptions {

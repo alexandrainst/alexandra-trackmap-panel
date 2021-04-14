@@ -49,6 +49,11 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
         defaultValue: 10,
         showIf: (config) => !config.map.zoomToDataBounds,
       })
+      .addTextInput({
+        path: 'map.tileUrlSchema',
+        name: 'Custom map tiles URL schema',
+        defaultValue: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+      })
       .addBooleanSwitch({
         path: 'map.useBoundsInQuery',
         name: 'Use map bounds in query',

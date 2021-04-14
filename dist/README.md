@@ -115,6 +115,30 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 
 To change the icons used for the markers, replace the `marker.png` and `marker_secondary.png` files in the `/src/img` folder.
 
+### Changing map style (map tiles)
+
+The tiles that are loaded and displayed within the map can be changed via the "Custom map tiles URL schema" configuration.  
+This allows customization of the style to be used for the map (e.g. streets, satellite or dark):
+
+![heatmap_options](img/heatmap.png)
+
+To make use of this configuration, specify a Tile Server URL (see [schema](https://leafletjs.com/reference-1.7.1.html#tilelayer-url-template)) in the input field.
+
+#### Mapbox
+
+One of the options is to use the [Static Tile API](https://docs.mapbox.com/api/maps/static-tiles/) provided by Mapbox, which provides a variety of styles (and also allows you to create your own).
+
+You can use some [public example styles](https://docs.mapbox.com/api/maps/styles/#mapbox-styles) with the following URL schemes (the [API key](https://docs.mapbox.com/help/getting-started/access-tokens/) has to be exchanged accordingly):
+
+* [*Streets (v11)*](https://studio.mapbox.com/styles/mapbox/streets-v11/):  
+    `https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}?access_token=[YOUR API TOKEN]`
+* [*Satellite (v9)*](https://studio.mapbox.com/styles/mapbox/satellite-v9/):  
+    `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}?access_token=[YOUR API TOKEN]`
+* [*Satellite Streets (v11)*](https://studio.mapbox.com/styles/mapbox/satellite-streets-v11/):  
+    `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/256/{z}/{x}/{y}?access_token=[YOUR API TOKEN]`
+* [*Dark (v10)*](https://studio.mapbox.com/styles/mapbox/dark-v10/):  
+    `https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/256/{z}/{x}/{y}?access_token=[YOUR API TOKEN]`
+
 ### Updating query based on map bounds
 
 To update the query dynamically based on the map bounds turn on `Use map bounds in query`. To use this you must manually add four variables to the dashboard (via settings in the top right corner). Add four variables of type `constant` with names `minLat`, `minLon`, `maxLat`, and `maxLon`. The values can be anything, e.g. 1, 2, 3, 4 - they will be overwritten by the plugin. Remember to save the dashboard. The variables can then be used in a query. Here is an example that limits the query to the bounds of the map:
