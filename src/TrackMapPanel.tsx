@@ -39,12 +39,26 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
   }, []);
 
   let latitudes: number[] | undefined = data.series
-    .find((f) => f.name === 'latitude' || f.name === 'lat')
+    .find(
+      (f) =>
+        f.name === 'latitude' ||
+        f.name === 'lat' ||
+        (options.coordinates.customLatitudeColumnName !== ''
+          ? f.name === options.coordinates.customLatitudeColumnName
+          : false)
+    )
     ?.fields.find((f) => f.name === 'Value')
     ?.values?.toArray();
 
   let longitudes: number[] | undefined = data.series
-    .find((f) => f.name === 'longitude' || f.name === 'lon')
+    .find(
+      (f) =>
+        f.name === 'longitude' ||
+        f.name === 'lon' ||
+        (options.coordinates.customLongitudeColumnName !== ''
+          ? f.name === options.coordinates.customLongitudeColumnName
+          : false)
+    )
     ?.fields.find((f) => f.name === 'Value')
     ?.values?.toArray();
 
@@ -64,11 +78,29 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
     ?.values?.toArray();
 
   if (!latitudes && data.series?.length) {
-    latitudes = data.series[0].fields.find((f) => f.name === 'latitude' || f.name === 'lat')?.values.toArray();
+    latitudes = data.series[0].fields
+      .find(
+        (f) =>
+          f.name === 'latitude' ||
+          f.name === 'lat' ||
+          (options.coordinates.customLatitudeColumnName !== ''
+            ? f.name === options.coordinates.customLatitudeColumnName
+            : false)
+      )
+      ?.values.toArray();
   }
 
   if (!longitudes && data.series?.length) {
-    longitudes = data.series[0].fields.find((f) => f.name === 'longitude' || f.name === 'lon')?.values.toArray();
+    longitudes = data.series[0].fields
+      .find(
+        (f) =>
+          f.name === 'longitude' ||
+          f.name === 'lon' ||
+          (options.coordinates.customLongitudeColumnName !== ''
+            ? f.name === options.coordinates.customLongitudeColumnName
+            : false)
+      )
+      ?.values.toArray();
   }
 
   if (!intensities && data.series?.length) {

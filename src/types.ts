@@ -5,6 +5,7 @@ export interface TrackMapOptions {
   map: Map;
   viewType: ViewType;
   ant: AntOptions;
+  coordinates: CoordinateOptions;
   heat: HeatOptions;
   marker: MarkerOptions;
   hex: HexOptions;
@@ -20,6 +21,11 @@ interface Map {
   useCenterFromFirstPos: boolean;
   useCenterFromLastPos: boolean;
   tileUrlSchema: string;
+}
+
+interface CoordinateOptions {
+  customLatitudeColumnName: string;
+  customLongitudeColumnName: string;
 }
 
 interface AntOptions {
