@@ -5,6 +5,16 @@ import { TrackMapOptions } from './types';
 export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOptions((builder) => {
   return (
     builder
+      .addTextInput({
+        path: 'coordinates.customLatitudeColumnName',
+        name: 'Custom latitude column name',
+        defaultValue: '',
+      })
+      .addTextInput({
+        path: 'coordinates.customLongitudeColumnName',
+        name: 'Custom latitude column name',
+        defaultValue: '',
+      })
       .addBooleanSwitch({
         path: 'discardZeroOrNull',
         name: 'Discard positions that contains null (avoid plugin crash) or exactly 0 (inconsistent) coordinates.',
@@ -52,7 +62,7 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
       .addTextInput({
         path: 'map.tileUrlSchema',
         name: 'Custom map tiles URL schema',
-        defaultValue: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        defaultValue: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       })
       .addBooleanSwitch({
         path: 'map.useBoundsInQuery',
