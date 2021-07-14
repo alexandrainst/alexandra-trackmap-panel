@@ -164,9 +164,11 @@ GROUP BY clusters
 
 If you are running Grafana locally, you can clone or download the repository directly into the plugin directory, reset the Grafana server, and the plugin should get detected automatically.
 
-If you are using Docker, follow the command line below (Replace image_name with you own docker instance name).
+If you are using Docker, a guide can be [found here](https://grafana.com/docs/grafana/latest/installation/docker/#installing-plugins-from-other-sources). Use the zip file: https://github.com/alexandrainst/alexandra-trackmap-panel/archive/refs/heads/master.zip
+
+Another example of installing the plugin in docker (Replace grafana_image_name with your own image name).
 ```sh
-sudo docker exec -it -u root image_name bash
+sudo docker exec -it -u root grafana_image_name sh
 # Add git and npm inside docker image
 apk add git
 # Enter plugins folder
@@ -176,7 +178,7 @@ git clone https://github.com/alexandrainst/alexandra-trackmap-panel.git
 # Exit the docker image
 exit
 # Restart the grafana docker image
-sudo docker restart image_name
+sudo docker restart grafana_image_name
 ```
 
 For more information on Grafana plugins [look here](https://grafana.com/docs/grafana/latest/plugins/).
