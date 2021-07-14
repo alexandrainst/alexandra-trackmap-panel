@@ -168,7 +168,7 @@ If you are using Docker, a guide can be [found here](https://grafana.com/docs/gr
 
 `-e "GF_INSTALL_PLUGINS=https://github.com/alexandrainst/alexandra-trackmap-panel/archive/refs/heads/master.zip" \`
 
-Another example of installing the plugin in docker (Replace grafana_image_name with your own image name).
+Another example of installing the plug-in in Docker (Replace `grafana_image_name` with your own image name).
 ```sh
 sudo docker exec -it -u root grafana_image_name sh
 # Add git and npm inside docker image
