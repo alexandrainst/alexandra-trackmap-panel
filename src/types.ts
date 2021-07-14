@@ -1,3 +1,7 @@
+import { Labels } from '@grafana/data';
+import { LabelColor } from './colorMapEditor';
+import { KeyValue } from './stringMapEditor';
+
 type ViewType = 'ant' | 'hex' | 'heat' | 'marker' | 'ant-marker';
 
 export interface TrackMapOptions {
@@ -13,6 +17,10 @@ export interface TrackMapOptions {
 }
 
 interface Map {
+  tileUrl: string;
+  tileAttribution: string;
+  tileAccessToken: string;
+  tileSubDomains: string[];
   centerLatitude: number;
   centerLongitude: number;
   zoomToDataBounds: boolean;
@@ -28,13 +36,21 @@ interface CoordinateOptions {
   customLongitudeColumnName: string;
 }
 
-interface AntOptions {
+export interface AntOptions {
   delay: number;
   weight: number;
   color: string;
   pulseColor: string;
   paused: boolean;
+  pauseNonLiveTracks: boolean;
+  labelName: string;
+  colorOverridesByLabel: LabelColor[];
   reverse: boolean;
+}
+
+export interface AntData {
+  options: any;
+  data: number[][];
 }
 
 interface HeatOptions {
@@ -44,11 +60,12 @@ interface HeatOptions {
 
 interface MarkerOptions {
   size: number;
-  sizeLast: number;
   showOnlyLastMarker: boolean;
-  useSecondaryIconForAllMarkers: boolean;
-  useSecondaryIconForLastMarker: boolean;
+  showOnlyLiveTracks: boolean;
   alwaysShowTooltips: boolean;
+  defaultHtml: string;
+  labelName: string;
+  markerHtmlByLabel: KeyValue[];
 }
 
 interface HexOptions {
@@ -64,4 +81,6 @@ export interface Position {
   longitude: number;
   popup?: string;
   tooltip?: string;
+  icon?: string;
+  labels?: Labels;
 }

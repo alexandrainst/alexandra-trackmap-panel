@@ -2,3 +2,8 @@
     height: 100%;
     width: 100%;
 }
+
+.leaflet-div-icon {
+  border: none !important;
+  background: transparent  !important;
+}
