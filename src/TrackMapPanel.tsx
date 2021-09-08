@@ -10,6 +10,7 @@ import { Icon, LeafletEvent, LatLngBounds, LatLngBoundsExpression } from 'leafle
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import { useRef } from 'react';
+import ReactHtmlParser from 'react-html-parser';
 
 const AntPath = require('react-leaflet-ant-path').default;
 const HeatmapLayer = require('react-leaflet-heatmap-layer').default;
@@ -202,7 +203,7 @@ export const TrackMapPanel: React.FC<Props> = ({ options, data, width, height })
         );
         markers.push(
           <Marker key={i} position={[p.latitude, p.longitude]} icon={icon} title={p.popup}>
-            <Popup>{p.popup}</Popup>
+            <Popup>{ReactHtmlParser(p.popup || '')}</Popup>
             {p.tooltip && <Tooltip permanent={alwaysShowTooltips}>{p.tooltip}</Tooltip>}
           </Marker>
         );
