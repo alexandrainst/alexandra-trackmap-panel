@@ -12,7 +12,7 @@ export const plugin = new PanelPlugin<TrackMapOptions>(TrackMapPanel).setPanelOp
       })
       .addTextInput({
         path: 'coordinates.customLongitudeColumnName',
-        name: 'Custom latitude column name',
+        name: 'Custom longitude column name',
         defaultValue: '',
       })
       .addBooleanSwitch({
