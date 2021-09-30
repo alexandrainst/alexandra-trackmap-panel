@@ -20,7 +20,7 @@ interface Map {
   tileUrl: string;
   tileAttribution: string;
   tileAccessToken: string;
-  tileSubDomains: string[];
+  tileSubdomains: string[];
   centerLatitude: number;
   centerLongitude: number;
   zoomToDataBounds: boolean;
