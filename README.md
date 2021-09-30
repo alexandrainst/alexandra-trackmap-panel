@@ -120,7 +120,7 @@ To change the icons used for the markers, replace the `marker.png` and `marker_s
 The tiles that are loaded and displayed within the map can be changed via the "Custom map tiles URL schema" configuration.  
 This allows customization of the style to be used for the map (e.g. streets, satellite or dark):
 
-![heatmap_options](img/map-tiles-config.png)
+![map_tiles_config](img/map_tiles_config.png)
 
 To make use of this configuration, specify a Tile Server URL (see [schema](https://leafletjs.com/reference-1.7.1.html#tilelayer-url-template)) in the input field.
 On the OpenStreetMap Wiki there is a list of [publicly available tile servers](https://wiki.openstreetmap.org/wiki/Tile_servers).
