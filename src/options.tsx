@@ -211,13 +211,48 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         defaultValue: 25,
         showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
       })
+      .addNumberInput({
+        category: ['Markers'],
+        path: 'marker.sizeLast',
+        name: 'Size of last marker',
+        defaultValue: 25,
+        showIf: (config) => config.viewType === 'marker' || config.viewType === 'ant-marker',
+      })
+      .addBooleanSwitch({
+        category: ['Markers'],
+        path: 'marker.showOnlyLastMarker',
+        name: 'Show only last marker',
+        defaultValue: false,
+        showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
+      })
+      .addBooleanSwitch({
+        category: ['Markers'],
+        path: 'marker.useSecondaryIconForLastMarker',
+        name: 'Use secondary icon for last marker',
+        defaultValue: false,
+        showIf: (config) => config.viewType === 'marker' || config.viewType === 'ant-marker',
+      })
+      .addBooleanSwitch({
+        category: ['Markers'],
+        path: 'marker.useSecondaryIconForAllMarkers',
+        name: 'Use secondary icon for all markers',
+        defaultValue: false,
+        showIf: (config) => config.viewType === 'marker' || config.viewType === 'ant-marker',
+      })
+      .addBooleanSwitch({
+        category: ['Markers'],
+        path: 'marker.useHTMLForMarkers',
+        name: 'Use HTML for markers',
+        defaultValue: false,
+        showIf: (config) => config.viewType === 'marker' || config.viewType === 'ant-marker',
+      })
       .addTextInput({
         category: ['Markers'],
         path: 'marker.defaultHtml',
         name: 'Default marker HTML',
         description: 'If the timeseries does not have a label with the key from the "Override label", the default marker will be used',
         defaultValue: `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25px" height="25px" viewBox="0 0 25 25" version="1.1"><g id="surface1"><path style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,50%,50%);fill-opacity:0.8;" d="M 12.515625 0 L 12.480469 0 C 8.164062 0 4.652344 3.511719 4.652344 7.828125 C 4.652344 10.65625 5.941406 14.386719 8.480469 18.921875 C 10.363281 22.285156 12.273438 24.859375 12.292969 24.882812 C 12.347656 24.957031 12.429688 24.996094 12.519531 24.996094 C 12.523438 24.996094 12.523438 24.996094 12.527344 24.996094 C 12.617188 24.996094 12.703125 24.949219 12.753906 24.871094 C 12.773438 24.84375 14.667969 21.980469 16.539062 18.476562 C 19.066406 13.75 20.347656 10.164062 20.347656 7.828125 C 20.347656 3.511719 16.832031 0 12.515625 0 Z M 16.128906 8.019531 C 16.128906 10.019531 14.5 11.648438 12.5 11.648438 C 10.496094 11.648438 8.867188 10.019531 8.867188 8.019531 C 8.867188 6.015625 10.496094 4.386719 12.5 4.386719 C 14.5 4.386719 16.128906 6.015625 16.128906 8.019531 Z M 16.128906 8.019531 "/></g></svg>`,
-        showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
+        showIf: config => (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers,
       })
       .addTextInput({
         category: ['Markers'],
@@ -225,7 +260,7 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         name: 'Override label',
         description: 'If a timeseries has a label with this key, it will be used to lookup an alternative HTML marker based on the label value',
         defaultValue: '',
-        showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
+        showIf: config => (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers,
       })
       .addCustomEditor({
         category: ['Markers'],
@@ -234,14 +269,7 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         name: 'Marker HTML overrides by label',
         editor: StringMapEditor as any,
         defaultValue: [],
-        showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
-      })
-      .addBooleanSwitch({
-        category: ['Markers'],
-        path: 'marker.showOnlyLastMarker',
-        name: 'Show only last marker',
-        defaultValue: false,
-        showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
+        showIf: config => (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers,
       })
       //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
       /*.addBooleanSwitch({

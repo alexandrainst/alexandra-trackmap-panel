@@ -35984,6 +35984,11 @@ var TrackMapPanel = function TrackMapPanel(_a) {
   var styles = getStyles();
   var mapRef = Object(react__WEBPACK_IMPORTED_MODULE_1__["useRef"])(null);
   var WrappedHexbinLayer = Object(react_leaflet__WEBPACK_IMPORTED_MODULE_3__["withLeaflet"])(HexbinLayer);
+
+  var primaryIcon = __webpack_require__(/*! img/marker.png */ "./img/marker.png");
+
+  var secondaryIcon = __webpack_require__(/*! img/marker_secondary.png */ "./img/marker_secondary.png");
+
   Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
     if (mapRef.current !== null) {
       if (options.map.zoomToDataBounds) {
@@ -36227,11 +36232,23 @@ var TrackMapPanel = function TrackMapPanel(_a) {
       options: antOptions,
       data: antDatas
     });
-  }); //TODO: Fix
+  }); //TODO: DivIcon does not scale to size
 
-  var createIcon = function createIcon(html, size) {
+  var createDivIcon = function createDivIcon(html, size) {
     return new leaflet__WEBPACK_IMPORTED_MODULE_4__["DivIcon"]({
-      html: html
+      html: html,
+      iconSize: [size, size],
+      iconAnchor: [size * 0.5, size],
+      popupAnchor: [0, -size]
+    });
+  };
+
+  var createIcon = function createIcon(url, size) {
+    return new leaflet__WEBPACK_IMPORTED_MODULE_4__["Icon"]({
+      iconUrl: url,
+      iconSize: [size, size],
+      iconAnchor: [size * 0.5, size],
+      popupAnchor: [0, -size]
     });
   };
 
@@ -36241,7 +36258,8 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     if (positions && positions.length > 0) {
       positions.forEach(function (positionSeries, i) {
         positionSeries.forEach(function (position, j) {
-          //TODO: Test
+          var isLastPosition = j + 1 === positionSeries.length;
+          var useSecondaryIcon = options.marker.useSecondaryIconForAllMarkers || options.marker.useSecondaryIconForLastMarker && isLastPosition;
           var html = options.marker.defaultHtml;
 
           if (iconHtml && iconHtml.length) {
@@ -36252,8 +36270,12 @@ var TrackMapPanel = function TrackMapPanel(_a) {
             }
           }
 
-          var icon = createIcon(html, options.marker.size);
-          var isLastPosition = j + 1 === positionSeries.length;
+          var icon = createDivIcon(html, options.marker.size);
+
+          if (!options.marker.useHTMLForMarkers) {
+            icon = createIcon(useSecondaryIcon ? secondaryIcon : primaryIcon, isLastPosition ? options.marker.sizeLast : options.marker.size);
+          }
+
           var shouldHide = options.marker.showOnlyLastMarker && !isLastPosition; //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
 
           /*if (options.marker.showOnlyLiveTracks && !liveness[i]) {
@@ -36266,7 +36288,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
               position: [position.latitude, position.longitude],
               icon: icon,
               title: position.popup
-            }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_3__["Popup"], null, react_html_parser__WEBPACK_IMPORTED_MODULE_10___default()(position.popup || '')), position.tooltip && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_3__["Tooltip"], {
+            }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(StyledPopup, null, react_html_parser__WEBPACK_IMPORTED_MODULE_10___default()(position.popup || '')), position.tooltip && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_3__["Tooltip"], {
               permanent: options.marker.alwaysShowTooltips
             }, position.tooltip)));
           }
@@ -36632,6 +36654,28 @@ var templateObject_1, templateObject_2, templateObject_3, templateObject_4;
 
 /***/ }),
 
+/***/ "./img/marker.png":
+/*!************************!*\
+  !*** ./img/marker.png ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAEGWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgZXhpZjpQaXhlbFhEaW1lbnNpb249IjY0IgogICBleGlmOlBpeGVsWURpbWVuc2lvbj0iNjQiCiAgIHRpZmY6SW1hZ2VXaWR0aD0iNjQiCiAgIHRpZmY6SW1hZ2VMZW5ndGg9IjY0IgogICB0aWZmOlJlc29sdXRpb25Vbml0PSIyIgogICB0aWZmOlhSZXNvbHV0aW9uPSIzMDAuMCIKICAgdGlmZjpZUmVzb2x1dGlvbj0iMzAwLjAiCiAgIHhtcDpNb2RpZnlEYXRlPSIyMDIwLTA4LTIwVDE0OjEzKzAyOjAwIgogICB4bXA6TWV0YWRhdGFEYXRlPSIyMDIwLTA4LTIwVDE0OjEzKzAyOjAwIj4KICAgPHhtcE1NOkhpc3Rvcnk+CiAgICA8cmRmOlNlcT4KICAgICA8cmRmOmxpCiAgICAgIHN0RXZ0OmFjdGlvbj0icHJvZHVjZWQiCiAgICAgIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFmZmluaXR5IFBob3RvIChKdW4gMTYgMjAxOSkiCiAgICAgIHN0RXZ0OndoZW49IjIwMjAtMDgtMjBUMTQ6MTMrMDI6MDAiLz4KICAgIDwvcmRmOlNlcT4KICAgPC94bXBNTTpIaXN0b3J5PgogIDwvcmRmOkRlc2NyaXB0aW9uPgogPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KPD94cGFja2V0IGVuZD0iciI/PrF4eFcAAAGCaUNDUHNSR0IgSUVDNjE5NjYtMi4xAAAokXWR3yuDURjHPxuamCguXCwtjatNM7W4USahltZMGW62136o/Xh73y0tt8qtosSNXxf8Bdwq10oRKbly4Zq4Qa/n3dSW7Dk95/mc7znP0znPAWsko2T1Ri9kcwUtPBlwzkcXnLZnbDiw04MlpujqWCgUpK593GEx443HrFX/3L/WupzQFbA0C48qqlYQnhIOrhZUk7eFu5R0bFn4VNityQWFb009XuEXk1MV/jJZi4THwdoh7EzVcLyGlbSWFZaX48pmisrvfcyX2BO5uVmJveIOdMJMEsDJNBOM42eQEZn9ePAxICvq5HvL+TPkJVeRWaWExgop0hRwi1qU6gmJSdETMjKUzP7/7aueHPJVqtsD0PRkGG99YNuC703D+Dw0jO8jaHiEi1w1P38Aw++ib1Y11z60r8PZZVWL78D5BnQ/qDEtVpYaxK3JJLyeQFsUOq+hZbHSs999ju8hsiZfdQW7e9Av59uXfgAfamfFXaH5tAAAAAlwSFlzAAAuIwAALiMBeKU/dgAABJ5JREFUeJzlm12IVVUUx3/Z2AaTXvLJ0JcsCl8kX8oehEhOAwOVSkhPfVAPFUjQCEUUUYEpQd/fZVaQhpPiB7KVBA0cehDGwnpIypA+HCxTMts1dXs4e2ScufeeddZeZ1/B3+O9a//vOv9Z55y9194DFzgX5fiRUDADuAm4FbgBmAvMAC4GWjHsX+AkcAQ4CGwFdjjPWJO5NWpAKJgPPA0MANMVEseBd4GXnedHy9zGacSAUHAFsBG40UjyFPCQ83xopHcWcwNCwSPAasrytmYIuMd5TlkJmhkQCqYBnwOLrDQ7sB8onOcPCzETA0JBH3AIuNpCT8BeoN95zqQKTUsVCAXTga/Jd/EAi4H3LYSSDQA+Ba4y0KnLHaHgzlSRpFsgFCylfDDVYQTYBOwGjlK+6mYBc4AlwHJggVDrJDA/5RWpNiAUzAR+AS4VDjkMDDrPFoH27cAaYJ5A9x3nuU+YwxRSboFVyC9+J7BQcvEAzrMZWBjHVXFXKJgrzGMKKQY8IIzbCQzUfXfH+AGqTegDButoT0RlQChYBFwuCD0MrHCe/zS/E8etiDrdWKrRB30FPCiMG0ydtcXxqyrCZoeCKzX6WgOuE8SMSO/5KuIzYaQibLFGW2vAbEHMJqV2J6pet1kNmCmI2a3U1uplNUAy7qhSW6s3SyNqMRXuxPHMeqMaUa0BreoQ3V8kQS+rAZL3+hyltlYvqwGSZsQSpbZW75hGVGvAD4KY5UrtTiyr+H6vRlRrwLAgZkEouE2pfw5xddhtiTwGbNdoaw14XRi3NhRcpvwNAOL4NRVh+5znd42+ygDnOYjsnpsHbIgN09rEcRuo7guoZ50p84AXhXH9wPa6lRDjd8Tx3WiBfs2RYsALwN/C2H7gQLyXK4mttgPALYLwbc7zszCPKaT2BN8D7q45bIRyYdOpJ7gMeU8Q4Hrn+aJmDmdJNeBa4Cua2QWS8Jnz3JwikLQWcJ5vgOdSNBJ5NlUgeWcoFDjKsr4mVasmw86nb8MlrwadJwD3IlsfWPKUhYjJcth59gOvWmgJ2eo83kLIsh/wKLI1QipngJVWYmYGOM9p4H4rvS6sdp4jVmKmHSHn2QWst9ScxHdUrwtq0URL7GGUa3MBK53nL0tBcwOc5wTyjZM67HFet+TtRiNNUecZAvYYyz5mrAc02xW2THhbyny/G40ZEBO22BprAY8b6LSlyQqAMvHUGeJG5/nSIpl2NGqA8xwCPkqQGAOeMEqnLU1XAMCTyBsnk1nvPN9aJjOZxg2Is7a3lMOfN0ylLTkqAOAZ4HTNMftiv6FRshjgPMeQN1HHeaOJXCaTqwIA1gInhLGj1D9/qCKbAXHjQrqQWee8+sFZi5wVAPAS5eHKbrSANzPkAmQ2wHn+pPwPkm7scp7vc+QD+SsA4G3oeoFZHn7jZDfAef6h8/v9N8rtsGz0ogIA1gG/tvl8KBqUjZ4YEJ8Fr7X56uPcufSqAgBegXPaWz+hPOWRQs8McJ5R4IMJH32iPVSdQi8rAMqH4fiRu+zlf14QCoZDUXkcvjH6evXDE9gCaeeIUjgfDNgMXNLrJC5Y/geuuwnM5Se1VgAAAABJRU5ErkJggg=="
+
+/***/ }),
+
+/***/ "./img/marker_secondary.png":
+/*!**********************************!*\
+  !*** ./img/marker_secondary.png ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAFTGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgZXhpZjpQaXhlbFhEaW1lbnNpb249IjY0IgogICBleGlmOlBpeGVsWURpbWVuc2lvbj0iNjQiCiAgIGV4aWY6Q29sb3JTcGFjZT0iMSIKICAgdGlmZjpJbWFnZUxlbmd0aD0iNjQiCiAgIHRpZmY6SW1hZ2VXaWR0aD0iNjQiCiAgIHRpZmY6UmVzb2x1dGlvblVuaXQ9IjIiCiAgIHRpZmY6WFJlc29sdXRpb249IjMwMC4wIgogICB0aWZmOllSZXNvbHV0aW9uPSIzMDAuMCIKICAgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyMC0xMS0wNFQxNTo0NjoyMiswMTowMCIKICAgeG1wOk1vZGlmeURhdGU9IjIwMjAtMTEtMDRUMTU6NDY6MjIrMDE6MDAiCiAg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"
+
+/***/ }),
+
 /***/ "./leaflet.css":
 /*!*********************!*\
   !*** ./leaflet.css ***!
@@ -36913,31 +36957,11 @@ var optionsBuilder = function optionsBuilder(builder) {
     showIf: function showIf(config) {
       return config.viewType === 'marker' || config.viewType === 'ant-marker';
     }
-  }).addTextInput({
+  }).addNumberInput({
     category: ['Markers'],
-    path: 'marker.defaultHtml',
-    name: 'Default marker HTML',
-    description: 'If the timeseries does not have a label with the key from the "Override label", the default marker will be used',
-    defaultValue: "<?xml version=\"1.0\" encoding=\"UTF-8\"?><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"25px\" height=\"25px\" viewBox=\"0 0 25 25\" version=\"1.1\"><g id=\"surface1\"><path style=\" stroke:none;fill-rule:nonzero;fill:rgb(100%,50%,50%);fill-opacity:0.8;\" d=\"M 12.515625 0 L 12.480469 0 C 8.164062 0 4.652344 3.511719 4.652344 7.828125 C 4.652344 10.65625 5.941406 14.386719 8.480469 18.921875 C 10.363281 22.285156 12.273438 24.859375 12.292969 24.882812 C 12.347656 24.957031 12.429688 24.996094 12.519531 24.996094 C 12.523438 24.996094 12.523438 24.996094 12.527344 24.996094 C 12.617188 24.996094 12.703125 24.949219 12.753906 24.871094 C 12.773438 24.84375 14.667969 21.980469 16.539062 18.476562 C 19.066406 13.75 20.347656 10.164062 20.347656 7.828125 C 20.347656 3.511719 16.832031 0 12.515625 0 Z M 16.128906 8.019531 C 16.128906 10.019531 14.5 11.648438 12.5 11.648438 C 10.496094 11.648438 8.867188 10.019531 8.867188 8.019531 C 8.867188 6.015625 10.496094 4.386719 12.5 4.386719 C 14.5 4.386719 16.128906 6.015625 16.128906 8.019531 Z M 16.128906 8.019531 \"/></g></svg>",
-    showIf: function showIf(config) {
-      return config.viewType === 'marker' || config.viewType === 'ant-marker';
-    }
-  }).addTextInput({
-    category: ['Markers'],
-    path: 'marker.labelName',
-    name: 'Override label',
-    description: 'If a timeseries has a label with this key, it will be used to lookup an alternative HTML marker based on the label value',
-    defaultValue: '',
-    showIf: function showIf(config) {
-      return config.viewType === 'marker' || config.viewType === 'ant-marker';
-    }
-  }).addCustomEditor({
-    category: ['Markers'],
-    id: 'marker.markerHtmlByLabel',
-    path: 'marker.markerHtmlByLabel',
-    name: 'Marker HTML overrides by label',
-    editor: _stringMapEditor__WEBPACK_IMPORTED_MODULE_2__["default"],
-    defaultValue: [],
+    path: 'marker.sizeLast',
+    name: 'Size of last marker',
+    defaultValue: 25,
     showIf: function showIf(config) {
       return config.viewType === 'marker' || config.viewType === 'ant-marker';
     }
@@ -36948,6 +36972,58 @@ var optionsBuilder = function optionsBuilder(builder) {
     defaultValue: false,
     showIf: function showIf(config) {
       return config.viewType === 'marker' || config.viewType === 'ant-marker';
+    }
+  }).addBooleanSwitch({
+    category: ['Markers'],
+    path: 'marker.useSecondaryIconForLastMarker',
+    name: 'Use secondary icon for last marker',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+    }
+  }).addBooleanSwitch({
+    category: ['Markers'],
+    path: 'marker.useSecondaryIconForAllMarkers',
+    name: 'Use secondary icon for all markers',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+    }
+  }).addBooleanSwitch({
+    category: ['Markers'],
+    path: 'marker.useHTMLForMarkers',
+    name: 'Use HTML for markers',
+    defaultValue: false,
+    showIf: function showIf(config) {
+      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+    }
+  }).addTextInput({
+    category: ['Markers'],
+    path: 'marker.defaultHtml',
+    name: 'Default marker HTML',
+    description: 'If the timeseries does not have a label with the key from the "Override label", the default marker will be used',
+    defaultValue: "<?xml version=\"1.0\" encoding=\"UTF-8\"?><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"25px\" height=\"25px\" viewBox=\"0 0 25 25\" version=\"1.1\"><g id=\"surface1\"><path style=\" stroke:none;fill-rule:nonzero;fill:rgb(100%,50%,50%);fill-opacity:0.8;\" d=\"M 12.515625 0 L 12.480469 0 C 8.164062 0 4.652344 3.511719 4.652344 7.828125 C 4.652344 10.65625 5.941406 14.386719 8.480469 18.921875 C 10.363281 22.285156 12.273438 24.859375 12.292969 24.882812 C 12.347656 24.957031 12.429688 24.996094 12.519531 24.996094 C 12.523438 24.996094 12.523438 24.996094 12.527344 24.996094 C 12.617188 24.996094 12.703125 24.949219 12.753906 24.871094 C 12.773438 24.84375 14.667969 21.980469 16.539062 18.476562 C 19.066406 13.75 20.347656 10.164062 20.347656 7.828125 C 20.347656 3.511719 16.832031 0 12.515625 0 Z M 16.128906 8.019531 C 16.128906 10.019531 14.5 11.648438 12.5 11.648438 C 10.496094 11.648438 8.867188 10.019531 8.867188 8.019531 C 8.867188 6.015625 10.496094 4.386719 12.5 4.386719 C 14.5 4.386719 16.128906 6.015625 16.128906 8.019531 Z M 16.128906 8.019531 \"/></g></svg>",
+    showIf: function showIf(config) {
+      return (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers;
+    }
+  }).addTextInput({
+    category: ['Markers'],
+    path: 'marker.labelName',
+    name: 'Override label',
+    description: 'If a timeseries has a label with this key, it will be used to lookup an alternative HTML marker based on the label value',
+    defaultValue: '',
+    showIf: function showIf(config) {
+      return (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers;
+    }
+  }).addCustomEditor({
+    category: ['Markers'],
+    id: 'marker.markerHtmlByLabel',
+    path: 'marker.markerHtmlByLabel',
+    name: 'Marker HTML overrides by label',
+    editor: _stringMapEditor__WEBPACK_IMPORTED_MODULE_2__["default"],
+    defaultValue: [],
+    showIf: function showIf(config) {
+      return (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers;
     }
   }) //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
 

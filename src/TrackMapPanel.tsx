@@ -4,7 +4,7 @@ import { Position, TrackMapOptions, AntData } from 'types';
 import { css, cx } from 'emotion';
 import { Feature, FeatureCollection } from 'geojson';
 import { Map, Marker, Popup, TileLayer, Tooltip, withLeaflet } from 'react-leaflet';
-import { DivIcon, LatLngBounds, LatLngBoundsExpression, LeafletEvent } from 'leaflet';
+import { DivIcon, Icon, LatLngBounds, LatLngBoundsExpression, LeafletEvent } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
@@ -31,6 +31,9 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
   const mapRef = useRef<Map | null>(null);
 
   const WrappedHexbinLayer: any = withLeaflet(HexbinLayer);
+
+  const primaryIcon: string = require('img/marker.png');
+  const secondaryIcon: string = require('img/marker_secondary.png');
 
   useEffect(() => {
     if (mapRef.current !== null) {
@@ -230,15 +233,25 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     });
   });
 
-  //TODO: Fix
-  const createIcon = (html: string, size: number) => {
+  //TODO: DivIcon does not scale to size
+  const createDivIcon = (html: string, size: number) => {
     return new DivIcon({
       html: html,
-      //iconSize: [size, size],
-      //iconAnchor: [size * 0.5, size],
-      //popupAnchor: [0, -size],
+      iconSize: [size, size],
+      iconAnchor: [size * 0.5, size],
+      popupAnchor: [0, -size],
     });
   };
+
+  const createIcon = (url: string, size: number) => {
+    return new Icon({
+      iconUrl: url,
+      iconSize: [size, size],
+      iconAnchor: [size * 0.5, size],
+      popupAnchor: [0, -size],
+    });
+  };
+  
 
   const createMarkers = (): ReactNode[] => {
     let markers: ReactNode[] = [];
@@ -246,8 +259,9 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     if (positions && positions.length > 0) {
       positions.forEach((positionSeries, i) => {
         positionSeries.forEach((position, j) => {
-          
-          //TODO: Test
+          const isLastPosition = j + 1 === positionSeries.length;
+          const useSecondaryIcon = options.marker.useSecondaryIconForAllMarkers || (options.marker.useSecondaryIconForLastMarker && isLastPosition);
+
           let html = options.marker.defaultHtml;
           if (iconHtml && iconHtml.length) {
             const maybeHtml = iconHtml[i];
@@ -255,9 +269,15 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
               html = maybeHtml;
             }
           }
-          const icon: DivIcon = createIcon(html, options.marker.size);
+
+          let icon: DivIcon = createDivIcon(html, options.marker.size);
+          if (!options.marker.useHTMLForMarkers) {
+            icon = createIcon(
+              useSecondaryIcon ? secondaryIcon : primaryIcon,
+              isLastPosition ? options.marker.sizeLast : options.marker.size
+            );
+          }
           
-          const isLastPosition = j + 1 === positionSeries.length;
           let shouldHide = options.marker.showOnlyLastMarker && !isLastPosition;
           
           //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
@@ -268,7 +288,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
           if (!shouldHide) {
             markers.push(
               <Marker key={i + '-' + j} position={[position.latitude, position.longitude]} icon={icon} title={position.popup}>
-                <Popup>{ReactHtmlParser(position.popup || '')}</Popup>
+                <StyledPopup>{ReactHtmlParser(position.popup || '')}</StyledPopup>
                 {position.tooltip && <Tooltip permanent={options.marker.alwaysShowTooltips}>{position.tooltip}</Tooltip>}
               </Marker>
             );

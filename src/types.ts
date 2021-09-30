@@ -60,12 +60,17 @@ interface HeatOptions {
 
 interface MarkerOptions {
   size: number;
+  sizeLast: number;
   showOnlyLastMarker: boolean;
-  showOnlyLiveTracks: boolean;
+  useSecondaryIconForAllMarkers: boolean;
+  useSecondaryIconForLastMarker: boolean;
+  useHTMLForMarkers: boolean;
   alwaysShowTooltips: boolean;
-  defaultHtml: string;
-  labelName: string;
   markerHtmlByLabel: KeyValue[];
+  labelName: string;
+  defaultHtml: string;
+  //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
+  //showOnlyLiveTracks: boolean;
 }
 
 interface HexOptions {
