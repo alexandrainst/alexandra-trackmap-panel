@@ -35975,7 +35975,7 @@ var HexbinLayer = __webpack_require__(/*! react-leaflet-d3 */ "../node_modules/r
 
 var StyledPopup = Object(styled_components__WEBPACK_IMPORTED_MODULE_7__["default"])(react_leaflet__WEBPACK_IMPORTED_MODULE_3__["Popup"])(templateObject_1 || (templateObject_1 = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__makeTemplateObject"])(["\n  .leaflet-popup-content-wrapper {\n    white-space: pre-wrap;\n  }\n\n  .leaflet-popup-tip-container {\n    visibility: hidden;\n  }\n"], ["\n  .leaflet-popup-content-wrapper {\n    white-space: pre-wrap;\n  }\n\n  .leaflet-popup-tip-container {\n    visibility: hidden;\n  }\n"])));
 var TrackMapPanel = function TrackMapPanel(_a) {
-  var _b, _c, _d, _e;
+  var _b, _c, _d, _e, _f, _g;
 
   var options = _a.options,
       data = _a.data,
@@ -36052,27 +36052,57 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     return (_a = s.fields.find(function (f) {
       return isLatitudeName(f.name);
     })) === null || _a === void 0 ? void 0 : _a.values.toArray();
-  });
+  }); //time series
+
+  if (!(latitudes === null || latitudes === void 0 ? void 0 : latitudes.some(function (l) {
+    return l !== undefined;
+  }))) {
+    latitudes = (_b = data.series.filter(function (f) {
+      return isLatitudeName(f.name);
+    })) === null || _b === void 0 ? void 0 : _b.map(function (f1) {
+      var _a, _b;
+
+      return (_b = (_a = f1.fields.find(function (f) {
+        return f.name === 'Value';
+      })) === null || _a === void 0 ? void 0 : _a.values) === null || _b === void 0 ? void 0 : _b.toArray();
+    });
+  }
+
   var longitudes = data.series.map(function (s) {
     var _a;
 
     return (_a = s.fields.find(function (f) {
       return isLongitudeName(f.name);
     })) === null || _a === void 0 ? void 0 : _a.values.toArray();
-  }); //TODO: Fix timestamps and labels
+  }); //time series
 
-  var timestamps = (_b = data.series.filter(function (f) {
+  if (!(longitudes === null || longitudes === void 0 ? void 0 : longitudes.some(function (l) {
+    return l !== undefined;
+  }))) {
+    longitudes = (_c = data.series.filter(function (f) {
+      return isLongitudeName(f.name);
+    })) === null || _c === void 0 ? void 0 : _c.map(function (f1) {
+      var _a, _b;
+
+      return (_b = (_a = f1.fields.find(function (f) {
+        return f.name === 'Value';
+      })) === null || _a === void 0 ? void 0 : _a.values) === null || _b === void 0 ? void 0 : _b.toArray();
+    });
+  } //TODO: Test/fix timestamps and labels
+
+
+  var timestamps = (_d = data.series.filter(function (f) {
     return isLatitudeName(f.name);
-  })) === null || _b === void 0 ? void 0 : _b.map(function (f1) {
+  })) === null || _d === void 0 ? void 0 : _d.map(function (f1) {
     var _a, _b;
 
     return (_b = (_a = f1.fields.find(function (f) {
       return f.name === 'Time';
     })) === null || _a === void 0 ? void 0 : _a.values) === null || _b === void 0 ? void 0 : _b.toArray();
   });
-  var labels = (_c = data.series.filter(function (f) {
+  var labels = (_e = data.series.filter(function (f) {
     return isLatitudeName(f.name);
-  })) === null || _c === void 0 ? void 0 : _c.map(function (f1) {
+  })) === null || _e === void 0 ? void 0 : _e.map(function (f1) {
     var _a;
 
     return (_a = f1.fields.find(function (f) {
@@ -36120,9 +36150,9 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     return lats.map(function (latitude, index2) {
       var longitude = longitudes !== undefined && longitudes.length && longitudes[index1] !== undefined ? longitudes[index1][index2] : 0;
       var timestamp = timestamps !== undefined && timestamps.length && timestamps[index1] !== undefined ? timestamps[index1][index2] : 0;
-      var timestampPrint = timestamp !== 0 ? "\nTimestamp: " + timestamp : '';
+      var timestampPrint = timestamp !== 0 ? "<br/>Timestamp: " + timestamp : '';
       var trackLabels = labels && labels[index1] ? labels[index1] : undefined;
-      var trackLabelsPrint = trackLabels !== undefined ? "\nLabels: " + JSON.stringify(trackLabels, null, 2) : '';
+      var trackLabelsPrint = trackLabels !== undefined ? "<br/>Labels: " + JSON.stringify(trackLabels, null, 2) : '';
       var popup = markerPopups !== undefined && markerPopups.length && markerPopups[index1] !== undefined ? markerPopups[index1][index2] : latitude + "," + longitude + timestampPrint + trackLabelsPrint;
       var tooltip = markerTooltips !== undefined && markerTooltips.length && markerTooltips[index1] !== undefined ? markerTooltips[index1][index2] : undefined; //TODO: What is this?
       // const icon = iconNames !== undefined ? iconNames[index1][index2] : undefined;
@@ -36319,12 +36349,12 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     longitude: options.map.centerLongitude
   };
 
-  if (options.map.useCenterFromFirstPos && (positions === null || positions === void 0 ? void 0 : positions.length) && ((_d = positions[0]) === null || _d === void 0 ? void 0 : _d.length) && positions[0][0].latitude) {
+  if (options.map.useCenterFromFirstPos && (positions === null || positions === void 0 ? void 0 : positions.length) && ((_f = positions[0]) === null || _f === void 0 ? void 0 : _f.length) && positions[0][0].latitude) {
     mapCenter.latitude = positions[0][0].latitude;
     mapCenter.longitude = positions[0][0].longitude;
   }
 
-  if ((positions === null || positions === void 0 ? void 0 : positions.length) && ((_e = positions[0]) === null || _e === void 0 ? void 0 : _e.length) && positions[0][0]) {
+  if ((positions === null || positions === void 0 ? void 0 : positions.length) && ((_g = positions[0]) === null || _g === void 0 ? void 0 : _g.length) && positions[0][0]) {
     if (options.map.useCenterFromFirstPos && positions[0][0].latitude) {
       mapCenter.latitude = positions[0][0].latitude;
       mapCenter.longitude = positions[0][0].longitude;

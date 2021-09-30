@@ -86,13 +86,27 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
   const getAntPathColorOverrides = getAntPathColorOverridesMemoized();
   const getMarkerHtmlOverrides = getMarkerHtmlOverridesMemoized();
 
-  const latitudes: number[][] | undefined = data.series
+  let latitudes: number[][] | undefined = data.series
     .map(s => s.fields.find(f => isLatitudeName(f.name))?.values.toArray() as number[]);
 
-  const longitudes: number[][] | undefined = data.series
-    .map(s => s.fields.find(f => isLongitudeName(f.name))?.values.toArray() as number[]);
+  //time series
+  if (!latitudes?.some(l => l !== undefined)) {
+    latitudes = data.series
+      .filter(f => isLatitudeName(f.name))
+      ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as number[]);
+  }
 
-  //TODO: Fix timestamps and labels
+  let longitudes: number[][] | undefined = data.series
+    .map(s => s.fields.find(f => isLongitudeName(f.name))?.values.toArray() as number[]);
+  
+  //time series
+  if (!longitudes?.some(l => l !== undefined)) {
+    longitudes = data.series
+      .filter(f => isLongitudeName(f.name))
+      ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as number[]);
+  }
+
+  //TODO: Test/fix timestamps and labels
   const timestamps: number[][] | undefined = data.series
     .filter((f) => isLatitudeName(f.name))
     ?.map((f1) => f1.fields.find((f) => f.name === 'Time')?.values?.toArray() as number[]);
@@ -130,10 +144,10 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
       const longitude = longitudes !== undefined && longitudes.length && longitudes[index1] !== undefined ? longitudes[index1][index2] : 0;
 
       const timestamp = timestamps !== undefined && timestamps.length && timestamps[index1] !== undefined ? timestamps[index1][index2] : 0;
-      const timestampPrint = timestamp !== 0 ? `\nTimestamp: ${timestamp}` : '';
+      const timestampPrint = timestamp !== 0 ? `<br/>Timestamp: ${timestamp}` : '';
 
       const trackLabels = labels && labels[index1] ? labels[index1] : undefined;
-      const trackLabelsPrint = trackLabels !== undefined ? `\nLabels: ${JSON.stringify(trackLabels, null, 2)}` : '';
+      const trackLabelsPrint = trackLabels !== undefined ? `<br/>Labels: ${JSON.stringify(trackLabels, null, 2)}` : '';
 
       const popup = markerPopups !== undefined && markerPopups.length && markerPopups[index1] !== undefined
           ? markerPopups[index1][index2]
