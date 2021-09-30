@@ -120,9 +120,10 @@ To change the icons used for the markers, replace the `marker.png` and `marker_s
 The tiles that are loaded and displayed within the map can be changed via the "Custom map tiles URL schema" configuration.  
 This allows customization of the style to be used for the map (e.g. streets, satellite or dark):
 
-![heatmap_options](img/heatmap.png)
+![map_tiles_config](img/map_tiles_config.png)
 
 To make use of this configuration, specify a Tile Server URL (see [schema](https://leafletjs.com/reference-1.7.1.html#tilelayer-url-template)) in the input field.
+On the OpenStreetMap Wiki there is a list of [publicly available tile servers](https://wiki.openstreetmap.org/wiki/Tile_servers).
 
 #### Mapbox
 
@@ -163,7 +164,24 @@ GROUP BY clusters
 
 If you are running Grafana locally, you can clone or download the repository directly into the plugin directory, reset the Grafana server, and the plugin should get detected automatically.
 
-If you are using Docker, a guide can be [found here](https://grafana.com/docs/grafana/latest/installation/docker/#installing-plugins-from-other-sources).
+If you are using Docker, a guide can be [found here](https://grafana.com/docs/grafana/latest/installation/docker/#install-plugins-from-other-sources), for instance using the ZIP file as so:
+
+`-e "GF_INSTALL_PLUGINS=https://github.com/alexandrainst/alexandra-trackmap-panel/archive/refs/heads/master.zip" \`
+
+Another example of installing the plug-in in Docker (Replace `grafana_image_name` with your own image name).
+```sh
+sudo docker exec -it -u root grafana_image_name sh
+# Add git and npm inside docker image
+apk add git
+# Enter plugins folder
+cd /var/lib/grafana/plugins/
+# Download the source code
+git clone https://github.com/alexandrainst/alexandra-trackmap-panel.git
+# Exit the docker image
+exit
+# Restart the grafana docker image
+sudo docker restart grafana_image_name
+```
 
 For more information on Grafana plugins [look here](https://grafana.com/docs/grafana/latest/plugins/).
 

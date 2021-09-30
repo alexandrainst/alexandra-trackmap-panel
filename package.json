@@ -21,8 +21,9 @@
     "@types/leaflet": "^1.7.0",
     "@types/react-leaflet": "^2.8.1",
     "@types/styled-components": "^5.1.8",
-    "emotion": "10.0.27",
-    "typescript": "4.0.2"
+    "@types/react-html-parser": "^2.0.2",
+    "typescript": "4.0.2",
+    "emotion": "10.0.27"
   },
   "engines": {
     "node": ">=12 <13"
@@ -34,6 +35,7 @@
     "leaflet-ant-path": "^1.3.0",
     "prop-types": "^15.7.2",
     "react-dom": "^16.14.0",
+    "react-html-parser": "^2.0.2",
     "react-leaflet": "^2.8.0",
     "react-leaflet-ant-path": "^1.1.0",
     "react-leaflet-d3": "^2.0.0",

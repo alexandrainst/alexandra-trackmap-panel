@@ -13,27 +13,34 @@ import StringMapEditor from './stringMapEditor';
 export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOptions>) => {
   return (
     builder
-      .addTextInput({
-        path: 'map.tileUrl',
-        name: 'URL template for tileserver',
-        defaultValue: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      })
-      .addTextInput({
-        path: 'map.tileAttribution',
-        name: 'Attribution HTML for tiles',
-        defaultValue: '&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      })
-      .addTextInput({
-        path: 'map.tileAccessToken',
-        name: 'Access token for tile server',
-        defaultValue: '',
-      })
-      .addCustomEditor({
-        id: 'map.tileSubdomains',
-        path: 'map.tileSubdomains',
-        name: 'Tile server subdomains',
-        editor: standardEditorsRegistry.get('strings').editor as any,
-        defaultValue: ['a', 'b', 'c'],
+      .addSelect({
+        path: 'viewType',
+        defaultValue: 'marker',
+        name: 'Visualisation type',
+        settings: {
+          options: [
+            {
+              value: 'marker',
+              label: 'Markers',
+            },
+            {
+              value: 'ant',
+              label: 'Ant Path',
+            },
+            {
+              value: 'ant-marker',
+              label: 'Ant Path With Markers',
+            },
+            {
+              value: 'hex',
+              label: 'Hexbin',
+            },
+            {
+              value: 'heat',
+              label: 'Heatmap',
+            },
+          ],
+        },
       })
       .addBooleanSwitch({
         path: 'map.useCenterFromFirstPos',
@@ -77,34 +84,42 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         defaultValue: false,
         showIf: config => !config.map.zoomToDataBounds,
       })
-      .addSelect({
-        path: 'viewType',
-        defaultValue: 'marker',
-        name: 'Visualisation type',
-        settings: {
-          options: [
-            {
-              value: 'marker',
-              label: 'Markers',
-            },
-            {
-              value: 'ant',
-              label: 'Ant Path',
-            },
-            {
-              value: 'ant-marker',
-              label: 'Ant Path With Markers',
-            },
-            {
-              value: 'hex',
-              label: 'Hexbin',
-            },
-            {
-              value: 'heat',
-              label: 'Heatmap',
-            },
-          ],
-        },
+      .addTextInput({
+        path: 'coordinates.customLatitudeColumnName',
+        name: 'Custom latitude column name',
+        defaultValue: '',
+      })
+      .addTextInput({
+        path: 'coordinates.customLongitudeColumnName',
+        name: 'Custom longitude column name',
+        defaultValue: '',
+      })
+      .addBooleanSwitch({
+        path: 'discardZeroOrNull',
+        name: 'Discard positions that contain null or exactly 0',
+        defaultValue: true,
+      })
+      .addTextInput({
+        path: 'map.tileUrl',
+        name: 'URL template for tileserver',
+        defaultValue: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      })
+      .addTextInput({
+        path: 'map.tileAttribution',
+        name: 'Attribution HTML for tiles',
+        defaultValue: '&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      })
+      .addTextInput({
+        path: 'map.tileAccessToken',
+        name: 'Access token for tile server',
+        defaultValue: '',
+      })
+      .addCustomEditor({
+        id: 'map.tileSubdomains',
+        path: 'map.tileSubdomains',
+        name: 'Tile server subdomains',
+        editor: standardEditorsRegistry.get('strings').editor as any,
+        defaultValue: ['a', 'b', 'c'],
       })
       //ant
       .addNumberInput({

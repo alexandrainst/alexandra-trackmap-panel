@@ -10,6 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
 import { getLocationSrv } from '@grafana/runtime';
 import { stylesFactory } from '@grafana/ui';
+import ReactHtmlParser from 'react-html-parser';
 
 const AntPath = require('react-leaflet-ant-path').default;
 const HeatmapLayer = require('react-leaflet-heatmap-layer').default;
@@ -42,6 +43,16 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     }
     // eslint-disable-next-line
   }, []);
+
+  const isLatitudeName = (name: string | undefined): boolean => {
+    const customLatitudeName = options.coordinates.customLatitudeColumnName !== '' ? options.coordinates.customLatitudeColumnName : ''
+    return name !== '' && (name === 'latitude' || name === 'lat' || name === customLatitudeName)
+  }
+
+  const isLongitudeName = (name: string | undefined): boolean => {
+    const customLongitudeName = options.coordinates.customLongitudeColumnName !== '' ? options.coordinates.customLongitudeColumnName : ''
+    return name !== '' && (name === 'longitude' || name === 'lon' || name === customLongitudeName)
+  }
 
   const getAntPathColorOverridesMemoized = (): (() => { [key: string]: string }) => {
     let antPathColorOverrides: { [key: string]: string } = {};
@@ -76,18 +87,18 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
   const getMarkerHtmlOverrides = getMarkerHtmlOverridesMemoized();
 
   const latitudes: number[][] | undefined = data.series
-    .map(s => s.fields.find(f => f.name === 'latitude' || f.name === 'lat')?.values.toArray() as number[]);
+    .map(s => s.fields.find(f => isLatitudeName(f.name))?.values.toArray() as number[]);
 
   const longitudes: number[][] | undefined = data.series
-    .map(s => s.fields.find(f => f.name === 'longitude' || f.name === 'lon')?.values.toArray() as number[]);
+    .map(s => s.fields.find(f => isLongitudeName(f.name))?.values.toArray() as number[]);
 
   //TODO: Fix timestamps and labels
   const timestamps: number[][] | undefined = data.series
-    .filter((f) => f.name === 'latitude' || f.name === 'lat')
+    .filter((f) => isLatitudeName(f.name))
     ?.map((f1) => f1.fields.find((f) => f.name === 'Time')?.values?.toArray() as number[]);
 
   const labels: Array<Labels | undefined> = data.series
-    .filter((f) => f.name === 'latitude' || f.name === 'lat')
+    .filter((f) => isLatitudeName(f.name))
     ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.labels);
 
   //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
@@ -243,7 +254,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
           if (!shouldHide) {
             markers.push(
               <Marker key={i + '-' + j} position={[position.latitude, position.longitude]} icon={icon} title={position.popup}>
-                <StyledPopup>{position.popup}</StyledPopup>
+                <Popup>{ReactHtmlParser(position.popup || '')}</Popup>
                 {position.tooltip && <Tooltip permanent={options.marker.alwaysShowTooltips}>{position.tooltip}</Tooltip>}
               </Marker>
             );
