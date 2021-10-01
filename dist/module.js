@@ -36875,11 +36875,14 @@ var optionsBuilder = function optionsBuilder(builder) {
     path: 'coordinates.customLongitudeColumnName',
     name: 'Custom longitude column name',
     defaultValue: ''
-  }).addBooleanSwitch({
+  })
+  /*TODO: Make this work after multi-track support, see https://github.com/alexandrainst/alexandra-trackmap-panel/commit/bb7a6083aaeba22824110fabdf4ad0b6c4521efb
+  .addBooleanSwitch({
     path: 'discardZeroOrNull',
     name: 'Discard positions that contain null or exactly 0',
-    defaultValue: true
-  }) //ant
+    defaultValue: true,
+  })*/
+  //ant
   .addNumberInput({
     category: ['Ant Path'],
     path: 'ant.delay',
