@@ -17,10 +17,6 @@ export interface TrackMapOptions {
 }
 
 interface Map {
-  tileUrl: string;
-  tileAttribution: string;
-  tileAccessToken: string;
-  tileSubdomains: string[];
   centerLatitude: number;
   centerLongitude: number;
   zoomToDataBounds: boolean;
@@ -29,6 +25,7 @@ interface Map {
   useCenterFromFirstPos: boolean;
   useCenterFromLastPos: boolean;
   tileUrlSchema: string;
+  tileAttribution: string;
 }
 
 interface CoordinateOptions {

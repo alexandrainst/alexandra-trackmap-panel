@@ -57,6 +57,14 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     return name !== '' && (name === 'longitude' || name === 'lon' || name === customLongitudeName)
   }
 
+  const isPopupName = (name: string | undefined): boolean => {
+    return name === 'popup' || name === 'text' || name === 'desc'
+  }
+
+  const isTooltipName = (name: string | undefined): boolean => {
+    return name === 'tooltip'
+  }
+
   const getAntPathColorOverridesMemoized = (): (() => { [key: string]: string }) => {
     let antPathColorOverrides: { [key: string]: string } = {};
     return () => {
@@ -119,14 +127,35 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
   //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
   //const liveness: boolean[] = latitudes.map((ls) => ls[ls.length - 1] !== null);
 
-  const intensities: number[][] | undefined = data.series
+  let intensities: number[][] | undefined = data.series
     .map(s => s.fields.find((f) => f.name === 'intensity')?.values.toArray() as number[]);
 
+  //time series
+  if (!intensities?.some(l => l !== undefined)) {
+    intensities = data.series
+      .filter(f => f.name === 'intensity')
+      ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as number[]);
+  }
+
   let markerPopups: string[][] | undefined = data.series
-    .map(s => s.fields.find(f => f.name === 'popup' || f.name === 'text' || f.name === 'desc')?.values.toArray() as string[]);
+    .map(s => s.fields.find(f => isPopupName(f.name))?.values.toArray() as string[]);
+
+  //time series
+  if (!markerPopups?.some(l => l !== undefined)) {
+    markerPopups = data.series
+      .filter(f => isPopupName(f.name))
+      ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as string[]);
+  }
 
   let markerTooltips: string[][] | undefined = data.series
-    .map(s => s.fields.find(f => f.name === 'tooltip')?.values.toArray() as string[]);
+    .map(s => s.fields.find(f => isTooltipName(f.name))?.values.toArray() as string[]);
+
+  //time series
+  if (!markerTooltips?.some(l => l !== undefined)) {
+    markerTooltips = data.series
+      .filter(f => isTooltipName(f.name))
+      ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as string[]);
+  }
 
   let iconHtml: Array<string | undefined> | undefined;
 
@@ -425,13 +454,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
         {(options.viewType === 'marker' || options.viewType === 'ant-marker') && createMarkers()}
         <TileLayer
           attribution={options.map.tileAttribution}
-          url={options.map.tileUrl}
-          accessToken={options.map.tileAccessToken !== '' ? options.map.tileAccessToken : undefined}
-          maxZoom={25}
-          maxNativeZoom={19}
-          subdomains={
-            options.map.tileSubdomains && options.map.tileSubdomains.length ? options.map.tileSubdomains : undefined
-          }
+          url={options.map.tileUrlSchema}
         />
       </Map>
     </div>

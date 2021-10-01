@@ -78,6 +78,16 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         showIf: config => !config.map.zoomToDataBounds,
       })
       .addTextInput({
+        path: 'map.tileUrlSchema',
+        name: 'Custom map tiles URL schema',
+        defaultValue: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+      })
+      .addTextInput({
+        path: 'map.tileAttribution',
+        name: 'Attribution HTML for tiles',
+        defaultValue: '&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      })
+      .addTextInput({
         path: 'coordinates.customLatitudeColumnName',
         name: 'Custom latitude column name',
         defaultValue: '',
@@ -91,28 +101,6 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         path: 'discardZeroOrNull',
         name: 'Discard positions that contain null or exactly 0',
         defaultValue: true,
-      })
-      .addTextInput({
-        path: 'map.tileUrl',
-        name: 'URL template for tileserver',
-        defaultValue: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      })
-      .addTextInput({
-        path: 'map.tileAttribution',
-        name: 'Attribution HTML for tiles',
-        defaultValue: '&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      })
-      .addTextInput({
-        path: 'map.tileAccessToken',
-        name: 'Access token for tile server',
-        defaultValue: '',
-      })
-      .addCustomEditor({
-        id: 'map.tileSubdomains',
-        path: 'map.tileSubdomains',
-        name: 'Tile server subdomains',
-        editor: standardEditorsRegistry.get('strings').editor as any,
-        defaultValue: ['a', 'b', 'c'],
       })
       //ant
       .addNumberInput({

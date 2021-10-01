@@ -35975,7 +35975,7 @@ var HexbinLayer = __webpack_require__(/*! react-leaflet-d3 */ "../node_modules/r
 
 var StyledPopup = Object(styled_components__WEBPACK_IMPORTED_MODULE_7__["default"])(react_leaflet__WEBPACK_IMPORTED_MODULE_3__["Popup"])(templateObject_1 || (templateObject_1 = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__makeTemplateObject"])(["\n  .leaflet-popup-content-wrapper {\n    white-space: pre-wrap;\n  }\n\n  .leaflet-popup-tip-container {\n    visibility: hidden;\n  }\n"], ["\n  .leaflet-popup-content-wrapper {\n    white-space: pre-wrap;\n  }\n\n  .leaflet-popup-tip-container {\n    visibility: hidden;\n  }\n"])));
 var TrackMapPanel = function TrackMapPanel(_a) {
-  var _b, _c, _d, _e, _f, _g;
+  var _b, _c, _d, _e, _f, _g, _h, _j, _k;
 
   var options = _a.options,
       data = _a.data,
@@ -36012,6 +36012,14 @@ var TrackMapPanel = function TrackMapPanel(_a) {
   var isLongitudeName = function isLongitudeName(name) {
     var customLongitudeName = options.coordinates.customLongitudeColumnName !== '' ? options.coordinates.customLongitudeColumnName : '';
     return name !== '' && (name === 'longitude' || name === 'lon' || name === customLongitudeName);
+  };
+
+  var isPopupName = function isPopupName(name) {
+    return name === 'popup' || name === 'text' || name === 'desc';
+  };
+
+  var isTooltipName = function isTooltipName(name) {
+    return name === 'tooltip';
   };
 
   var getAntPathColorOverridesMemoized = function getAntPathColorOverridesMemoized() {
@@ -36120,21 +36128,66 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     return (_a = s.fields.find(function (f) {
       return f.name === 'intensity';
     })) === null || _a === void 0 ? void 0 : _a.values.toArray();
-  });
+  }); //time series
+
+  if (!(intensities === null || intensities === void 0 ? void 0 : intensities.some(function (l) {
+    return l !== undefined;
+  }))) {
+    intensities = (_f = data.series.filter(function (f) {
+      return f.name === 'intensity';
+    })) === null || _f === void 0 ? void 0 : _f.map(function (f1) {
+      var _a, _b;
+
+      return (_b = (_a = f1.fields.find(function (f) {
+        return f.name === 'Value';
+      })) === null || _a === void 0 ? void 0 : _a.values) === null || _b === void 0 ? void 0 : _b.toArray();
+    });
+  }
+
   var markerPopups = data.series.map(function (s) {
     var _a;
 
     return (_a = s.fields.find(function (f) {
-      return f.name === 'popup' || f.name === 'text' || f.name === 'desc';
+      return isPopupName(f.name);
     })) === null || _a === void 0 ? void 0 : _a.values.toArray();
-  });
+  }); //time series
+
+  if (!(markerPopups === null || markerPopups === void 0 ? void 0 : markerPopups.some(function (l) {
+    return l !== undefined;
+  }))) {
+    markerPopups = (_g = data.series.filter(function (f) {
+      return isPopupName(f.name);
+    })) === null || _g === void 0 ? void 0 : _g.map(function (f1) {
+      var _a, _b;
+
+      return (_b = (_a = f1.fields.find(function (f) {
+        return f.name === 'Value';
+      })) === null || _a === void 0 ? void 0 : _a.values) === null || _b === void 0 ? void 0 : _b.toArray();
+    });
+  }
+
   var markerTooltips = data.series.map(function (s) {
     var _a;
 
     return (_a = s.fields.find(function (f) {
-      return f.name === 'tooltip';
+      return isTooltipName(f.name);
     })) === null || _a === void 0 ? void 0 : _a.values.toArray();
-  });
+  }); //time series
+
+  if (!(markerTooltips === null || markerTooltips === void 0 ? void 0 : markerTooltips.some(function (l) {
+    return l !== undefined;
+  }))) {
+    markerTooltips = (_h = data.series.filter(function (f) {
+      return isTooltipName(f.name);
+    })) === null || _h === void 0 ? void 0 : _h.map(function (f1) {
+      var _a, _b;
+
+      return (_b = (_a = f1.fields.find(function (f) {
+        return f.name === 'Value';
+      })) === null || _a === void 0 ? void 0 : _a.values) === null || _b === void 0 ? void 0 : _b.toArray();
+    });
+  }
+
   var iconHtml;
 
   if (labels && labels.length) {
@@ -36367,12 +36420,12 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     longitude: options.map.centerLongitude
   };
 
-  if (options.map.useCenterFromFirstPos && (positions === null || positions === void 0 ? void 0 : positions.length) && ((_f = positions[0]) === null || _f === void 0 ? void 0 : _f.length) && positions[0][0].latitude) {
+  if (options.map.useCenterFromFirstPos && (positions === null || positions === void 0 ? void 0 : positions.length) && ((_j = positions[0]) === null || _j === void 0 ? void 0 : _j.length) && positions[0][0].latitude) {
     mapCenter.latitude = positions[0][0].latitude;
     mapCenter.longitude = positions[0][0].longitude;
   }
 
-  if ((positions === null || positions === void 0 ? void 0 : positions.length) && ((_g = positions[0]) === null || _g === void 0 ? void 0 : _g.length) && positions[0][0]) {
+  if ((positions === null || positions === void 0 ? void 0 : positions.length) && ((_k = positions[0]) === null || _k === void 0 ? void 0 : _k.length) && positions[0][0]) {
     if (options.map.useCenterFromFirstPos && positions[0][0].latitude) {
       mapCenter.latitude = positions[0][0].latitude;
       mapCenter.longitude = positions[0][0].longitude;
@@ -36437,11 +36490,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     data: hexData
   })), (options.viewType === 'marker' || options.viewType === 'ant-marker') && createMarkers(), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_3__["TileLayer"], {
     attribution: options.map.tileAttribution,
-    url: options.map.tileUrl,
-    accessToken: options.map.tileAccessToken !== '' ? options.map.tileAccessToken : undefined,
-    maxZoom: 25,
-    maxNativeZoom: 19,
-    subdomains: options.map.tileSubdomains && options.map.tileSubdomains.length ? options.map.tileSubdomains : undefined
+    url: options.map.tileUrlSchema
   })));
 };
 var getStyles = Object(_grafana_ui__WEBPACK_IMPORTED_MODULE_9__["stylesFactory"])(function () {
@@ -36734,11 +36783,8 @@ var plugin = new _grafana_data__WEBPACK_IMPORTED_MODULE_0__["PanelPlugin"](_Trac
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "optionsBuilder", function() { return optionsBuilder; });
-/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @grafana/data */ "@grafana/data");
-/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_grafana_data__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _colorMapEditor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./colorMapEditor */ "./colorMapEditor.tsx");
-/* harmony import */ var _stringMapEditor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./stringMapEditor */ "./stringMapEditor.tsx");
-
+/* harmony import */ var _colorMapEditor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./colorMapEditor */ "./colorMapEditor.tsx");
+/* harmony import */ var _stringMapEditor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./stringMapEditor */ "./stringMapEditor.tsx");
 
 
 var optionsBuilder = function optionsBuilder(builder) {
@@ -36814,6 +36860,14 @@ var optionsBuilder = function optionsBuilder(builder) {
       return !config.map.zoomToDataBounds;
     }
   }).addTextInput({
+    path: 'map.tileUrlSchema',
+    name: 'Custom map tiles URL schema',
+    defaultValue: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+  }).addTextInput({
+    path: 'map.tileAttribution',
+    name: 'Attribution HTML for tiles',
+    defaultValue: '&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+  }).addTextInput({
     path: 'coordinates.customLatitudeColumnName',
     name: 'Custom latitude column name',
     defaultValue: ''
@@ -36825,24 +36879,6 @@ var optionsBuilder = function optionsBuilder(builder) {
     path: 'discardZeroOrNull',
     name: 'Discard positions that contain null or exactly 0',
     defaultValue: true
-  }).addTextInput({
-    path: 'map.tileUrl',
-    name: 'URL template for tileserver',
-    defaultValue: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-  }).addTextInput({
-    path: 'map.tileAttribution',
-    name: 'Attribution HTML for tiles',
-    defaultValue: '&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-  }).addTextInput({
-    path: 'map.tileAccessToken',
-    name: 'Access token for tile server',
-    defaultValue: ''
-  }).addCustomEditor({
-    id: 'map.tileSubdomains',
-    path: 'map.tileSubdomains',
-    name: 'Tile server subdomains',
-    editor: _grafana_data__WEBPACK_IMPORTED_MODULE_0__["standardEditorsRegistry"].get('strings').editor,
-    defaultValue: ['a', 'b', 'c']
   }) //ant
   .addNumberInput({
     category: ['Ant Path'],
@@ -36915,7 +36951,7 @@ var optionsBuilder = function optionsBuilder(builder) {
     category: ['Ant Path'],
     path: 'ant.colorOverridesByLabel',
     name: 'Color overrides by label',
-    editor: _colorMapEditor__WEBPACK_IMPORTED_MODULE_1__["default"],
+    editor: _colorMapEditor__WEBPACK_IMPORTED_MODULE_0__["default"],
     defaultValue: [],
     showIf: function showIf(config) {
       return config.viewType === 'ant' || config.viewType === 'ant-marker';
@@ -37009,7 +37045,7 @@ var optionsBuilder = function optionsBuilder(builder) {
     id: 'marker.markerHtmlByLabel',
     path: 'marker.markerHtmlByLabel',
     name: 'Marker HTML overrides by label',
-    editor: _stringMapEditor__WEBPACK_IMPORTED_MODULE_2__["default"],
+    editor: _stringMapEditor__WEBPACK_IMPORTED_MODULE_1__["default"],
     defaultValue: [],
     showIf: function showIf(config) {
       return (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers;
