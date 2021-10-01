@@ -85,7 +85,6 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     };
   };
 
-  //TODO: Test
   const getAntPathColorOverrides = getAntPathColorOverridesMemoized();
   const getMarkerHtmlOverrides = getMarkerHtmlOverridesMemoized();
 
@@ -109,7 +108,6 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
       ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as number[]);
   }
 
-  //TODO: Test/fix timestamps and labels
   const timestamps: number[][] | undefined = data.series
     .filter((f) => isLatitudeName(f.name))
     ?.map((f1) => f1.fields.find((f) => f.name === 'Time')?.values?.toArray() as number[]);
@@ -160,15 +158,12 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
           ? markerTooltips[index1][index2]
           : undefined;
           
-      //TODO: What is this?
-      // const icon = iconNames !== undefined ? iconNames[index1][index2] : undefined;
       return {
         latitude,
         longitude,
         popup,
         tooltip,
-        labels: trackLabels,
-        // icon,
+        labels: trackLabels
       };
     });
   });
@@ -233,7 +228,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     });
   });
 
-  //TODO: DivIcon does not scale to size
+  //TODO: DivIcon does not scale?
   const createDivIcon = (html: string, size: number) => {
     return new DivIcon({
       html: html,
@@ -282,7 +277,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
           
           //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
           /*if (options.marker.showOnlyLiveTracks && !liveness[i]) {
-            //set shouldHide/shouldShow
+            //change shouldHide/shouldShow
           }*/
 
           if (!shouldHide) {

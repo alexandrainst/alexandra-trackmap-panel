@@ -14,7 +14,7 @@ For Grafana 6 and older, please use our [1.x branch](https://github.com/alexandr
 
 ### Query
 
-The query in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added.
+The queries in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added.
 
 To add a text popup to the markers, a `popup`, `text` or `desc` field should be added. If no popup field exists, latitude and longitude are displayed in the popup.
 
@@ -42,6 +42,9 @@ FROM table_name) table_name_clustered
 GROUP BY clusters
 ORDER BY clusters;
 ```
+
+### Multiple queries at once
+It is possible to add multiple data queries to the same map, but these must all be either `Table` or `Time series`, not a mix of the two.
 
 ### Configuration
 

@@ -3,13 +3,6 @@ import { TrackMapOptions } from './types';
 import ColorMapEditor from './colorMapEditor';
 import StringMapEditor from './stringMapEditor';
 
-/**TODO: Options that no longer work or have been removed:
- * markers:
- * size
- * size of last
- * secondary icon for last
- * secondary icon for all
-**/
 export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOptions>) => {
   return (
     builder
@@ -157,13 +150,14 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         defaultValue: false,
         showIf: config => config.viewType === 'ant' || config.viewType === 'ant-marker',
       })
+      /*TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
       .addBooleanSwitch({
         category: ['Ant Path'],
         path: 'ant.pauseNonLiveTracks',
         name: 'Pause non-live tracks',
         defaultValue: true,
         showIf: config => config.viewType === 'ant' || config.viewType === 'ant-marker',
-      })
+      })*/
       .addBooleanSwitch({
         category: ['Ant Path'],
         path: 'ant.reverse',
@@ -271,8 +265,8 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         defaultValue: [],
         showIf: config => (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers,
       })
-      //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
-      /*.addBooleanSwitch({
+      /*TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
+      .addBooleanSwitch({
         category: ['Markers'],
         path: 'marker.showOnlyLiveTracks',
         name: 'Show last marker only for tracks still present at the end of the time window (i.e. still live)',

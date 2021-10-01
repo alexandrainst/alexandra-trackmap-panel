@@ -36046,8 +36046,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
 
       return markerHtmlOverrides;
     };
-  }; //TODO: Test
-
+  };
 
   var getAntPathColorOverrides = getAntPathColorOverridesMemoized();
   var getMarkerHtmlOverrides = getMarkerHtmlOverridesMemoized();
@@ -36093,8 +36092,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
         return f.name === 'Value';
       })) === null || _a === void 0 ? void 0 : _a.values) === null || _b === void 0 ? void 0 : _b.toArray();
     });
-  } //TODO: Test/fix timestamps and labels
-
+  }
 
   var timestamps = (_d = data.series.filter(function (f) {
     return isLatitudeName(f.name);
@@ -36159,9 +36157,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
       var trackLabels = labels && labels[index1] ? labels[index1] : undefined;
       var trackLabelsPrint = trackLabels !== undefined ? "<br/>Labels: " + JSON.stringify(trackLabels, null, 2) : '';
       var popup = markerPopups !== undefined && markerPopups.length && markerPopups[index1] !== undefined ? markerPopups[index1][index2] : latitude + "," + longitude + timestampPrint + trackLabelsPrint;
-      var tooltip = markerTooltips !== undefined && markerTooltips.length && markerTooltips[index1] !== undefined ? markerTooltips[index1][index2] : undefined; //TODO: What is this?
-      // const icon = iconNames !== undefined ? iconNames[index1][index2] : undefined;
-
+      var tooltip = markerTooltips !== undefined && markerTooltips.length && markerTooltips[index1] !== undefined ? markerTooltips[index1][index2] : undefined;
       return {
         latitude: latitude,
         longitude: longitude,
@@ -36232,7 +36228,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
       options: antOptions,
       data: antDatas
     });
-  }); //TODO: DivIcon does not scale to size
+  }); //TODO: DivIcon does not scale?
 
   var createDivIcon = function createDivIcon(html, size) {
     return new leaflet__WEBPACK_IMPORTED_MODULE_4__["DivIcon"]({
@@ -36279,7 +36275,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
           var shouldHide = options.marker.showOnlyLastMarker && !isLastPosition; //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
 
           /*if (options.marker.showOnlyLiveTracks && !liveness[i]) {
-            //set shouldHide/shouldShow
+            //change shouldHide/shouldShow
           }*/
 
           if (!shouldHide) {
@@ -36745,14 +36741,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/**TODO: Options that no longer work or have been removed:
- * markers:
- * size
- * size of last
- * secondary icon for last
- * secondary icon for all
-**/
-
 var optionsBuilder = function optionsBuilder(builder) {
   return builder.addSelect({
     path: 'viewType',
@@ -36896,15 +36884,16 @@ var optionsBuilder = function optionsBuilder(builder) {
     showIf: function showIf(config) {
       return config.viewType === 'ant' || config.viewType === 'ant-marker';
     }
-  }).addBooleanSwitch({
+  })
+  /*TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
+  .addBooleanSwitch({
     category: ['Ant Path'],
     path: 'ant.pauseNonLiveTracks',
     name: 'Pause non-live tracks',
     defaultValue: true,
-    showIf: function showIf(config) {
-      return config.viewType === 'ant' || config.viewType === 'ant-marker';
-    }
-  }).addBooleanSwitch({
+    showIf: config => config.viewType === 'ant' || config.viewType === 'ant-marker',
+  })*/
+  .addBooleanSwitch({
     category: ['Ant Path'],
     path: 'ant.reverse',
     name: 'Reverse',
@@ -37025,9 +37014,9 @@ var optionsBuilder = function optionsBuilder(builder) {
     showIf: function showIf(config) {
       return (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers;
     }
-  }) //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
-
-  /*.addBooleanSwitch({
+  })
+  /*TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
+  .addBooleanSwitch({
     category: ['Markers'],
     path: 'marker.showOnlyLiveTracks',
     name: 'Show last marker only for tracks still present at the end of the time window (i.e. still live)',

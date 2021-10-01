@@ -42,7 +42,8 @@ export interface AntOptions {
   color: string;
   pulseColor: string;
   paused: boolean;
-  pauseNonLiveTracks: boolean;
+  //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
+  //pauseNonLiveTracks: boolean;
   labelName: string;
   colorOverridesByLabel: LabelColor[];
   reverse: boolean;
