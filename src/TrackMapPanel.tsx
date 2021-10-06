@@ -258,9 +258,10 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
   });
 
   const createDivIcon = (html: string) => {
-    return new DivIcon({
-      html: html,
-    });
+    if (options.marker.customIconHeight !== undefined && options.marker.customIconWidth !== undefined) {
+      return new DivIcon({ html, iconSize: [options.marker.customIconWidth, options.marker.customIconHeight] })
+    }
+    return new DivIcon({ html });
   };
 
   const createIcon = (url: string, size: number) => {

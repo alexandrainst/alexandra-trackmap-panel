@@ -68,6 +68,9 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 - `Use secondary icon for last marker`: Uses secondary icon image for last marker
 - `Use secondary icon for all markers`: Uses secondary icon image for all markers
 - `Always show tooltips`: Always show the mouseover tooltips
+- `Use HTML for markers`: Insert custom HTML/SVG for icons
+- `Custom icon width`: Use to scale custom icon. Leave empty if custom HTML/SVG has inline size.
+- `Custom icon height`: Use to scale custom icon. Leave empty if custom HTML/SVG has inline size.
 
 ![markers_options](img/markers.png)
 
@@ -94,6 +97,9 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 - `Use secondary icon for last marker`: Uses secondary icon image for last marker
 - `Use secondary icon for all markers`: Uses secondary icon image for all markers
 - `Always show tooltips`: Always show the mouseover tooltips
+- `Use HTML for markers`: Insert custom HTML/SVG for icons
+- `Custom icon width`: Use to scale custom icon. Leave empty if custom HTML/SVG has inline size.
+- `Custom icon height`: Use to scale custom icon. Leave empty if custom HTML/SVG has inline size.
 
 ![ant_markers_options](img/ant_markers.png)
 
@@ -114,9 +120,25 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 
 ![heatmap_options](img/heatmap.png)
 
-### Changing marker icons
+### Changing marker icons or using custom HTML/SVG icons
 
-To change the icons used for the markers, replace the `marker.png` and `marker_secondary.png` files in the `/src/img` folder.
+There are two ways to change the marker icons. To change the images used, replace the `marker.png` and `marker_secondary.png` files in the `/src/img` folder. To use custom HTML or SVG for icons, toggle the `Use HTML for markers` option and paste the HTML/SVG in the `Default marker HTML` field. The custom icon is surrounded by a div. The size of this div can be set with `Custom icon width` and `Custom icon height`. If left empty, the sizes should be defined in the custom HTML/SVG.
+
+Example (small yellow square with inline height/width):
+```
+Use HTML for markers: True
+Default marker HTML: <div style="background:yellow; width:10px; height:10px;"></div>
+Custom icon height: Empty (no value)
+Custom icon width: Empty (no value)
+```
+
+Example (custom image with set size):
+```
+Use HTML for markers: True
+Default marker HTML: <img src="http://your-image-url-here.jpg" width="100%" />
+Custom icon height: 50
+Custom icon width: 25
+```
 
 ### Changing map style (map tiles)
 

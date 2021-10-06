@@ -67,6 +67,8 @@ interface MarkerOptions {
   markerHtmlByLabel: KeyValue[];
   labelName: string;
   defaultHtml: string;
+  customIconWidth: number | undefined;
+  customIconHeight: number | undefined;
   //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
   //showOnlyLiveTracks: boolean;
 }

@@ -36284,6 +36284,13 @@ var TrackMapPanel = function TrackMapPanel(_a) {
   });
 
   var createDivIcon = function createDivIcon(html) {
+    if (options.marker.customIconHeight !== undefined && options.marker.customIconWidth !== undefined) {
+      return new leaflet__WEBPACK_IMPORTED_MODULE_4__["DivIcon"]({
+        html: html,
+        iconSize: [options.marker.customIconWidth, options.marker.customIconHeight]
+      });
+    }
+
     return new leaflet__WEBPACK_IMPORTED_MODULE_4__["DivIcon"]({
       html: html
     });
@@ -37021,6 +37028,22 @@ var optionsBuilder = function optionsBuilder(builder) {
     defaultValue: false,
     showIf: function showIf(config) {
       return config.viewType === 'marker' || config.viewType === 'ant-marker';
+    }
+  }).addNumberInput({
+    category: ['Markers'],
+    path: 'marker.customIconWidth',
+    name: 'Custom icon width (empty if using HTML/SVG with inline size)',
+    defaultValue: undefined,
+    showIf: function showIf(config) {
+      return (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers;
+    }
+  }).addNumberInput({
+    category: ['Markers'],
+    path: 'marker.customIconHeight',
+    name: 'Custom icon height (empty if using HTML/SVG with inline size)',
+    defaultValue: undefined,
+    showIf: function showIf(config) {
+      return (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers;
     }
   }).addTextInput({
     category: ['Markers'],

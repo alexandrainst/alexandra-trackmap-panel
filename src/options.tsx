@@ -229,6 +229,20 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         defaultValue: false,
         showIf: (config) => config.viewType === 'marker' || config.viewType === 'ant-marker',
       })
+      .addNumberInput({
+        category: ['Markers'],
+        path: 'marker.customIconWidth',
+        name: 'Custom icon width (empty if using HTML/SVG with inline size)',
+        defaultValue: undefined,
+        showIf: config => (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers,
+      })
+      .addNumberInput({
+        category: ['Markers'],
+        path: 'marker.customIconHeight',
+        name: 'Custom icon height (empty if using HTML/SVG with inline size)',
+        defaultValue: undefined,
+        showIf: config => (config.viewType === 'marker' || config.viewType === 'ant-marker') && config.marker.useHTMLForMarkers,
+      })
       .addTextInput({
         category: ['Markers'],
         path: 'marker.defaultHtml',
