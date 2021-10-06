@@ -36202,6 +36202,14 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     });
   }
 
+  var filterZeroOrNull = function filterZeroOrNull(positionSeries) {
+    return positionSeries.filter(function (pos) {
+      var isNotExactlyZero = pos.longitude !== 0 || pos.latitude !== 0;
+      var isNotNullOrUndefined = pos.longitude !== null && pos.latitude !== null && pos.longitude !== undefined && pos.latitude !== undefined;
+      return !options.discardZeroOrNull || options.discardZeroOrNull && isNotExactlyZero && isNotNullOrUndefined;
+    });
+  };
+
   var positions = latitudes === null || latitudes === void 0 ? void 0 : latitudes.map(function (lats, index1) {
     return lats.map(function (latitude, index2) {
       var longitude = longitudes !== undefined && longitudes.length && longitudes[index1] !== undefined ? longitudes[index1][index2] : 0;
@@ -36219,6 +36227,8 @@ var TrackMapPanel = function TrackMapPanel(_a) {
         labels: trackLabels
       };
     });
+  }).map(function (pos) {
+    return filterZeroOrNull(pos);
   });
 
   if (!positions || positions.length === 0) {
@@ -36879,14 +36889,11 @@ var optionsBuilder = function optionsBuilder(builder) {
     path: 'coordinates.customLongitudeColumnName',
     name: 'Custom longitude column name',
     defaultValue: ''
-  })
-  /*TODO: Make this work after multi-track support, see https://github.com/alexandrainst/alexandra-trackmap-panel/commit/bb7a6083aaeba22824110fabdf4ad0b6c4521efb
-  .addBooleanSwitch({
+  }).addBooleanSwitch({
     path: 'discardZeroOrNull',
     name: 'Discard positions that contain null or exactly 0',
-    defaultValue: true,
-  })*/
-  //ant
+    defaultValue: true
+  }) //ant
   .addNumberInput({
     category: ['Ant Path'],
     path: 'ant.delay',

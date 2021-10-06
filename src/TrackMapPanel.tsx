@@ -169,6 +169,14 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     });
   }
 
+  const filterZeroOrNull = (positionSeries: Position[]) => {
+    return positionSeries.filter(pos => {
+      const isNotExactlyZero = pos.longitude !== 0 || pos.latitude !== 0
+      const isNotNullOrUndefined = pos.longitude !== null && pos.latitude !== null && pos.longitude !== undefined && pos.latitude !== undefined
+      return !options.discardZeroOrNull || (options.discardZeroOrNull && isNotExactlyZero && isNotNullOrUndefined)
+    })
+  };
+
   let positions: Position[][] | undefined = latitudes?.map((lats, index1) => {
     return lats.map((latitude, index2) => {
       const longitude = longitudes !== undefined && longitudes.length && longitudes[index1] !== undefined ? longitudes[index1][index2] : 0;
@@ -195,7 +203,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
         labels: trackLabels
       };
     });
-  });
+  }).map(pos => filterZeroOrNull(pos));
 
   if (!positions || positions.length === 0) {
     positions = [[{ latitude: 0, longitude: 0 }]];
