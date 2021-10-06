@@ -257,13 +257,9 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     });
   });
 
-  //TODO: DivIcon does not scale?
-  const createDivIcon = (html: string, size: number) => {
+  const createDivIcon = (html: string) => {
     return new DivIcon({
       html: html,
-      iconSize: [size, size],
-      iconAnchor: [size * 0.5, size],
-      popupAnchor: [0, -size],
     });
   };
 
@@ -275,7 +271,6 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
       popupAnchor: [0, -size],
     });
   };
-  
 
   const createMarkers = (): ReactNode[] => {
     let markers: ReactNode[] = [];
@@ -294,7 +289,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
             }
           }
 
-          let icon: DivIcon = createDivIcon(html, options.marker.size);
+          let icon: DivIcon = createDivIcon(html);
           if (!options.marker.useHTMLForMarkers) {
             icon = createIcon(
               useSecondaryIcon ? secondaryIcon : primaryIcon,

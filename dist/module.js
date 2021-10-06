@@ -36281,14 +36281,11 @@ var TrackMapPanel = function TrackMapPanel(_a) {
       options: antOptions,
       data: antDatas
     });
-  }); //TODO: DivIcon does not scale?
+  });
 
-  var createDivIcon = function createDivIcon(html, size) {
+  var createDivIcon = function createDivIcon(html) {
     return new leaflet__WEBPACK_IMPORTED_MODULE_4__["DivIcon"]({
-      html: html,
-      iconSize: [size, size],
-      iconAnchor: [size * 0.5, size],
-      popupAnchor: [0, -size]
+      html: html
     });
   };
 
@@ -36319,7 +36316,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
             }
           }
 
-          var icon = createDivIcon(html, options.marker.size);
+          var icon = createDivIcon(html);
 
           if (!options.marker.useHTMLForMarkers) {
             icon = createIcon(useSecondaryIcon ? secondaryIcon : primaryIcon, isLastPosition ? options.marker.sizeLast : options.marker.size);
@@ -36983,7 +36980,7 @@ var optionsBuilder = function optionsBuilder(builder) {
     name: 'Size',
     defaultValue: 25,
     showIf: function showIf(config) {
-      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+      return (config.viewType === 'marker' || config.viewType === 'ant-marker') && !config.marker.useHTMLForMarkers;
     }
   }).addNumberInput({
     category: ['Markers'],
@@ -36991,7 +36988,7 @@ var optionsBuilder = function optionsBuilder(builder) {
     name: 'Size of last marker',
     defaultValue: 25,
     showIf: function showIf(config) {
-      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+      return (config.viewType === 'marker' || config.viewType === 'ant-marker') && !config.marker.useHTMLForMarkers;
     }
   }).addBooleanSwitch({
     category: ['Markers'],
@@ -37007,7 +37004,7 @@ var optionsBuilder = function optionsBuilder(builder) {
     name: 'Use secondary icon for last marker',
     defaultValue: false,
     showIf: function showIf(config) {
-      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+      return (config.viewType === 'marker' || config.viewType === 'ant-marker') && !config.marker.useHTMLForMarkers;
     }
   }).addBooleanSwitch({
     category: ['Markers'],
@@ -37015,7 +37012,7 @@ var optionsBuilder = function optionsBuilder(builder) {
     name: 'Use secondary icon for all markers',
     defaultValue: false,
     showIf: function showIf(config) {
-      return config.viewType === 'marker' || config.viewType === 'ant-marker';
+      return (config.viewType === 'marker' || config.viewType === 'ant-marker') && !config.marker.useHTMLForMarkers;
     }
   }).addBooleanSwitch({
     category: ['Markers'],

@@ -192,14 +192,14 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         path: 'marker.size',
         name: 'Size',
         defaultValue: 25,
-        showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
+        showIf: config => (config.viewType === 'marker' || config.viewType === 'ant-marker') && !config.marker.useHTMLForMarkers,
       })
       .addNumberInput({
         category: ['Markers'],
         path: 'marker.sizeLast',
         name: 'Size of last marker',
         defaultValue: 25,
-        showIf: (config) => config.viewType === 'marker' || config.viewType === 'ant-marker',
+        showIf: (config) => (config.viewType === 'marker' || config.viewType === 'ant-marker') && !config.marker.useHTMLForMarkers,
       })
       .addBooleanSwitch({
         category: ['Markers'],
@@ -213,14 +213,14 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         path: 'marker.useSecondaryIconForLastMarker',
         name: 'Use secondary icon for last marker',
         defaultValue: false,
-        showIf: (config) => config.viewType === 'marker' || config.viewType === 'ant-marker',
+        showIf: (config) => (config.viewType === 'marker' || config.viewType === 'ant-marker') && !config.marker.useHTMLForMarkers,
       })
       .addBooleanSwitch({
         category: ['Markers'],
         path: 'marker.useSecondaryIconForAllMarkers',
         name: 'Use secondary icon for all markers',
         defaultValue: false,
-        showIf: (config) => config.viewType === 'marker' || config.viewType === 'ant-marker',
+        showIf: (config) => (config.viewType === 'marker' || config.viewType === 'ant-marker') && !config.marker.useHTMLForMarkers,
       })
       .addBooleanSwitch({
         category: ['Markers'],
