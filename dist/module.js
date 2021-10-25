@@ -36306,12 +36306,16 @@ var TrackMapPanel = function TrackMapPanel(_a) {
     });
   };
 
+  var getOffset = function getOffset(option, defaultValue) {
+    return option === undefined || option.trim() === '' ? defaultValue : [parseInt(option.split(',')[0]), parseInt(option.split(',')[1])];
+  };
+
   var createIcon = function createIcon(url, size) {
     return new leaflet__WEBPACK_IMPORTED_MODULE_4__["Icon"]({
       iconUrl: url,
       iconSize: [size, size],
-      iconAnchor: [size * 0.5, size],
-      popupAnchor: [0, -size]
+      iconAnchor: getOffset(options.marker.iconOffset, [size * 0.5, size]),
+      popupAnchor: getOffset(options.marker.popupOffset, [0, -size])
     });
   };
 
@@ -36352,6 +36356,7 @@ var TrackMapPanel = function TrackMapPanel(_a) {
               icon: icon,
               title: position.popup
             }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(StyledPopup, null, react_html_parser__WEBPACK_IMPORTED_MODULE_10___default()(position.popup || '')), position.tooltip && react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_3__["Tooltip"], {
+              offset: getOffset(options.marker.tooltipOffset, [0, 0]),
               permanent: options.marker.alwaysShowTooltips
             }, position.tooltip)));
           }
@@ -36624,14 +36629,11 @@ function (_super) {
   ColorMapEditor.prototype.render = function () {
     var _this = this;
 
-    var _a;
-
-    var _b = this.props,
-        value = _b.value,
-        item = _b.item;
+    var _a = this.props,
+        value = _a.value,
+        item = _a.item;
     var showAdd = this.state.showAdd;
     var styles = getStyles(Object(_grafana_ui__WEBPACK_IMPORTED_MODULE_2__["getTheme"])());
-    var placeholder = ((_a = item.settings) === null || _a === void 0 ? void 0 : _a.placeholder) || 'Add label value';
     var inputs = null;
 
     if (value) {
@@ -36674,7 +36676,7 @@ function (_super) {
       css: {},
       autoFocus: true,
       className: styles.textInput,
-      placeholder: placeholder,
+      placeholder: "Add key",
       defaultValue: '',
       onBlur: function onBlur(e) {
         return _this.onValueChange(e.currentTarget.value.trim(), 'black', -1, e);
@@ -36694,7 +36696,7 @@ function (_super) {
           showAdd: true
         });
       }
-    }, placeholder));
+    }, "Add override"));
   };
 
   return ColorMapEditor;
@@ -37097,6 +37099,30 @@ var optionsBuilder = function optionsBuilder(builder) {
     showIf: function showIf(config) {
       return config.viewType === 'marker' || config.viewType === 'ant-marker';
     }
+  }).addTextInput({
+    category: ['Markers'],
+    path: 'marker.tooltipOffset',
+    name: 'Tooltip offset: x,y',
+    defaultValue: '',
+    showIf: function showIf(config) {
+      return config.viewType === 'marker';
+    }
+  }).addTextInput({
+    category: ['Markers'],
+    path: 'marker.popupOffset',
+    name: 'Popup offset: x,y',
+    defaultValue: '',
+    showIf: function showIf(config) {
+      return config.viewType === 'marker';
+    }
+  }).addTextInput({
+    category: ['Markers'],
+    path: 'marker.iconOffset',
+    name: 'Icon offset: x,y',
+    defaultValue: '',
+    showIf: function showIf(config) {
+      return config.viewType === 'marker';
+    }
   }) //hex
   .addNumberInput({
     category: ['HexBin'],
@@ -37249,14 +37275,11 @@ function (_super) {
   StringMapEditor.prototype.render = function () {
     var _this = this;
 
-    var _a;
-
-    var _b = this.props,
-        value = _b.value,
-        item = _b.item;
+    var _a = this.props,
+        value = _a.value,
+        item = _a.item;
     var showAdd = this.state.showAdd;
     var styles = Object(_colorMapEditor__WEBPACK_IMPORTED_MODULE_3__["getStyles"])(Object(_grafana_ui__WEBPACK_IMPORTED_MODULE_2__["getTheme"])());
-    var placeholder = ((_a = item.settings) === null || _a === void 0 ? void 0 : _a.placeholder) || 'Add label value';
     var inputs = null;
 
     if (value) {
@@ -37304,7 +37327,7 @@ function (_super) {
       css: {},
       autoFocus: true,
       className: styles.textInput,
-      placeholder: placeholder,
+      placeholder: "Add key",
       defaultValue: '',
       onBlur: function onBlur(e) {
         return _this.onValueChange(e.currentTarget.value.trim(), '<div></div>', -1, e);
@@ -37324,7 +37347,7 @@ function (_super) {
           showAdd: true
         });
       }
-    }, placeholder));
+    }, "Add override"));
   };
 
   return StringMapEditor;

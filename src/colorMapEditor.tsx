@@ -69,7 +69,6 @@ export default class ColorMapEditor extends React.PureComponent<ColorMapEditorPr
     let { value, item } = this.props;
     const { showAdd } = this.state;
     const styles = getStyles(getTheme());
-    const placeholder = item.settings?.placeholder || 'Add label value';
     let inputs = null;
     if (value) {
       inputs = value.map((k, index) => {
@@ -112,7 +111,7 @@ export default class ColorMapEditor extends React.PureComponent<ColorMapEditorPr
             css={{}}
             autoFocus
             className={styles.textInput}
-            placeholder={placeholder}
+            placeholder="Add key"
             defaultValue={''}
             onBlur={(e) => this.onValueChange(e.currentTarget.value.trim(), 'black', -1, e)}
             onKeyDown={(e) => this.onValueChange(e.currentTarget.value.trim(), 'black', -1, e)}
@@ -120,7 +119,7 @@ export default class ColorMapEditor extends React.PureComponent<ColorMapEditorPr
           />
         ) : (
           <Button icon="plus" size="sm" variant="secondary" onClick={() => this.setState({ showAdd: true })}>
-            {placeholder}
+            Add override
           </Button>
         )}
       </div>

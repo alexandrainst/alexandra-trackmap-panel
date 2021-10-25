@@ -140,6 +140,31 @@ Custom icon height: 50
 Custom icon width: 25
 ```
 
+If a timeseries has a label with the key entered in `Override label` and the label value matches a key set in `Marker HTML overrides by label`, then the HTML will be overriden by the defined HTML in the marker override. For multiple series, add multiple `Marker HTML overrides by label`.
+
+Example:
+```
+Timeseries label is: {"icon": "a"}
+Override label: "icon"
+Marker HTML overrides by label: key="a", value="<div>custom HTML</div>"
+```
+
+
+### Change ant path colors with labels
+In the ant path options, if a timeseries has a label with the key entered in `Override label` and the label value matches a key set in `Color overrides by label`, then the selected color will be used for the ant path. For multiple series, add multiple `Color overrides by label`.
+
+Example:
+```
+Timeseries label is: {"antCol": "a"}
+Override label: "antCol"
+Color overrides by label: key="a", value=[color selected in the GUI]
+```
+
+
+### Icon, popup, and tooltip offset
+Change the offset values `Icon offset`, `Popup offset`, and `Tooltip offset` to override the default placement of marker icons, popups, and tooltips. The format should be x,y - e.g. `0,50`.
+
+
 ### Changing map style (map tiles)
 
 The tiles that are loaded and displayed within the map can be changed via the "Custom map tiles URL schema" configuration.  

@@ -69,6 +69,9 @@ interface MarkerOptions {
   defaultHtml: string;
   customIconWidth: number | undefined;
   customIconHeight: number | undefined;
+  tooltipOffset: string;
+  iconOffset: string;
+  popupOffset: string;
   //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
   //showOnlyLiveTracks: boolean;
 }

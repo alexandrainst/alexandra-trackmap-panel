@@ -282,6 +282,27 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         defaultValue: false,
         showIf: config => config.viewType === 'marker' || config.viewType === 'ant-marker',
       })
+      .addTextInput({
+        category: ['Markers'],
+        path: 'marker.tooltipOffset',
+        name: 'Tooltip offset: x,y',
+        defaultValue: '',
+        showIf: config => config.viewType === 'marker',
+      })
+      .addTextInput({
+        category: ['Markers'],
+        path: 'marker.popupOffset',
+        name: 'Popup offset: x,y',
+        defaultValue: '',
+        showIf: config => config.viewType === 'marker',
+      })
+      .addTextInput({
+        category: ['Markers'],
+        path: 'marker.iconOffset',
+        name: 'Icon offset: x,y',
+        defaultValue: '',
+        showIf: config => config.viewType === 'marker',
+      })
       //hex
       .addNumberInput({
         category: ['HexBin'],

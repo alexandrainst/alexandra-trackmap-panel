@@ -4,7 +4,7 @@ import { Position, TrackMapOptions, AntData } from 'types';
 import { css, cx } from 'emotion';
 import { Feature, FeatureCollection } from 'geojson';
 import { Map, Marker, Popup, TileLayer, Tooltip, withLeaflet } from 'react-leaflet';
-import { DivIcon, Icon, LatLngBounds, LatLngBoundsExpression, LeafletEvent } from 'leaflet';
+import { DivIcon, Icon, LatLngBounds, LatLngBoundsExpression, LeafletEvent, PointExpression } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
@@ -272,12 +272,16 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     return new DivIcon({ html });
   };
 
+  const getOffset = (option: string | undefined, defaultValue: PointExpression): PointExpression => {
+    return option === undefined || option.trim() === '' ? defaultValue : [parseInt(option.split(',')[0]), parseInt(option.split(',')[1])]
+  }
+
   const createIcon = (url: string, size: number) => {
     return new Icon({
       iconUrl: url,
       iconSize: [size, size],
-      iconAnchor: [size * 0.5, size],
-      popupAnchor: [0, -size],
+      iconAnchor: getOffset(options.marker.iconOffset, [size * 0.5, size]),
+      popupAnchor: getOffset(options.marker.popupOffset, [0, -size]),
     });
   };
 
@@ -317,7 +321,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
             markers.push(
               <Marker key={i + '-' + j} position={[position.latitude, position.longitude]} icon={icon} title={position.popup}>
                 <StyledPopup>{ReactHtmlParser(position.popup || '')}</StyledPopup>
-                {position.tooltip && <Tooltip permanent={options.marker.alwaysShowTooltips}>{position.tooltip}</Tooltip>}
+                {position.tooltip && <Tooltip offset={getOffset(options.marker.tooltipOffset, [0,0])} permanent={options.marker.alwaysShowTooltips}>{position.tooltip}</Tooltip>}
               </Marker>
             );
           }
