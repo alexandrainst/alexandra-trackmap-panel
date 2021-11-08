@@ -14,7 +14,7 @@ For Grafana 6 and older, please use our [1.x branch](https://github.com/alexandr
 
 ### Query
 
-The query in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added.
+The queries in Grafana can be formatted as `Table` or `Time series` and contain the fields `latitude` and `longitude` or just `lat` and `lon`. To add intensity to the heatmap (instead of using only coordinates), the `intensity` field should be added.
 
 To add a text popup to the markers, a `popup`, `text` or `desc` field should be added. If no popup field exists, latitude and longitude are displayed in the popup.
 
@@ -43,6 +43,9 @@ GROUP BY clusters
 ORDER BY clusters;
 ```
 
+### Multiple queries at once
+It is possible to add multiple data queries to the same map, but these must all be either `Table` or `Time series`, not a mix of the two.
+
 ### Configuration
 
 The panel has general configuration options as well as options specific to each visualisation type.
@@ -65,6 +68,9 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 - `Use secondary icon for last marker`: Uses secondary icon image for last marker
 - `Use secondary icon for all markers`: Uses secondary icon image for all markers
 - `Always show tooltips`: Always show the mouseover tooltips
+- `Use HTML for markers`: Insert custom HTML/SVG for icons
+- `Custom icon width`: Use to scale custom icon. Leave empty if custom HTML/SVG has inline size.
+- `Custom icon height`: Use to scale custom icon. Leave empty if custom HTML/SVG has inline size.
 
 ![markers_options](img/markers.png)
 
@@ -91,6 +97,9 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 - `Use secondary icon for last marker`: Uses secondary icon image for last marker
 - `Use secondary icon for all markers`: Uses secondary icon image for all markers
 - `Always show tooltips`: Always show the mouseover tooltips
+- `Use HTML for markers`: Insert custom HTML/SVG for icons
+- `Custom icon width`: Use to scale custom icon. Leave empty if custom HTML/SVG has inline size.
+- `Custom icon height`: Use to scale custom icon. Leave empty if custom HTML/SVG has inline size.
 
 ![ant_markers_options](img/ant_markers.png)
 
@@ -111,16 +120,57 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 
 ![heatmap_options](img/heatmap.png)
 
-### Changing marker icons
+### Changing marker icons or using custom HTML/SVG icons
 
-To change the icons used for the markers, replace the `marker.png` and `marker_secondary.png` files in the `/src/img` folder.
+There are two ways to change the marker icons. To change the images used, replace the `marker.png` and `marker_secondary.png` files in the `/src/img` folder. To use custom HTML or SVG for icons, toggle the `Use HTML for markers` option and paste the HTML/SVG in the `Default marker HTML` field. The custom icon is surrounded by a div. The size of this div can be set with `Custom icon width` and `Custom icon height`. If left empty, the sizes should be defined in the custom HTML/SVG.
+
+Example (small yellow square with inline height/width):
+```
+Use HTML for markers: True
+Default marker HTML: <div style="background:yellow; width:10px; height:10px;"></div>
+Custom icon height: Empty (no value)
+Custom icon width: Empty (no value)
+```
+
+Example (custom image with set size):
+```
+Use HTML for markers: True
+Default marker HTML: <img src="http://your-image-url-here.jpg" width="100%" />
+Custom icon height: 50
+Custom icon width: 25
+```
+
+If a timeseries has a label with the key entered in `Override label` and the label value matches a key set in `Marker HTML overrides by label`, then the HTML will be overriden by the defined HTML in the marker override. For multiple series, add multiple `Marker HTML overrides by label`.
+
+Example:
+```
+Timeseries label is: {"icon": "a"}
+Override label: "icon"
+Marker HTML overrides by label: key="a", value="<div>custom HTML</div>"
+```
+
+
+### Change ant path colors with labels
+In the ant path options, if a timeseries has a label with the key entered in `Override label` and the label value matches a key set in `Color overrides by label`, then the selected color will be used for the ant path. For multiple series, add multiple `Color overrides by label`.
+
+Example:
+```
+Timeseries label is: {"antCol": "a"}
+Override label: "antCol"
+Color overrides by label: key="a", value=[color selected in the GUI]
+```
+
+
+### Icon, popup, and tooltip offset
+Change the offset values `Icon offset`, `Popup offset`, and `Tooltip offset` to override the default placement of marker icons, popups, and tooltips. The format should be x,y - e.g. `0,50`.
+
 
 ### Changing map style (map tiles)
 
 The tiles that are loaded and displayed within the map can be changed via the "Custom map tiles URL schema" configuration.  
 This allows customization of the style to be used for the map (e.g. streets, satellite or dark):
 
-![heatmap_options](img/map-tiles-config.png)
+![map_tiles_config](img/map_tiles_config.png)
 
 To make use of this configuration, specify a Tile Server URL (see [schema](https://leafletjs.com/reference-1.7.1.html#tilelayer-url-template)) in the input field.
 On the OpenStreetMap Wiki there is a list of [publicly available tile servers](https://wiki.openstreetmap.org/wiki/Tile_servers).

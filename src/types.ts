@@ -1,3 +1,7 @@
+import { Labels } from '@grafana/data';
+import { LabelColor } from './colorMapEditor';
+import { KeyValue } from './stringMapEditor';
+
 type ViewType = 'ant' | 'hex' | 'heat' | 'marker' | 'ant-marker';
 
 export interface TrackMapOptions {
@@ -21,6 +25,7 @@ interface Map {
   useCenterFromFirstPos: boolean;
   useCenterFromLastPos: boolean;
   tileUrlSchema: string;
+  tileAttribution: string;
 }
 
 interface CoordinateOptions {
@@ -28,13 +33,22 @@ interface CoordinateOptions {
   customLongitudeColumnName: string;
 }
 
-interface AntOptions {
+export interface AntOptions {
   delay: number;
   weight: number;
   color: string;
   pulseColor: string;
   paused: boolean;
+  //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
+  //pauseNonLiveTracks: boolean;
+  labelName: string;
+  colorOverridesByLabel: LabelColor[];
   reverse: boolean;
+}
+
+export interface AntData {
+  options: any;
+  data: number[][];
 }
 
 interface HeatOptions {
@@ -48,7 +62,18 @@ interface MarkerOptions {
   showOnlyLastMarker: boolean;
   useSecondaryIconForAllMarkers: boolean;
   useSecondaryIconForLastMarker: boolean;
+  useHTMLForMarkers: boolean;
   alwaysShowTooltips: boolean;
+  markerHtmlByLabel: KeyValue[];
+  labelName: string;
+  defaultHtml: string;
+  customIconWidth: number | undefined;
+  customIconHeight: number | undefined;
+  tooltipOffset: string;
+  iconOffset: string;
+  popupOffset: string;
+  //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
+  //showOnlyLiveTracks: boolean;
 }
 
 interface HexOptions {
@@ -64,4 +89,6 @@ export interface Position {
   longitude: number;
   popup?: string;
   tooltip?: string;
+  icon?: string;
+  labels?: Labels;
 }
