@@ -48,22 +48,24 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
   }, []);
 
   const isLatitudeName = (name: string | undefined): boolean => {
-    const customLatitudeName = options.coordinates.customLatitudeColumnName !== '' ? options.coordinates.customLatitudeColumnName : ''
-    return name !== '' && (name === 'latitude' || name === 'lat' || name === customLatitudeName)
-  }
+    const customLatitudeName =
+      options.coordinates.customLatitudeColumnName !== '' ? options.coordinates.customLatitudeColumnName : '';
+    return name !== '' && (name === 'latitude' || name === 'lat' || name === customLatitudeName);
+  };
 
   const isLongitudeName = (name: string | undefined): boolean => {
-    const customLongitudeName = options.coordinates.customLongitudeColumnName !== '' ? options.coordinates.customLongitudeColumnName : ''
-    return name !== '' && (name === 'longitude' || name === 'lon' || name === customLongitudeName)
-  }
+    const customLongitudeName =
+      options.coordinates.customLongitudeColumnName !== '' ? options.coordinates.customLongitudeColumnName : '';
+    return name !== '' && (name === 'longitude' || name === 'lon' || name === customLongitudeName);
+  };
 
-  const isPopupName = (name: string | undefined): boolean => {
-    return name === 'popup' || name === 'text' || name === 'desc'
-  }
+  const isPopupName = (name: string | undefined): boolean => {
+    return name === 'popup' || name === 'text' || name === 'desc';
+  };
 
-  const isTooltipName = (name: string | undefined): boolean => {
-    return name === 'tooltip'
-  }
+  const isTooltipName = (name: string | undefined): boolean => {
+    return name === 'tooltip';
+  };
 
   const getAntPathColorOverridesMemoized = (): (() => { [key: string]: string }) => {
     let antPathColorOverrides: { [key: string]: string } = {};
@@ -96,24 +98,26 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
   const getAntPathColorOverrides = getAntPathColorOverridesMemoized();
   const getMarkerHtmlOverrides = getMarkerHtmlOverridesMemoized();
 
-  let latitudes: number[][] | undefined = data.series
-    .map(s => s.fields.find(f => isLatitudeName(f.name))?.values.toArray() as number[]);
+  let latitudes: number[][] | undefined = data.series.map(
+    (s) => s.fields.find((f) => isLatitudeName(f.name))?.values.toArray() as number[]
+  );
 
   //time series
-  if (!latitudes?.some(l => l !== undefined)) {
+  if (!latitudes?.some((l) => l !== undefined)) {
     latitudes = data.series
-      .filter(f => isLatitudeName(f.name))
-      ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as number[]);
+      .filter((f) => isLatitudeName(f.name))
+      ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.values?.toArray() as number[]);
   }
 
-  let longitudes: number[][] | undefined = data.series
-    .map(s => s.fields.find(f => isLongitudeName(f.name))?.values.toArray() as number[]);
-  
+  let longitudes: number[][] | undefined = data.series.map(
+    (s) => s.fields.find((f) => isLongitudeName(f.name))?.values.toArray() as number[]
+  );
+
   //time series
-  if (!longitudes?.some(l => l !== undefined)) {
+  if (!longitudes?.some((l) => l !== undefined)) {
     longitudes = data.series
-      .filter(f => isLongitudeName(f.name))
-      ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as number[]);
+      .filter((f) => isLongitudeName(f.name))
+      ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.values?.toArray() as number[]);
   }
 
   const timestamps: number[][] | undefined = data.series
@@ -127,34 +131,37 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
   //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
   //const liveness: boolean[] = latitudes.map((ls) => ls[ls.length - 1] !== null);
 
-  let intensities: number[][] | undefined = data.series
-    .map(s => s.fields.find((f) => f.name === 'intensity')?.values.toArray() as number[]);
+  let intensities: number[][] | undefined = data.series.map(
+    (s) => s.fields.find((f) => f.name === 'intensity')?.values.toArray() as number[]
+  );
 
   //time series
-  if (!intensities?.some(l => l !== undefined)) {
+  if (!intensities?.some((l) => l !== undefined)) {
     intensities = data.series
-      .filter(f => f.name === 'intensity')
-      ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as number[]);
+      .filter((f) => f.name === 'intensity')
+      ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.values?.toArray() as number[]);
   }
 
-  let markerPopups: string[][] | undefined = data.series
-    .map(s => s.fields.find(f => isPopupName(f.name))?.values.toArray() as string[]);
+  let markerPopups: string[][] | undefined = data.series.map(
+    (s) => s.fields.find((f) => isPopupName(f.name))?.values.toArray() as string[]
+  );
 
   //time series
-  if (!markerPopups?.some(l => l !== undefined)) {
+  if (!markerPopups?.some((l) => l !== undefined)) {
     markerPopups = data.series
-      .filter(f => isPopupName(f.name))
-      ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as string[]);
+      .filter((f) => isPopupName(f.name))
+      ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.values?.toArray() as string[]);
   }
 
-  let markerTooltips: string[][] | undefined = data.series
-    .map(s => s.fields.find(f => isTooltipName(f.name))?.values.toArray() as string[]);
+  let markerTooltips: string[][] | undefined = data.series.map(
+    (s) => s.fields.find((f) => isTooltipName(f.name))?.values.toArray() as string[]
+  );
 
   //time series
-  if (!markerTooltips?.some(l => l !== undefined)) {
+  if (!markerTooltips?.some((l) => l !== undefined)) {
     markerTooltips = data.series
-      .filter(f => isTooltipName(f.name))
-      ?.map(f1 => f1.fields.find(f => f.name === 'Value')?.values?.toArray() as string[]);
+      .filter((f) => isTooltipName(f.name))
+      ?.map((f1) => f1.fields.find((f) => f.name === 'Value')?.values?.toArray() as string[]);
   }
 
   let iconHtml: Array<string | undefined> | undefined;
@@ -170,40 +177,52 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
   }
 
   const filterZeroOrNull = (positionSeries: Position[]) => {
-    return positionSeries.filter(pos => {
-      const isNotExactlyZero = pos.longitude !== 0 || pos.latitude !== 0
-      const isNotNullOrUndefined = pos.longitude !== null && pos.latitude !== null && pos.longitude !== undefined && pos.latitude !== undefined
-      return !options.discardZeroOrNull || (options.discardZeroOrNull && isNotExactlyZero && isNotNullOrUndefined)
-    })
+    return positionSeries.filter((pos) => {
+      const isNotExactlyZero = pos.longitude !== 0 || pos.latitude !== 0;
+      const isNotNullOrUndefined =
+        pos.longitude !== null && pos.latitude !== null && pos.longitude !== undefined && pos.latitude !== undefined;
+      return !options.discardZeroOrNull || (options.discardZeroOrNull && isNotExactlyZero && isNotNullOrUndefined);
+    });
   };
 
-  let positions: Position[][] | undefined = latitudes?.map((lats, index1) => {
-    return lats.map((latitude, index2) => {
-      const longitude = longitudes !== undefined && longitudes.length && longitudes[index1] !== undefined ? longitudes[index1][index2] : 0;
+  let positions: Position[][] | undefined = latitudes
+    ?.map((lats, index1) => {
+      return lats.map((latitude, index2) => {
+        const longitude =
+          longitudes !== undefined && longitudes.length && longitudes[index1] !== undefined
+            ? longitudes[index1][index2]
+            : 0;
 
-      const timestamp = timestamps !== undefined && timestamps.length && timestamps[index1] !== undefined ? timestamps[index1][index2] : 0;
-      const timestampPrint = timestamp !== 0 ? `<br/>Timestamp: ${timestamp}` : '';
+        const timestamp =
+          timestamps !== undefined && timestamps.length && timestamps[index1] !== undefined
+            ? timestamps[index1][index2]
+            : 0;
+        const timestampPrint = timestamp !== 0 ? `<br/>Timestamp: ${timestamp}` : '';
 
-      const trackLabels = labels && labels[index1] ? labels[index1] : undefined;
-      const trackLabelsPrint = trackLabels !== undefined ? `<br/>Labels: ${JSON.stringify(trackLabels, null, 2)}` : '';
+        const trackLabels = labels && labels[index1] ? labels[index1] : undefined;
+        const trackLabelsPrint =
+          trackLabels !== undefined ? `<br/>Labels: ${JSON.stringify(trackLabels, null, 2)}` : '';
 
-      const popup = markerPopups !== undefined && markerPopups.length && markerPopups[index1] !== undefined
-          ? markerPopups[index1][index2]
-          : `${latitude},${longitude}${timestampPrint}${trackLabelsPrint}`;
+        const popup =
+          markerPopups !== undefined && markerPopups.length && markerPopups[index1] !== undefined
+            ? markerPopups[index1][index2]
+            : `${latitude},${longitude}${timestampPrint}${trackLabelsPrint}`;
 
-      const tooltip = markerTooltips !== undefined && markerTooltips.length && markerTooltips[index1] !== undefined
-          ? markerTooltips[index1][index2]
-          : undefined;
-          
-      return {
-        latitude,
-        longitude,
-        popup,
-        tooltip,
-        labels: trackLabels
-      };
-    });
-  }).map(pos => filterZeroOrNull(pos));
+        const tooltip =
+          markerTooltips !== undefined && markerTooltips.length && markerTooltips[index1] !== undefined
+            ? markerTooltips[index1][index2]
+            : undefined;
+
+        return {
+          latitude,
+          longitude,
+          popup,
+          tooltip,
+          labels: trackLabels,
+        };
+      });
+    })
+    .map((pos) => filterZeroOrNull(pos));
 
   if (!positions || positions.length === 0) {
     positions = [[{ latitude: 0, longitude: 0 }]];
@@ -246,7 +265,11 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     positionSeries.forEach((position, j) => {
       // These may be null for alignment purposes in the timeseries data
       if (position.latitude && position.longitude) {
-        heatDatas.push([position.latitude, position.longitude, (intensities !== undefined && intensities[i] && intensities[i][j]) ? intensities[i][j] : 0]);
+        heatDatas.push([
+          position.latitude,
+          position.longitude,
+          intensities !== undefined && intensities[i] && intensities[i][j] ? intensities[i][j] : 0,
+        ]);
         antDatas.push([position.latitude, position.longitude]);
         hexData.features.push({
           type: 'Feature',
@@ -267,14 +290,16 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
 
   const createDivIcon = (html: string) => {
     if (options.marker.customIconHeight !== undefined && options.marker.customIconWidth !== undefined) {
-      return new DivIcon({ html, iconSize: [options.marker.customIconWidth, options.marker.customIconHeight] })
+      return new DivIcon({ html, iconSize: [options.marker.customIconWidth, options.marker.customIconHeight] });
     }
     return new DivIcon({ html });
   };
 
-  const getOffset = (option: string | undefined, defaultValue: PointExpression): PointExpression => {
-    return option === undefined || option.trim() === '' ? defaultValue : [parseInt(option.split(',')[0]), parseInt(option.split(',')[1])]
-  }
+  const getOffset = (option: string | undefined, defaultValue: PointExpression): PointExpression => {
+    return option === undefined || option.trim() === ''
+      ? defaultValue
+      : [parseInt(option.split(',')[0], 10), parseInt(option.split(',')[1], 10)];
+  };
 
   const createIcon = (url: string, size: number) => {
     return new Icon({
@@ -292,7 +317,9 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
       positions.forEach((positionSeries, i) => {
         positionSeries.forEach((position, j) => {
           const isLastPosition = j + 1 === positionSeries.length;
-          const useSecondaryIcon = options.marker.useSecondaryIconForAllMarkers || (options.marker.useSecondaryIconForLastMarker && isLastPosition);
+          const useSecondaryIcon =
+            options.marker.useSecondaryIconForAllMarkers ||
+            (options.marker.useSecondaryIconForLastMarker && isLastPosition);
 
           let html = options.marker.defaultHtml;
           if (iconHtml && iconHtml.length) {
@@ -309,9 +336,9 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
               isLastPosition ? options.marker.sizeLast : options.marker.size
             );
           }
-          
+
           let shouldHide = options.marker.showOnlyLastMarker && !isLastPosition;
-          
+
           //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
           /*if (options.marker.showOnlyLiveTracks && !liveness[i]) {
             //change shouldHide/shouldShow
@@ -319,9 +346,21 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
 
           if (!shouldHide) {
             markers.push(
-              <Marker key={i + '-' + j} position={[position.latitude, position.longitude]} icon={icon} title={position.popup}>
+              <Marker
+                key={i + '-' + j}
+                position={[position.latitude, position.longitude]}
+                icon={icon}
+                title={position.popup}
+              >
                 <StyledPopup>{ReactHtmlParser(position.popup || '')}</StyledPopup>
-                {position.tooltip && <Tooltip offset={getOffset(options.marker.tooltipOffset, [0,0])} permanent={options.marker.alwaysShowTooltips}>{position.tooltip}</Tooltip>}
+                {position.tooltip && (
+                  <Tooltip
+                    offset={getOffset(options.marker.tooltipOffset, [0, 0])}
+                    permanent={options.marker.alwaysShowTooltips}
+                  >
+                    {position.tooltip}
+                  </Tooltip>
+                )}
               </Marker>
             );
           }
@@ -426,16 +465,18 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
   }
 
   const createHeatMaps = useMemo((): ReactNode[] => {
-    return heatData.map(h => 
+    return heatData.map((h, i) => (
       <HeatmapLayer
+        key={i}
         fitBoundsOnLoad={options.heat.fitBoundsOnLoad}
         fitBoundsOnUpdate={options.heat.fitBoundsOnUpdate}
         points={h}
         longitudeExtractor={(m: any) => m[1]}
         latitudeExtractor={(m: any) => m[0]}
         intensityExtractor={(m: any) => parseFloat(m[2])}
-      />)
-  }, [heatData])
+      />
+    ));
+  }, [heatData]);
 
   return (
     <div
@@ -460,10 +501,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
         {options.viewType === 'heat' && createHeatMaps}
         {options.viewType === 'hex' && <WrappedHexbinLayer {...hexbinOptions} data={hexData} />}
         {(options.viewType === 'marker' || options.viewType === 'ant-marker') && createMarkers()}
-        <TileLayer
-          attribution={options.map.tileAttribution}
-          url={options.map.tileUrlSchema}
-        />
+        <TileLayer attribution={options.map.tileAttribution} url={options.map.tileUrlSchema} />
       </Map>
     </div>
   );

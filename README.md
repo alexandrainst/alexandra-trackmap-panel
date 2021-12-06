@@ -237,7 +237,7 @@ For more information on Grafana plugins [look here](https://grafana.com/docs/gra
 
 ## Development
 
-To compile the plugin you need either `npm` (default) or `yarn`.
+To compile the plugin you need `npm`.
 
 ### 1. Install dependencies
 
