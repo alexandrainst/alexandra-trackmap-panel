@@ -11,10 +11,10 @@
   "author": "Alexandra Institute",
   "license": "MIT",
   "devDependencies": {
-    "@grafana/data": "^7.5.11",
-    "@grafana/runtime": "^7.5.11",
+    "@grafana/data": "^9.3.0-beta1",
+    "@grafana/runtime": "^9.3.0-beta1",
     "@grafana/toolkit": "^9.3.0-beta1",
-    "@grafana/ui": "^7.5.11",
+    "@grafana/ui": "^9.3.0-beta1",
     "@types/d3": "^5.16.4",
     "@types/d3-hexbin": "^0.2.3",
     "@types/geojson": "^7946.0.8",
