@@ -156,6 +156,13 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         defaultValue: false,
         showIf: (config) => config.viewType === 'ant' || config.viewType === 'ant-marker',
       })
+      .addBooleanSwitch({
+        category: ['Ant Path'],
+        path: 'ant.hardwareAccelerated',
+        name: 'Hardware Acceleration',
+        defaultValue: true,
+        showIf: (config) => config.viewType === 'ant' || config.viewType === 'ant-marker',
+      })
       .addTextInput({
         category: ['Ant Path'],
         path: 'ant.labelName',
@@ -175,18 +182,12 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         showIf: (config: TrackMapOptions) => config.viewType === 'ant' || config.viewType === 'ant-marker',
       })
       //heat
-      .addBooleanSwitch({
+      .addNumberInput({
         category: ['Heat Map'],
-        path: 'heat.fitBoundsOnLoad',
-        name: 'Fit bounds on load',
-        defaultValue: false,
-        showIf: (config) => config.viewType === 'heat',
-      })
-      .addBooleanSwitch({
-        category: ['Heat Map'],
-        path: 'heat.fitBoundsOnUpdate',
-        name: 'Fit bounds on update',
-        defaultValue: false,
+        path: 'heat.maxValue',
+        name: 'Maximum intensity',
+        description: 'Value that is considered maximum intensity for heat map. Use 0 to autodetect.',
+        defaultValue: 1.0,
         showIf: (config) => config.viewType === 'heat',
       })
       //marker

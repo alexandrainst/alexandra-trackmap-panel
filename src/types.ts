@@ -44,6 +44,7 @@ export interface AntOptions {
   labelName: string;
   colorOverridesByLabel: LabelColor[];
   reverse: boolean;
+  hardwareAccelerated: boolean;
 }
 
 export interface AntData {
@@ -52,8 +53,7 @@ export interface AntData {
 }
 
 interface HeatOptions {
-  fitBoundsOnLoad: boolean;
-  fitBoundsOnUpdate: boolean;
+  maxValue: number;
 }
 
 interface MarkerOptions {

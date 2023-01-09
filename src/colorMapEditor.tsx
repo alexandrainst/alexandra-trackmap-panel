@@ -1,7 +1,7 @@
 import { FieldConfigEditorProps, GrafanaTheme, StringFieldConfigSettings } from '@grafana/data';
 import React from 'react';
 import { Button, ColorPicker, getTheme, Icon, Input, stylesFactory } from '@grafana/ui';
-import { css } from 'emotion';
+import { css } from '@emotion/css';
 
 export interface LabelColor {
   label: string;
@@ -87,7 +87,7 @@ export default class ColorMapEditor extends React.PureComponent<ColorMapEditorPr
         );
         return (
           <Input
-            css={{}}
+            style={{}}
             className={styles.textInput}
             key={`${index}/${k}`}
             defaultValue={k.label || ''}
@@ -108,7 +108,7 @@ export default class ColorMapEditor extends React.PureComponent<ColorMapEditorPr
         {inputs}
         {showAdd ? (
           <Input
-            css={{}}
+            style={{}}
             autoFocus
             className={styles.textInput}
             placeholder="Add key"

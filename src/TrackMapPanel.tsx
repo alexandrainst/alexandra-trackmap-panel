@@ -1,20 +1,20 @@
-import React, { useEffect, useRef, ReactNode, useMemo } from 'react';
+import React, { useEffect, ReactNode } from 'react';
 import { Labels, PanelProps } from '@grafana/data';
 import { Position, TrackMapOptions, AntData } from 'types';
-import { css, cx } from 'emotion';
-import { Feature, FeatureCollection } from 'geojson';
-import { Map, Marker, Popup, TileLayer, Tooltip, withLeaflet } from 'react-leaflet';
-import { DivIcon, Icon, LatLngBounds, LatLngBoundsExpression, LeafletEvent, PointExpression } from 'leaflet';
+import { css, cx } from '@emotion/css';
+import { MapContainer, Marker, Popup, TileLayer, Tooltip, useMap, useMapEvent } from 'react-leaflet';
+import { DivIcon, heatLayer, HeatMapOptions, latLng, LatLng, hexbinLayer, HexbinLayerConfig, Icon, LatLngBounds, LatLngBoundsExpression, PointExpression } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
 import { getLocationSrv } from '@grafana/runtime';
 import { stylesFactory } from '@grafana/ui';
-import ReactHtmlParser from 'react-html-parser';
+import ReactHtmlParser from 'html-react-parser';
 
-const AntPath = require('react-leaflet-ant-path').default;
-const HeatmapLayer = require('react-leaflet-heatmap-layer').default;
-const HexbinLayer = require('react-leaflet-d3').HexbinLayer;
+const { antPath } = require('leaflet-ant-path');
+import 'leaflet.heat';
+import '@asymmetrik/leaflet-d3';
+
 
 const StyledPopup = styled(Popup)`
   .leaflet-popup-content-wrapper {
@@ -28,24 +28,22 @@ const StyledPopup = styled(Popup)`
 
 export const TrackMapPanel = ({ options, data, width, height }: PanelProps<TrackMapOptions>) => {
   const styles = getStyles();
-  const mapRef = useRef<Map | null>(null);
-
-  const WrappedHexbinLayer: any = withLeaflet(HexbinLayer);
 
   const primaryIcon: string = require('img/marker.png');
   const secondaryIcon: string = require('img/marker_secondary.png');
 
-  useEffect(() => {
-    if (mapRef.current !== null) {
-      if (options.map.zoomToDataBounds) {
+  const MapBounds = (props: { options: typeof options.map }) => {
+    const mapInstance = useMap();
+    useEffect(() => {
+      if (props.options.zoomToDataBounds) {
         const bounds = getBoundsFromPositions(positions);
-        mapRef.current.leafletElement.fitBounds(bounds, { animate: false });
+        mapInstance.fitBounds(bounds, { animate: false });
       }
-      const bounds = mapRef.current.leafletElement.getBounds();
+      const bounds = mapInstance.getBounds();
       updateMap(bounds);
-    }
-    // eslint-disable-next-line
-  }, []);
+    }, [mapInstance, props.options]);
+    return null;
+  };
 
   const isLatitudeName = (name: string | undefined): boolean => {
     const customLatitudeName =
@@ -228,12 +226,8 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     positions = [[{ latitude: 0, longitude: 0 }]];
   }
 
-  const heatData: any[][] = [];
+  const latLngs: LatLng[] = [];
   const antData: AntData[] = [];
-  const hexData: FeatureCollection = {
-    type: 'FeatureCollection',
-    features: [],
-  };
 
   positions?.forEach((positionSeries, i) => {
     const antDatas: number[][] = [];
@@ -246,6 +240,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
       pulseColor: options.ant.pulseColor,
       paused: options.ant.paused,
       reverse: options.ant.reverse,
+      hardwareAccelerated: options.ant.hardwareAccelerated,
     };
 
     //TODO: Feature "Live track", concept of a "non-live" track, where lat/lon data is null for the latest timestamp, but exists within the panel's time window
@@ -261,27 +256,17 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
       }
     }
 
-    const heatDatas: number[][] = [];
     positionSeries.forEach((position, j) => {
       // These may be null for alignment purposes in the timeseries data
       if (position.latitude && position.longitude) {
-        heatDatas.push([
+        latLngs.push(latLng(
           position.latitude,
           position.longitude,
-          intensities !== undefined && intensities[i] && intensities[i][j] ? intensities[i][j] : 0,
-        ]);
+          intensities !== undefined && intensities[i] && intensities[i][j] ? intensities[i][j] : 0
+        ));
         antDatas.push([position.latitude, position.longitude]);
-        hexData.features.push({
-          type: 'Feature',
-          id: i,
-          geometry: {
-            type: 'Point',
-            coordinates: [position.longitude, position.latitude],
-          },
-        } as Feature);
       }
     });
-    heatData.push(heatDatas);
     antData.push({
       options: antOptions,
       data: antDatas,
@@ -309,6 +294,30 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
       popupAnchor: getOffset(options.marker.popupOffset, [0, -size]),
     });
   };
+
+  const createPopups = (index: number): ReactNode[] => {
+    const popups: ReactNode[] = [];
+
+    const popup = positions ? positions[index].find((p) => p.latitude && p.longitude)?.popup : undefined;
+    if (popup !== undefined) {
+      popups.push(<StyledPopup>{popup}</StyledPopup>);
+    }
+    return popups;
+  }
+
+  const createAntPaths = (): ReactNode[] => {
+    let antpaths: ReactNode[] = [];
+
+    antData.forEach((ant, index) => {
+      antpaths.push(
+        <AntPath ant={ant}>
+          {createPopups(index)}
+        </AntPath>
+        );
+    });
+
+    return antpaths;
+  }
 
   const createMarkers = (): ReactNode[] => {
     let markers: ReactNode[] = [];
@@ -370,19 +379,13 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     return markers;
   };
 
-  const hexbinOptions = {
-    colorScaleExtent: [1, undefined],
-    radiusScaleExtent: [1, undefined],
-    colorRange: [options.hex.colorRangeFrom, options.hex.colorRangeTo],
-    radiusRange: [options.hex.radiusRangeFrom, options.hex.radiusRangeTo],
-  };
-
-  const onMapMoveEnd = (event: LeafletEvent) => {
-    if (mapRef.current !== null) {
-      mapRef.current.leafletElement.invalidateSize();
-    }
-    updateMap(event.target.getBounds());
-  };
+  const MapMove = () => {
+    const map = useMapEvent('moveend', () => {
+      map.invalidateSize();
+      updateMap(map.getBounds());
+    });
+    return null;
+  }
 
   const updateQueryVariables = (minLat: number, minLon: number, maxLat: number, maxLon: number) => {
     getLocationSrv().update({
@@ -449,34 +452,79 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
       mapCenter.longitude = positions[0][positions.length - 1].longitude;
     }
   }
-  let antPaths = null;
-  if (options.viewType === 'ant' || options.viewType === 'ant-marker') {
-    antPaths = antData.map((d, i) => {
-      if (d.data.length && d.data.length > 1) {
-        const popup = positions ? positions[i].find((p) => p.latitude && p.longitude)?.popup : undefined;
-        return (
-          <AntPath key={i} positions={d.data} options={d.options}>
-            {popup ? <StyledPopup>{popup}</StyledPopup> : null}
-          </AntPath>
-        );
+
+  const AntPath = (props: { children: ReactNode[], ant: AntData} ) => {
+    const mapInstance = useMap();
+    useEffect(() => {
+      const antPolylines: any[] = [];
+      if (options.viewType === 'ant' || options.viewType === 'ant-marker') {
+        const antPolyline = antPath(props.ant.data, props.ant.options);
+        mapInstance.addLayer(antPolyline)
+
+        return () => {
+          mapInstance.removeLayer(antPolyline)
+        }
       }
-      return null;
+      return () => {}
+    }, [mapInstance, props.ant.data, props.ant.options]);
+    return null;
+  };
+
+  const Heat = (props: { positions: LatLng[], options: typeof options.heat }) => {
+    const mapInstance = useMap();
+
+    let maxValue: number | undefined = undefined;
+    let minValue: number | undefined = undefined;
+    props.positions.forEach((d) => {
+
+      if (d.alt && (!maxValue || d.alt > maxValue)) {
+        maxValue = d.alt;
+      }
+      if (d.alt && (!minValue || d.alt < minValue)) {
+        minValue = d.alt;
+      }
     });
+
+    useEffect( () => {
+      const heatOptions: HeatMapOptions = {
+        max: options.heat.maxValue !== 0 ? options.heat.maxValue : maxValue,
+      };
+
+      if (options.viewType !== 'heat') {
+        return;
+      }
+      const heat = heatLayer(props.positions, heatOptions).addTo(mapInstance);
+      return () => {
+        mapInstance.removeLayer(heat);
+      }
+    }, [mapInstance, props.positions, maxValue]);
+
+    return null;
   }
 
-  const createHeatMaps = useMemo((): ReactNode[] => {
-    return heatData.map((h, i) => (
-      <HeatmapLayer
-        key={i}
-        fitBoundsOnLoad={options.heat.fitBoundsOnLoad}
-        fitBoundsOnUpdate={options.heat.fitBoundsOnUpdate}
-        points={h}
-        longitudeExtractor={(m: any) => m[1]}
-        latitudeExtractor={(m: any) => m[0]}
-        intensityExtractor={(m: any) => parseFloat(m[2])}
-      />
-    ));
-  }, [heatData]);
+  const HexBin = (props: { positions: LatLng[], options: typeof options.hex }) => {
+    const mapInstance = useMap();
+
+    useEffect ( () => {
+      if (options.viewType !== 'hex') {
+        return;
+      }
+      const hexData = props.positions.map( d => [ d.lng, d.lat ]);
+      const hexOptions: HexbinLayerConfig = {
+        opacity: props.options.opacity,
+        radiusRange: [ props.options.radiusRangeFrom, props.options.radiusRangeTo ],
+        colorRange: [ props.options.colorRangeFrom, props.options.colorRangeTo ]
+      };
+      const hexLayer = hexbinLayer(hexOptions);
+      hexLayer.addTo(mapInstance);
+      hexLayer.data(hexData);
+
+      return () => {
+        mapInstance.removeLayer(hexLayer);
+      }
+    }, [mapInstance, props.positions, props.options]);
+    return null;
+  }
 
   return (
     <div
@@ -488,21 +536,19 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
         `
       )}
     >
-      <Map
-        ref={mapRef}
+      <MapContainer
         center={[mapCenter.latitude, mapCenter.longitude]}
         zoom={options.map.zoom}
         zoomSnap={0.5}
-        onmoveend={(event: LeafletEvent) => {
-          onMapMoveEnd(event);
-        }}
       >
-        {antPaths}
-        {options.viewType === 'heat' && createHeatMaps}
-        {options.viewType === 'hex' && <WrappedHexbinLayer {...hexbinOptions} data={hexData} />}
+        {(options.viewType === 'ant' || options.viewType === 'ant-marker') && createAntPaths()}
         {(options.viewType === 'marker' || options.viewType === 'ant-marker') && createMarkers()}
+        {options.viewType === 'heat' && <Heat positions={latLngs} options={options.heat}/>}
+        {options.viewType === 'hex' && <HexBin positions={latLngs} options={options.hex}/>}
+        <MapBounds options={options.map} />
+        <MapMove />
         <TileLayer attribution={options.map.tileAttribution} url={options.map.tileUrlSchema} />
-      </Map>
+      </MapContainer>
     </div>
   );
 };
