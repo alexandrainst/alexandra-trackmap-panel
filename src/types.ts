@@ -13,7 +13,9 @@ export interface TrackMapOptions {
   heat: HeatOptions;
   marker: MarkerOptions;
   hex: HexOptions;
+  hoverMarker: HoverOptions;
   discardZeroOrNull: boolean;
+  displayHoverMarker: boolean;
 }
 
 interface Map {
@@ -84,9 +86,18 @@ interface HexOptions {
   radiusRangeTo: number;
 }
 
+interface HoverOptions {
+  color: string;
+  fillColor: string;
+  fillOpacity: number;
+  weight: number;
+  radius: number;
+}
+
 export interface Position {
   latitude: number;
   longitude: number;
+  timestamp?: number;
   popup?: string;
   tooltip?: string;
   icon?: string;

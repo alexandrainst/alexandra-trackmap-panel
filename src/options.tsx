@@ -105,6 +105,11 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         name: 'Discard positions that contain null or exactly 0',
         defaultValue: true,
       })
+      .addBooleanSwitch({
+        path: 'displayHoverMarker',
+        name: 'Listen for hover events and display Hover marker',
+        defaultValue: true,
+      })
       //ant
       .addNumberInput({
         category: ['Ant Path'],
@@ -354,6 +359,48 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         name: 'Radius range to',
         defaultValue: 12,
         showIf: (config) => config.viewType === 'hex',
+      })
+      //hoverMarker
+      .addColorPicker({
+        category: ['Hover Marker'],
+        path: 'hoverMarker.color',
+        name: 'Color',
+        defaultValue: 'rgb(255, 255, 255)',
+        showIf: (config: TrackMapOptions) => config.displayHoverMarker === true,
+      })
+      .addColorPicker({
+        category: ['Hover Marker'],
+        path: 'hoverMarker.fillColor',
+        name: 'Fill color',
+        defaultValue: 'rgb(65, 105, 225)',
+        showIf: (config: TrackMapOptions) => config.displayHoverMarker === true,
+      })
+      .addSliderInput({
+        category: ['Hover Marker'],
+        path: 'hoverMarker.fillOpacity',
+        name: 'Fill opacity',
+        defaultValue: 1.0,
+        settings: {
+          included: true,
+          min: 0.0,
+          max: 1.0,
+          step: 0.01,
+        },
+        showIf: (config: TrackMapOptions) => config.displayHoverMarker === true,
+      })
+      .addNumberInput({
+        category: ['Hover Marker'],
+        path: 'hoverMarker.weight',
+        name: 'Weight',
+        defaultValue: 2,
+        showIf: (config: TrackMapOptions) => config.displayHoverMarker === true,
+      })
+      .addNumberInput({
+        category: ['Hover Marker'],
+        path: 'hoverMarker.radius',
+        name: 'Radius',
+        defaultValue: 7,
+        showIf: (config: TrackMapOptions) => config.displayHoverMarker === true,
       })
   );
 };

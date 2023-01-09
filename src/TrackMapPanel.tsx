@@ -1,9 +1,9 @@
 import React, { useEffect, ReactNode } from 'react';
-import { Labels, PanelProps } from '@grafana/data';
+import { Labels, PanelProps, DataHoverEvent, DataHoverClearEvent } from '@grafana/data';
 import { Position, TrackMapOptions, AntData } from 'types';
 import { css, cx } from '@emotion/css';
 import { MapContainer, Marker, Popup, TileLayer, Tooltip, useMap, useMapEvent } from 'react-leaflet';
-import { DivIcon, heatLayer, HeatMapOptions, latLng, LatLng, hexbinLayer, HexbinLayerConfig, Icon, LatLngBounds, LatLngBoundsExpression, PointExpression } from 'leaflet';
+import { DivIcon, heatLayer, HeatMapOptions, latLng, LatLng, hexbinLayer, HexbinLayerConfig, Icon, LatLngBounds, LatLngBoundsExpression, PointExpression, CircleMarker, circleMarker } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
@@ -26,11 +26,13 @@ const StyledPopup = styled(Popup)`
   }
 `;
 
-export const TrackMapPanel = ({ options, data, width, height }: PanelProps<TrackMapOptions>) => {
+export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelProps<TrackMapOptions>) => {
   const styles = getStyles();
 
   const primaryIcon: string = require('img/marker.png');
   const secondaryIcon: string = require('img/marker_secondary.png');
+
+  const hoverCircles: CircleMarker[] = [];
 
   const MapBounds = (props: { options: typeof options.map }) => {
     const mapInstance = useMap();
@@ -181,6 +183,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
         return {
           latitude,
           longitude,
+          timestamp,
           popup,
           tooltip,
           labels: trackLabels,
@@ -493,6 +496,59 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
     return null;
   }
 
+  const HoverMarker = (props: { options: typeof options.hoverMarker }) => {
+    const mapInstance = useMap();
+
+    useEffect(() => {
+      const eventHoverHandler = (event: DataHoverEvent) => {
+        if (event.payload?.point?.time) {
+          let circleIndex = 0;
+          positions?.forEach(positionSeries => {
+
+            if (!positionSeries.some(position => position.timestamp && position.timestamp <= event.payload.point.time) ) {
+              return;
+            }
+
+            const circlePosition = positionSeries.find( position => position.timestamp && position.timestamp >= event.payload.point.time );
+            if (circlePosition) {
+              const circleLatitude = circlePosition.latitude;
+              const circleLongitude = circlePosition.longitude;
+
+              const existingCircle = hoverCircles.at(circleIndex);
+              if (existingCircle) {
+                existingCircle.setLatLng([circleLatitude, circleLongitude]);
+              } else {
+                hoverCircles.push(circleMarker([circleLatitude, circleLongitude], {
+                  color: props.options.color,
+                  fillColor: props.options.fillColor,
+                  fillOpacity: props.options.fillOpacity,
+                  weight: props.options.weight,
+                  radius: props.options.radius,
+                }).addTo(mapInstance));
+                circleIndex++;
+              }
+            }
+          });
+        }
+      }
+
+      const eventHoverClearHandler = (event: DataHoverClearEvent) => {
+        while(hoverCircles.length > 0) {
+          const hoverCircle = hoverCircles.pop();
+          hoverCircle?.remove();
+        }
+      }
+
+      eventBus.subscribe(DataHoverEvent, eventHoverHandler);
+      eventBus.subscribe(DataHoverClearEvent, eventHoverClearHandler);
+      return () => {
+        eventBus.removeAllListeners();
+      }
+    }, [mapInstance, props.options]);
+
+  return null;
+}
+
   return (
     <div
       className={cx(
@@ -512,6 +568,7 @@ export const TrackMapPanel = ({ options, data, width, height }: PanelProps<Track
         {(options.viewType === 'marker' || options.viewType === 'ant-marker') && createMarkers()}
         {options.viewType === 'heat' && <Heat positions={latLngs} options={options.heat}/>}
         {options.viewType === 'hex' && <HexBin positions={latLngs} options={options.hex}/>}
+        {options.displayHoverMarker && <HoverMarker options={options.hoverMarker} />}
         <MapBounds options={options.map} />
         <MapMove />
         <TileLayer attribution={options.map.tileAttribution} url={options.map.tileUrlSchema} />
