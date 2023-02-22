@@ -76,7 +76,7 @@ export default class StringMapEditor extends React.PureComponent<StringMapEditor
           <div className={styles.inputPrefix}>
             <Input
               // This is the HTML data
-              css={{}}
+              style={{}}
               className={styles.textInput}
               key={`${index}/${k}`}
               defaultValue={k.value || '<div></div>'}
@@ -91,7 +91,7 @@ export default class StringMapEditor extends React.PureComponent<StringMapEditor
         );
         return (
           <Input
-            css={{}}
+            style={{}}
             className={styles.textInput}
             key={`${index}/${k}`}
             defaultValue={k.key || 'LABEL_VALUE'}
@@ -112,7 +112,7 @@ export default class StringMapEditor extends React.PureComponent<StringMapEditor
         {inputs}
         {showAdd ? (
           <Input
-            css={{}}
+            style={{}}
             autoFocus
             className={styles.textInput}
             placeholder="Add key"
