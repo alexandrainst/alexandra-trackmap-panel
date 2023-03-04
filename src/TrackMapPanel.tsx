@@ -34,19 +34,6 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
 
   const hoverCircles: CircleMarker[] = [];
 
-  const MapBounds = (props: { options: typeof options.map }) => {
-    const mapInstance = useMap();
-    useEffect(() => {
-      if (props.options.zoomToDataBounds) {
-        const bounds = getBoundsFromPositions(positions);
-        mapInstance.fitBounds(bounds, { animate: false });
-      }
-      const bounds = mapInstance.getBounds();
-      updateMap(bounds);
-    }, [mapInstance, props.options]);
-    return null;
-  };
-
   const isLatitudeName = (name: string | undefined): boolean => {
     const customLatitudeName =
       options.coordinates.customLatitudeColumnName !== '' ? options.coordinates.customLatitudeColumnName : '';
@@ -398,30 +385,44 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
     }
   };
 
-  const mapCenter: Position = {
-    latitude: options.map.centerLatitude,
-    longitude: options.map.centerLongitude,
+  const mapCenter = (positions: LatLng[], mapOptions: typeof options.map): LatLng => {
+    if (positions.length) {
+      let centerPosition: LatLng | undefined;
+
+      if (mapOptions.centerMethod === 'first') {
+        centerPosition = positions.find( p => p.lat && p.lng );
+      } else if (mapOptions.centerMethod === 'last') {
+        let i = positions.length - 1;
+        do {
+          if (positions[i].lat && positions[i].lng) {
+            centerPosition = positions[i];
+            break;
+          }
+        } while (i--)
+      }
+
+      if (centerPosition) {
+        return centerPosition;
+      }
+    }
+
+    return latLng(mapOptions.centerLatitude, mapOptions.centerLongitude);
+  }
+
+  const MapBounds = (props: { options: typeof options.map }) => {
+    const mapInstance = useMap();
+    useEffect(() => {
+      if (props.options.zoomToDataBounds) {
+        const bounds = getBoundsFromPositions(positions);
+        mapInstance.fitBounds(bounds, { animate: true });
+      } else {
+        mapInstance.setView(mapCenter(latLngs, props.options));
+      }
+      const bounds = mapInstance.getBounds();
+      updateMap(bounds);
+    }, [mapInstance, props.options]);
+    return null;
   };
-
-  if (options.map.useCenterFromFirstPos && positions?.length && positions[0]?.length && positions[0][0].latitude) {
-    mapCenter.latitude = positions[0][0].latitude;
-    mapCenter.longitude = positions[0][0].longitude;
-  }
-
-  if (positions?.length && positions[0]?.length && positions[0][0]) {
-    if (options.map.useCenterFromFirstPos && positions[0][0].latitude) {
-      mapCenter.latitude = positions[0][0].latitude;
-      mapCenter.longitude = positions[0][0].longitude;
-    }
-    if (
-      !options.map.useCenterFromFirstPos &&
-      options.map.useCenterFromLastPos &&
-      positions[0][positions[0].length - 1].latitude
-    ) {
-      mapCenter.latitude = positions[0][positions.length - 1].latitude;
-      mapCenter.longitude = positions[0][positions.length - 1].longitude;
-    }
-  }
 
   const AntPath = (props: { children: ReactNode[], ant: AntData} ) => {
     const mapInstance = useMap();
@@ -560,7 +561,7 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
       )}
     >
       <MapContainer
-        center={[mapCenter.latitude, mapCenter.longitude]}
+        center={mapCenter(latLngs, options.map)}
         zoom={options.map.zoom}
         zoomSnap={0.5}
       >

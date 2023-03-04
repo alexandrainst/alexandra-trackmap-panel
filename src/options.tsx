@@ -35,38 +35,39 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
           ],
         },
       })
-      .addBooleanSwitch({
-        path: 'map.useCenterFromFirstPos',
-        name: 'Map center to first position',
-        defaultValue: false,
-        showIf: (config) => !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds,
-      })
-      .addBooleanSwitch({
-        path: 'map.useCenterFromLastPos',
-        name: 'Map center to last position',
-        defaultValue: false,
-        showIf: (config) => !config.map.useCenterFromFirstPos && !config.map.zoomToDataBounds,
+      .addRadio({
+        path: 'map.centerMethod',
+        name: 'Map Center method',
+        defaultValue: 'first',
+        settings: {
+          options: [
+            { value: 'first', label: 'First Position', description: 'Center map on first track position' },
+            { value: 'last', label: 'Last Position', description: 'Center map on last track position' },
+            { value: 'predefined', label: 'Pre-defined', description: 'Center on pre-defined coordinates' },
+          ],
+          isClearable: false,
+        },
       })
       .addBooleanSwitch({
         path: 'map.zoomToDataBounds',
         name: 'Zoom map to fit data bounds',
         defaultValue: false,
         showIf: (config) =>
-          !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.useBoundsInQuery,
+          !config.map.useBoundsInQuery,
       })
       .addNumberInput({
         path: 'map.centerLatitude',
         name: 'Map center latitude',
         defaultValue: 56.17203,
         showIf: (config) =>
-          !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds,
+          config.map.centerMethod === 'predefined',
       })
       .addNumberInput({
         path: 'map.centerLongitude',
         name: 'Map center longitude',
         defaultValue: 10.1865203,
         showIf: (config) =>
-          !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds,
+          config.map.centerMethod === 'predefined',
       })
       .addNumberInput({
         path: 'map.zoom',
