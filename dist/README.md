@@ -82,6 +82,7 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 - `Pulse color`: The color of the pulse running along the path
 - `Paused`: Pause/start the animation
 - `Reverse`: Reverse the animation direction
+- `Hardware Acceleration`: Use/do not use hardware acceleration with the animation
 
 ![ant_path_options](img/antpath.png)
 
@@ -93,6 +94,7 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 - `Pulse color`: The color of the pulse running along the path
 - `Paused`: Pause/start the animation
 - `Reverse`: Reverse the animation direction
+- `Hardware Acceleration`: Use/do not use hardware acceleration with the animation
 - `Show only last marker`: Shows only last marker
 - `Use secondary icon for last marker`: Uses secondary icon image for last marker
 - `Use secondary icon for all markers`: Uses secondary icon image for all markers
@@ -115,10 +117,17 @@ Note that some options are disabled when others are enabled - e.g. you cannot se
 
 #### Heatmap
 
-- `Fit bounds on load`: Fit the heatmap inside the map bounds on load
-- `Fit bounds on update`: Fit the heatmap inside the map bounds on update
+- `Maximum intensity`: Value of intensity that is considered the maximum achievable. Set to 0 to compute the value automatically
 
 ![heatmap_options](img/heatmap.png)
+
+#### Hover Marker
+
+- `Color`: Color to display the hover marker outline in
+- `Fill color`: Color to use to fill the hover marker
+- `Fill opacity`: The opacity of the fill color
+- `Weight`: Width of the outline
+- `Radius`: Radius of the marker
 
 ### Changing marker icons or using custom HTML/SVG icons
 
