@@ -409,7 +409,7 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
     return latLng(mapOptions.centerLatitude, mapOptions.centerLongitude);
   }
 
-  const MapBounds = (props: { options: typeof options.map }) => {
+  const MapProperties = (props: { options: typeof options.map }) => {
     const mapInstance = useMap();
     useEffect(() => {
       if (props.options.zoomToDataBounds) {
@@ -570,7 +570,7 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
         {options.viewType === 'heat' && <Heat positions={latLngs} options={options.heat}/>}
         {options.viewType === 'hex' && <HexBin positions={latLngs} options={options.hex}/>}
         {options.displayHoverMarker && <HoverMarker options={options.hoverMarker} />}
-        <MapBounds options={options.map} />
+        <MapProperties options={options.map} />
         <MapMove />
         <TileLayer attribution={options.map.tileAttribution} url={options.map.tileUrlSchema} />
       </MapContainer>
