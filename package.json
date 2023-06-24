@@ -13,9 +13,9 @@
   "devDependencies": {
     "@emotion/css": "^11.10.5",
     "@grafana/data": "^9.3.0",
-    "@grafana/runtime": "^9.3.0",
-    "@grafana/toolkit": "^9.3.0",
-    "@grafana/ui": "^9.3.0",
+    "@grafana/runtime": "^9.5.5",
+    "@grafana/toolkit": "^10.0.1",
+    "@grafana/ui": "^9.5.5",
     "@types/d3": "^7.4.0",
     "@types/d3-hexbin": "^0.2.2",
     "@types/leaflet": "^1.9.0",
