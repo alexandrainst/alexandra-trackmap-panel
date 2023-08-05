@@ -7,7 +7,7 @@ import { DivIcon, heatLayer, HeatMapOptions, latLng, LatLng, hexbinLayer, Hexbin
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
-import { getLocationSrv } from '@grafana/runtime';
+import { config, getLocationSrv } from '@grafana/runtime';
 import { stylesFactory } from '@grafana/ui';
 import ReactHtmlParser from 'html-react-parser';
 
@@ -193,8 +193,8 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
       delay: options.ant.delay,
       dashArray: [10, 20],
       weight: options.ant.weight,
-      color: options.ant.color,
-      pulseColor: options.ant.pulseColor,
+      color: config.theme2.visualization.getColorByName(options.ant.color),
+      pulseColor: config.theme2.visualization.getColorByName(options.ant.pulseColor),
       paused: options.ant.paused,
       reverse: options.ant.reverse,
       hardwareAccelerated: options.ant.hardwareAccelerated,
@@ -520,8 +520,8 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
                 existingCircle.setLatLng([circleLatitude, circleLongitude]);
               } else {
                 hoverCircles.push(circleMarker([circleLatitude, circleLongitude], {
-                  color: props.options.color,
-                  fillColor: props.options.fillColor,
+                  color: config.theme2.visualization.getColorByName(props.options.color),
+                  fillColor: config.theme2.visualization.getColorByName(props.options.fillColor),
                   fillOpacity: props.options.fillOpacity,
                   weight: props.options.weight,
                   radius: props.options.radius,
