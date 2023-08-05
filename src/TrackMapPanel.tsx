@@ -1,9 +1,10 @@
 import React, { useEffect, ReactNode } from 'react';
 import { Labels, PanelProps, DataHoverEvent, DataHoverClearEvent } from '@grafana/data';
+import { urlSchemas } from 'tileurlschemas'
 import { Position, TrackMapOptions, AntData } from 'types';
 import { css, cx } from '@emotion/css';
-import { MapContainer, Marker, Popup, TileLayer, Tooltip, useMap, useMapEvent } from 'react-leaflet';
-import { DivIcon, heatLayer, HeatMapOptions, latLng, LatLng, hexbinLayer, HexbinLayerConfig, Icon, LatLngBounds, LatLngBoundsExpression, PointExpression, CircleMarker, circleMarker } from 'leaflet';
+import { MapContainer, Marker, Popup, Tooltip, useMap, useMapEvent } from 'react-leaflet';
+import { circleMarker, CircleMarker, DivIcon, heatLayer, HeatMapOptions, hexbinLayer, HexbinLayerConfig, Icon, latLng, LatLng, LatLngBounds, LatLngBoundsExpression, PointExpression, tileLayer } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
@@ -412,6 +413,16 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
   const MapProperties = (props: { options: typeof options.map }) => {
     const mapInstance = useMap();
     useEffect(() => {
+      const tile = tileLayer(props.options.tileUrlSchema,
+        urlSchemas[props.options.tileUrlSchema]? urlSchemas[props.options.tileUrlSchema] :
+        {
+          attribution: props.options.tileAttribution,
+          subdomains: props.options.tileSubdomains,
+          detectRetina: true,
+        }
+      );
+      mapInstance.addLayer(tile);
+
       if (props.options.zoomToDataBounds) {
         const bounds = getBoundsFromPositions(positions);
         mapInstance.fitBounds(bounds, { animate: true });
@@ -420,6 +431,11 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
       }
       const bounds = mapInstance.getBounds();
       updateMap(bounds);
+
+      return () => {
+        mapInstance.removeLayer(tile);
+      }
+
     }, [mapInstance, props.options]);
     return null;
   };
@@ -572,7 +588,6 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
         {options.displayHoverMarker && <HoverMarker options={options.hoverMarker} />}
         <MapProperties options={options.map} />
         <MapMove />
-        <TileLayer attribution={options.map.tileAttribution} url={options.map.tileUrlSchema} />
       </MapContainer>
     </div>
   );

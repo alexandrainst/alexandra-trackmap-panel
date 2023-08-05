@@ -31,8 +31,9 @@ interface Map {
   zoomToDataBounds: boolean;
   zoom: number;
   useBoundsInQuery: boolean;
-  tileUrlSchema: string;
   tileAttribution: string;
+  tileSubdomains: string[];
+  tileUrlSchema: string;
 }
 
 interface CoordinateOptions {
