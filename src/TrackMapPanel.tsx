@@ -1,7 +1,7 @@
 import React, { useEffect, ReactNode } from 'react';
 import { Labels, PanelProps, DataHoverEvent, DataHoverClearEvent } from '@grafana/data';
-import { urlSchemas } from 'tileurlschemas'
-import { Position, TrackMapOptions, AntData } from 'types';
+import { urlSchemas } from './tileurlschemas'
+import { Position, TrackMapOptions, AntData } from './types';
 import { css, cx } from '@emotion/css';
 import { MapContainer, Marker, Popup, Tooltip, useMap, useMapEvent } from 'react-leaflet';
 import { circleMarker, CircleMarker, DivIcon, heatLayer, HeatMapOptions, hexbinLayer, HexbinLayerConfig, Icon, latLng, LatLng, LatLngBounds, LatLngBoundsExpression, PointExpression, tileLayer } from 'leaflet';
@@ -443,7 +443,6 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
   const AntPath = (props: { children: ReactNode[], ant: AntData} ) => {
     const mapInstance = useMap();
     useEffect(() => {
-      const antPolylines: any[] = [];
       if (options.viewType === 'ant' || options.viewType === 'ant-marker') {
         const antPolyline = antPath(props.ant.data, props.ant.options);
         mapInstance.addLayer(antPolyline)

@@ -1,4 +1,4 @@
-import { FieldOverrideContext, FieldType, PanelOptionsEditorBuilder, standardEditorsRegistry } from '@grafana/data';
+import { FieldOverrideContext, PanelOptionsEditorBuilder } from '@grafana/data';
 import { urlSchemas } from './tileurlschemas'
 import { TrackMapOptions } from './types';
 import ColorMapEditor from './colorMapEditor';
