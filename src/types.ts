@@ -18,16 +18,22 @@ export interface TrackMapOptions {
   displayHoverMarker: boolean;
 }
 
+enum MapCenterMethod {
+  First = 'first',
+  Last = 'last',
+  Predefined = 'predefined',
+}
+
 interface Map {
   centerLatitude: number;
   centerLongitude: number;
+  centerMethod: MapCenterMethod;
   zoomToDataBounds: boolean;
   zoom: number;
   useBoundsInQuery: boolean;
-  useCenterFromFirstPos: boolean;
-  useCenterFromLastPos: boolean;
-  tileUrlSchema: string;
   tileAttribution: string;
+  tileSubdomains: string[];
+  tileUrlSchema: string;
 }
 
 interface CoordinateOptions {

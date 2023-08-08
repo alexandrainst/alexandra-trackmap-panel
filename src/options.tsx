@@ -1,4 +1,5 @@
-import { PanelOptionsEditorBuilder, standardEditorsRegistry } from '@grafana/data';
+import { FieldOverrideContext, PanelOptionsEditorBuilder } from '@grafana/data';
+import { urlSchemas } from './tileurlschemas'
 import { TrackMapOptions } from './types';
 import ColorMapEditor from './colorMapEditor';
 import StringMapEditor from './stringMapEditor';
@@ -35,38 +36,39 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
           ],
         },
       })
-      .addBooleanSwitch({
-        path: 'map.useCenterFromFirstPos',
-        name: 'Map center to first position',
-        defaultValue: false,
-        showIf: (config) => !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds,
-      })
-      .addBooleanSwitch({
-        path: 'map.useCenterFromLastPos',
-        name: 'Map center to last position',
-        defaultValue: false,
-        showIf: (config) => !config.map.useCenterFromFirstPos && !config.map.zoomToDataBounds,
+      .addRadio({
+        path: 'map.centerMethod',
+        name: 'Map Center method',
+        defaultValue: 'first',
+        settings: {
+          options: [
+            { value: 'first', label: 'First Position', description: 'Center map on first track position' },
+            { value: 'last', label: 'Last Position', description: 'Center map on last track position' },
+            { value: 'predefined', label: 'Pre-defined', description: 'Center on pre-defined coordinates' },
+          ],
+          isClearable: false,
+        },
       })
       .addBooleanSwitch({
         path: 'map.zoomToDataBounds',
         name: 'Zoom map to fit data bounds',
         defaultValue: false,
         showIf: (config) =>
-          !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.useBoundsInQuery,
+          !config.map.useBoundsInQuery,
       })
       .addNumberInput({
         path: 'map.centerLatitude',
         name: 'Map center latitude',
         defaultValue: 56.17203,
         showIf: (config) =>
-          !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds,
+          config.map.centerMethod === 'predefined',
       })
       .addNumberInput({
         path: 'map.centerLongitude',
         name: 'Map center longitude',
         defaultValue: 10.1865203,
         showIf: (config) =>
-          !config.map.useCenterFromFirstPos && !config.map.useCenterFromLastPos && !config.map.zoomToDataBounds,
+          config.map.centerMethod === 'predefined',
       })
       .addNumberInput({
         path: 'map.zoom',
@@ -80,15 +82,37 @@ export const optionsBuilder = (builder: PanelOptionsEditorBuilder<TrackMapOption
         defaultValue: false,
         showIf: (config) => !config.map.zoomToDataBounds,
       })
-      .addTextInput({
+      .addSelect({
         path: 'map.tileUrlSchema',
-        name: 'Custom map tiles URL schema',
         defaultValue: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        name: 'Map tile URL schema',
+        description: 'URL source for map tiles. Choose from the list or type in a custom schema.',
+        settings: {
+          isClearable: false,
+          allowCustomValue: true,
+          options: [],
+          getOptions: async (context: FieldOverrideContext) => {
+            const options: any[] = [];
+
+            for (const url in urlSchemas) {
+              options.push( {value: url, label: urlSchemas[url]?.label, description: url } )
+            }
+            return options;
+          },
+        },
       })
       .addTextInput({
         path: 'map.tileAttribution',
         name: 'Attribution HTML for tiles',
         defaultValue: '&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        showIf: (config) => urlSchemas[config.map.tileUrlSchema] === undefined,
+      })
+      .addStringArray({
+        path: 'map.tileSubdomains',
+        name: 'Tile Subdomains',
+        description: 'Subdomains to use in place of {s} in the tile URL schema',
+        defaultValue: ['a', 'b', 'c'],
+        showIf: (config) => urlSchemas[config.map.tileUrlSchema] === undefined && config.map.tileUrlSchema.includes('{s}'),
       })
       .addTextInput({
         path: 'coordinates.customLatitudeColumnName',
