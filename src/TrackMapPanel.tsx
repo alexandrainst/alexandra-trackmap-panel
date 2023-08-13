@@ -426,7 +426,7 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
         const bounds = getBoundsFromPositions(positions);
         mapInstance.fitBounds(bounds, { animate: true });
       } else {
-        mapInstance.setView(mapCenter(latLngs, props.options));
+        mapInstance.setView(mapCenter(latLngs, props.options), props.options.zoom);
       }
       const bounds = mapInstance.getBounds();
       updateMap(bounds);
@@ -574,11 +574,7 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
         `
       )}
     >
-      <MapContainer
-        center={mapCenter(latLngs, options.map)}
-        zoom={options.map.zoom}
-        zoomSnap={0.5}
-      >
+      <MapContainer>
         {(options.viewType === 'ant' || options.viewType === 'ant-marker') && createAntPaths()}
         {(options.viewType === 'marker' || options.viewType === 'ant-marker') && createMarkers()}
         {options.viewType === 'heat' && <Heat positions={latLngs} options={options.heat}/>}
