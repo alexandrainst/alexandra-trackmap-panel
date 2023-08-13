@@ -8,7 +8,7 @@ import { circleMarker, CircleMarker, DivIcon, heatLayer, HeatMapOptions, hexbinL
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
-import { config, getLocationSrv } from '@grafana/runtime';
+import { config, locationService } from '@grafana/runtime';
 import { stylesFactory } from '@grafana/ui';
 import ReactHtmlParser from 'html-react-parser';
 
@@ -346,16 +346,15 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
   }
 
   const updateQueryVariables = (minLat: number, minLon: number, maxLat: number, maxLon: number) => {
-    getLocationSrv().update({
-      query: {
+    locationService.partial(
+      {
         'var-minLat': minLat,
         'var-maxLat': maxLat,
         'var-minLon': minLon,
         'var-maxLon': maxLon,
       },
-      partial: true,
-      replace: true,
-    });
+      true
+    );
   };
 
   const updateMap = (bounds: LatLngBounds) => {
