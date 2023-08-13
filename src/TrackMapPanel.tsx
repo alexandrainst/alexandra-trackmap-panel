@@ -2,14 +2,13 @@ import React, { useEffect, ReactNode } from 'react';
 import { Labels, PanelProps, DataHoverEvent, DataHoverClearEvent } from '@grafana/data';
 import { urlSchemas } from './tileurlschemas'
 import { Position, TrackMapOptions, AntData } from './types';
-import { css, cx } from '@emotion/css';
+import { css } from '@emotion/css';
 import { MapContainer, Marker, Popup, Tooltip, useMap, useMapEvent } from 'react-leaflet';
 import { circleMarker, CircleMarker, DivIcon, heatLayer, HeatMapOptions, hexbinLayer, HexbinLayerConfig, Icon, latLng, LatLng, LatLngBounds, LatLngBoundsExpression, PointExpression, tileLayer } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
 import { config, locationService } from '@grafana/runtime';
-import { stylesFactory } from '@grafana/ui';
 import ReactHtmlParser from 'html-react-parser';
 
 const { antPath } = require('leaflet-ant-path');
@@ -28,8 +27,6 @@ const StyledPopup = styled(Popup)`
 `;
 
 export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelProps<TrackMapOptions>) => {
-  const styles = getStyles();
-
   const primaryIcon: string = require('img/marker.png');
   const secondaryIcon: string = require('img/marker_secondary.png');
 
@@ -563,17 +560,12 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
 
   return null;
 }
-
   return (
-    <div
-      className={cx(
-        styles.wrapper,
-        css`
-          width: ${width}px;
-          height: ${height}px;
-        `
-      )}
-    >
+    <div className={css`
+      width: ${width}px;
+      height: ${height}px;
+      overflow: auto;
+    `}>
       <MapContainer>
         {(options.viewType === 'ant' || options.viewType === 'ant-marker') && createAntPaths()}
         {(options.viewType === 'marker' || options.viewType === 'ant-marker') && createMarkers()}
@@ -586,11 +578,3 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
     </div>
   );
 };
-
-const getStyles = stylesFactory(() => {
-  return {
-    wrapper: css`
-      position: relative;
-    `,
-  };
-});

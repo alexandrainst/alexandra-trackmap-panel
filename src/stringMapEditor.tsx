@@ -1,6 +1,7 @@
 import { FieldConfigEditorProps, StringFieldConfigSettings } from '@grafana/data';
 import React from 'react';
-import { Button, getTheme, Icon, Input } from '@grafana/ui';
+import { Button, Icon, Input } from '@grafana/ui';
+import { config } from '@grafana/runtime';
 import { getStyles } from './colorMapEditor';
 
 export interface KeyValue {
@@ -66,10 +67,10 @@ export default class StringMapEditor extends React.PureComponent<StringMapEditor
   };
 
   render() {
-    let { value, item } = this.props;
+    let { value } = this.props;
     const { showAdd } = this.state;
-    const styles = getStyles(getTheme());
-    let inputs = null;
+    const styles = getStyles(config.theme2);
+    let inputs;
     if (value) {
       inputs = value.map((k, index) => {
         const prefix = (

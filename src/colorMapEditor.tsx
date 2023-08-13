@@ -1,6 +1,7 @@
-import { FieldConfigEditorProps, GrafanaTheme, StringFieldConfigSettings } from '@grafana/data';
+import { FieldConfigEditorProps, GrafanaTheme2, StringFieldConfigSettings } from '@grafana/data';
 import React from 'react';
-import { Button, ColorPicker, getTheme, Icon, Input, stylesFactory } from '@grafana/ui';
+import { Button, ColorPicker, Icon, Input } from '@grafana/ui';
+import { config } from '@grafana/runtime';
 import { css } from '@emotion/css';
 
 export interface LabelColor {
@@ -66,10 +67,10 @@ export default class ColorMapEditor extends React.PureComponent<ColorMapEditorPr
   };
 
   render() {
-    let { value, item } = this.props;
+    let { value } = this.props;
     const { showAdd } = this.state;
-    const styles = getStyles(getTheme());
-    let inputs = null;
+    const styles = getStyles(config.theme2);
+    let inputs;
     if (value) {
       inputs = value.map((k, index) => {
         const prefix = (
@@ -127,10 +128,10 @@ export default class ColorMapEditor extends React.PureComponent<ColorMapEditorPr
   }
 }
 
-export const getStyles = stylesFactory((theme: GrafanaTheme) => {
+export const getStyles = (theme: GrafanaTheme2) => {
   return {
     colorPicker: css`
-      padding: 0 ${theme.spacing.sm};
+      padding: 0 ${theme.v1.spacing.sm};
     `,
     inputPrefix: css`
       display: flex;
@@ -140,16 +141,16 @@ export const getStyles = stylesFactory((theme: GrafanaTheme) => {
     textInput: css`
       margin-bottom: 5px;
       &:hover {
-        border: 1px solid ${theme.colors.formInputBorderHover};
+        border: 1px solid ${theme.v1.colors.formInputBorderHover};
       }
     `,
     trashIcon: css`
-      color: ${theme.colors.textWeak};
+      color: ${theme.colors.text.secondary};
       cursor: pointer;
 
       &:hover {
-        color: ${theme.colors.text};
+        color: ${theme.colors.text.primary};
       }
     `,
   };
-});
+}
