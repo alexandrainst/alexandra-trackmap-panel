@@ -6,7 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 
 node_modules/
-yarn.lock
 
 # Runtime data
 pids
@@ -25,7 +24,7 @@ artifacts/
 work/
 ci/
 e2e-results/
-dist/CHANGELOG.md
+dist/
 
 # Editors
 .idea

@@ -1,1 +1,5 @@
 * text=auto eol=lf
+dist/module.js -diff
+dist/module.js.map -diff
+package-lock.json -diff
+yarn.lock -diff
