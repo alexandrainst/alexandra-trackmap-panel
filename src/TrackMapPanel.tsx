@@ -4,7 +4,7 @@ import { urlSchemas } from './tileurlschemas'
 import { Position, TrackMapOptions, AntData } from './types';
 import { css } from '@emotion/css';
 import { MapContainer, Marker, Popup, Tooltip, useMap, useMapEvent } from 'react-leaflet';
-import { circleMarker, CircleMarker, DivIcon, heatLayer, HeatMapOptions, hexbinLayer, HexbinLayerConfig, Icon, latLng, LatLng, LatLngBounds, LatLngBoundsExpression, PointExpression, tileLayer } from 'leaflet';
+import { circleMarker, CircleMarker, DivIcon, heatLayer, HeatMapOptions, hexbinLayer, HexbinLayerConfig, Icon, latLng, LatLng, LatLngBounds, LatLngBoundsExpression, LeafletMouseEvent, PointExpression, tileLayer } from 'leaflet';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
@@ -441,10 +441,35 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
     useEffect(() => {
       if (options.viewType === 'ant' || options.viewType === 'ant-marker') {
         const antPolyline = antPath(props.ant.data, props.ant.options);
-        mapInstance.addLayer(antPolyline)
+
+        antPolyline.on('mouseover', (e: LeafletMouseEvent) => {
+          positions?.forEach(positionSeries => {
+            let smallestDistance: number | undefined = undefined
+            let smallestDistanceTimestamp: number | undefined = undefined;
+
+            positionSeries.forEach(position => {
+              const distance = e.latlng.distanceTo([position.latitude, position.longitude]);
+              if (!smallestDistance || distance < smallestDistance) {
+                smallestDistance = distance;
+                smallestDistanceTimestamp = position.timestamp;
+              }
+            });
+
+            if (smallestDistanceTimestamp) {
+              eventBus.publish(new DataHoverEvent({ point: { time: smallestDistanceTimestamp } }));
+            }
+          })
+        })
+
+        antPolyline.on('mouseout', (e: LeafletMouseEvent) => {
+          eventBus.publish(new DataHoverClearEvent());
+        })
+
+        mapInstance.addLayer(antPolyline);
 
         return () => {
-          mapInstance.removeLayer(antPolyline)
+          antPolyline.off('mouseover');
+          mapInstance.removeLayer(antPolyline);
         }
       }
       return () => {}
@@ -536,6 +561,7 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
                   fillOpacity: props.options.fillOpacity,
                   weight: props.options.weight,
                   radius: props.options.radius,
+                  interactive: false,
                 }).addTo(mapInstance));
                 circleIndex++;
               }
