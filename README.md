@@ -254,22 +254,22 @@ To compile the plugin you need `npm`.
 npm install
 ```
 
-### 2. Build plugin in development mode
+### 2. Build plugin in development & watch mode
 
 ```sh
-npm run-script dev
-```
-
-or run in watch mode
-
-```sh
-npm run-script watch
+npm run dev
 ```
 
 ### 3. Build plugin in production mode
 
 ```sh
-npm run-script build
+npm run build
+```
+
+### 4. (optional) Update plugin scaffolding
+
+```sh
+npx @grafana/create-plugin@latest update
 ```
 
 ## License

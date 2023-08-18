@@ -29,3 +29,6 @@ dist/
 # Editors
 .idea
 .vscode
+
+# Cache-files
+.eslintcache
