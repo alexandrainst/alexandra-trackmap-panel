@@ -26,8 +26,8 @@
       {"name": "MIT License", "url": "https://github.com/alexandrainst/alexandra-trackmap-panel/blob/master/LICENSE"}
     ],
     "screenshots": [],
-    "version": "2.3.0",
-    "updated": "2023-08-18"
+    "version": "2.5.0",
+    "updated": "2023-08-19"
   },
   "dependencies": {
     "grafanaVersion": "7.x.x",

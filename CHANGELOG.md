@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.5.0
+
+* Add support for listening and publishing Grafana data hover events
+* Add support for displaying circle marker based on hover events
+* Add support for computing heat map maximum intensity dynamically
+* Overhaul plugin options for improved usability
+* Refactor plugin code to remove deprecated imports
+* Switch to new Grafana plugin scaffolding
+* Update leaflet to 1.9.4
+* Update react-leaflet to version 4.2.1
+* Update other dependencies, lots of small bugfixes, improvements, etc.
+
 ## v2.2.0 2021-03-02
 
 * Add option to discard null or 0 coordinate on map [#45](https://github.com/alexandrainst/alexandra-trackmap-panel/pull/45)

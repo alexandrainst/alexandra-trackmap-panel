@@ -1,6 +1,6 @@
 {
   "name": "alexandra-trackmap-panel",
-  "version": "2.3.0",
+  "version": "2.5.0",
   "description": "A map plugin to visualise GPS data as markers, hexbin, ant path, or heatmap",
   "scripts": {
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
