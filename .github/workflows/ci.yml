@@ -1,4 +1,3 @@
-{{!-- /* 🚨 The `${{ }}` Github workflow expressions need to be escaped so they are not being interpreted by Handlebars. (this comment is going to be removed after scaffolding) 🚨 */ --}}
 name: CI
 
 on:
