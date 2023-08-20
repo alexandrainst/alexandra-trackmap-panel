@@ -15,28 +15,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-{{#if_eq packageManagerName "pnpm"}}
-      # pnpm action uses the packageManager field in package.json to
-      # understand which version to install.
-      - uses: pnpm/action-setup@v2
-{{/if_eq}}
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: '{{ packageManagerName }}'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: {{ packageManagerInstallCmd }}
+        run: npm install
 
       - name: Check types
-        run: {{ packageManagerName }} run typecheck
+        run: npm run typecheck
       - name: Lint
-        run: {{ packageManagerName }} run lint
+        run: npm run lint
       - name: Unit tests
-        run: {{ packageManagerName }} run test:ci
+        run: npm run test:ci
       - name: Build frontend
-        run: {{ packageManagerName }} run build
+        run: npm run build
 
       - name: Check for backend
         id: check-for-backend
@@ -80,7 +75,7 @@ jobs:
 
       - name: Run e2e tests
         if: steps.check-for-e2e.outputs.has-e2e == 'true'
-        run: {{ packageManagerName }} run e2e
+        run: npm run e2e
 
       - name: Stop grafana docker
         if: steps.check-for-e2e.outputs.has-e2e == 'true'
