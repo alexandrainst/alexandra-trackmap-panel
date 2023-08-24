@@ -131,7 +131,7 @@ export default class ColorMapEditor extends React.PureComponent<ColorMapEditorPr
 export const getStyles = (theme: GrafanaTheme2) => {
   return {
     colorPicker: css`
-      padding: 0 ${theme.v1.spacing.sm};
+      padding: 0 ${theme.spacing(0.5)};
     `,
     inputPrefix: css`
       display: flex;
@@ -141,7 +141,7 @@ export const getStyles = (theme: GrafanaTheme2) => {
     textInput: css`
       margin-bottom: 5px;
       &:hover {
-        border: 1px solid ${theme.v1.colors.formInputBorderHover};
+        border: 1px solid ${theme.colors.border.strong};
       }
     `,
     trashIcon: css`
