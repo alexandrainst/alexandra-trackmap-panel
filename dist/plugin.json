@@ -25,12 +25,21 @@
       {"name": "Project site", "url": "https://github.com/alexandrainst/alexandra-trackmap-panel"},
       {"name": "MIT License", "url": "https://github.com/alexandrainst/alexandra-trackmap-panel/blob/master/LICENSE"}
     ],
-    "screenshots": [],
-    "version": "2.5.0",
-    "updated": "2023-08-19"
+    "screenshots": [
+      { "name": "Ant Path",
+        "path": "img/antpath.png"},
+      { "name": "Heatmap",
+        "path": "img/heatmap.png"},
+      { "name": "Hexbin",
+        "path": "img/hexbin.png"},
+      { "name": "Markers",
+        "path": "img/markers.png"}
+    ],
+    "version": "2.5.1",
+    "updated": "2023-08-25"
   },
   "dependencies": {
-    "grafanaVersion": "7.x.x",
+    "grafanaDependency": ">=8.0.0",
     "plugins": []
   }
 }

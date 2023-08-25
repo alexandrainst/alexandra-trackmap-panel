@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.5.1
+
+* Bugfix: Address issue using map bounds in query [#111](https://github.com/alexandrainst/alexandra-trackmap-panel/issues/111)
+* Work on automated CI and release pipelines
+* Other minor developments
+
 ## v2.5.0
 
 * Add support for listening and publishing Grafana data hover events
