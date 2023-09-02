@@ -27,13 +27,7 @@
     ],
     "screenshots": [
       { "name": "Ant Path",
-        "path": "img/antpath.png"},
-      { "name": "Heatmap",
-        "path": "img/heatmap.png"},
-      { "name": "Hexbin",
-        "path": "img/hexbin.png"},
-      { "name": "Markers",
-        "path": "img/markers.png"}
+        "path": "img/antpath.png"}
     ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
