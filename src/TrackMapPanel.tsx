@@ -590,7 +590,7 @@ export const TrackMapPanel = ({ options, data, width, height, eventBus }: PanelP
       height: ${height}px;
       overflow: auto;
     `}>
-      <MapContainer center={mapCenter(latLngs, options.map)}>
+      <MapContainer center={mapCenter(latLngs, options.map)} zoom={options.map.zoom}>
         {(options.viewType === 'ant' || options.viewType === 'ant-marker') && createAntPaths()}
         {(options.viewType === 'marker' || options.viewType === 'ant-marker') && createMarkers()}
         {options.viewType === 'heat' && <Heat positions={latLngs} options={options.heat}/>}
