@@ -181,7 +181,7 @@ This allows customization of the style to be used for the map (e.g. streets, sat
 
 ![map_tiles_config](img/map_tiles_config.png)
 
-To make use of this configuration, specify a Tile Server URL (see [schema](https://leafletjs.com/reference-1.7.1.html#tilelayer-url-template)) in the input field.
+To make use of this configuration, specify a Tile Server URL (see [schema](https://leafletjs.com/reference.html#tilelayer-url-template)) in the input field.
 On the OpenStreetMap Wiki there is a list of [publicly available tile servers](https://wiki.openstreetmap.org/wiki/Tile_servers).
 
 #### Mapbox
