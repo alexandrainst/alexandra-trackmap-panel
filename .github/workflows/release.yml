@@ -55,7 +55,7 @@ jobs:
 
       - name: Warn missing Grafana Access Policy token
         run: |
-          echo Please generate a Grafana API key: https://grafana.com/docs/grafana/latest/developers/plugins/publish-a-plugin/sign-a-plugin/#generate-a-token
+          echo Please generate a Grafana Access Policy token: https://grafana.com/docs/grafana/latest/developers/plugins/publish-a-plugin/sign-a-plugin/#generate-a-token
         if: ${{ env.GRAFANA_ACCESS_POLICY_TOKEN == '' }}
 
       - name: Sign plugin
@@ -90,6 +90,10 @@ jobs:
       - name: Check package version
         run: if [ "v${{ steps.metadata.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name\033[0m\n"; exit 1; fi
 
+      - name: Convert relative links in README to absolute
+        run: |
+          sed -i 's/\(\[.*\]\)(\([^h].*\))/\1(https:\/\/raw.githubusercontent.com\/alexandrainst\/alexandra-trackmap-panel\/${{ steps.metadata.outputs.github-tag }}\/\2)/g' dist/README.md
+
       - name: Package plugin
         id: package-plugin
         run: |
@@ -104,7 +108,7 @@ jobs:
           pushd ./plugin-validator/pkg/cmd/plugincheck2
           go install
           popd
-          plugincheck2 -config ./plugin-validator/config/default.yaml ${{ steps.metadata.outputs.archive }}
+          plugincheck2 -config ./plugin-validator/config/publishing.yaml ${{ steps.metadata.outputs.archive }}
 
       - name: Create Github release
         uses: softprops/action-gh-release@v1
