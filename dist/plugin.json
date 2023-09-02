@@ -27,16 +27,10 @@
     ],
     "screenshots": [
       { "name": "Ant Path",
-        "path": "img/antpath.png"},
-      { "name": "Heatmap",
-        "path": "img/heatmap.png"},
-      { "name": "Hexbin",
-        "path": "img/hexbin.png"},
-      { "name": "Markers",
-        "path": "img/markers.png"}
+        "path": "img/antpath.png"}
     ],
-    "version": "2.5.1",
-    "updated": "2023-08-25"
+    "version": "2.5.2",
+    "updated": "2023-09-02"
   },
   "dependencies": {
     "grafanaDependency": ">=8.0.0",

@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.5.2
+
+* Bugfix: Always explicitly set map initial zoom level
+* Address some issues with plugin.json
+* Update scaffolding and dependencies
+
 ## v2.5.1
 
 * Bugfix: Address issue using map bounds in query [#111](https://github.com/alexandrainst/alexandra-trackmap-panel/issues/111)
